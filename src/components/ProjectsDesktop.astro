@@ -12,30 +12,26 @@ const projectsData = projects.map(p => ({
   role: p.data.role,
   year: p.data.year,
   tools: p.data.tools,
+  coverImage: p.data.coverImage,
   externalLink: p.data.externalLink,
 }));
 ---
 
 <section class="projects-section section hidden-section" id="projects-section">
-  <div class="terminal-window projects-terminal">
-    <div class="terminal-titlebar">
-      <span class="terminal-dots">
-        <span class="dot close"></span>
-        <span class="dot minimize"></span>
-        <span class="dot maximize"></span>
-      </span>
-      <span class="terminal-title">projects — bash</span>
-    </div>
-    <div class="terminal-body">
-      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">ls -la projects/</span>
-<span class="terminal-output">total {projects.length}
-{projects.map((p, i) => `${String(i + 1).padStart(3)}  drwxr-xr-x  2 user  staff  1024  draft  ${p.data.title.toLowerCase().replace(/\s+/g, '-')}`).join('\n')}</span></pre>
-    </div>
-  </div>
+  <h2 class="section-heading">
+    <span class="heading-accent">&gt;</span> projects
+    <span class="heading-count">{projectsData.length} files</span>
+  </h2>
 
-  <div class="projects-grid">
-    {projects.map((project, index) => (
-      <ProjectCard title={project.data.title} index={index} />
+  <div class="projects-grid" id="projects-grid">
+    {projectsData.map((project, index) => (
+      <ProjectCard
+        title={project.title}
+        shortDescription={project.shortDescription}
+        tools={project.tools}
+        coverImage={project.coverImage}
+        index={index}
+      />
     ))}
   </div>
 </section>
@@ -55,32 +51,88 @@ const projectsData = projects.map(p => ({
   const bodyEl = document.getElementById('window-body');
   const closeBtn = document.getElementById('window-close-btn');
   const dragHandle = document.getElementById('window-drag-handle');
-  const cards = document.querySelectorAll('.project-card');
+  const section = document.getElementById('projects-section');
+  const grid = document.getElementById('projects-grid');
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let isOpen = false;
   let isDragging = false;
   let dragStartX, dragStartY, winStartX, winStartY;
+  let hasAnimated = false;
 
-  cards.forEach((card) => {
-    card.addEventListener('click', () => {
-      const index = parseInt(card.dataset.projectIndex);
-      openProject(index);
-    });
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const index = parseInt(card.dataset.projectIndex);
-        openProject(index);
+  /* ---- stagger on reveal ---- */
+  if (section && !prefersReduced) {
+    const observer = new MutationObserver(() => {
+      if (!section.classList.contains('hidden-section') && !hasAnimated) {
+        hasAnimated = true;
+        observer.disconnect();
+        const cards = grid.querySelectorAll('.project-card');
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 40, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.55,
+            stagger: { each: 0.12, from: 'start' },
+            ease: 'power3.out',
+            onComplete: () => {
+              cards.forEach(c => {
+                c.style.opacity = '';
+                c.style.transform = '';
+              });
+            },
+          }
+        );
       }
     });
-  });
+    observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* ---- card click ---- */
+  const allCards = () => document.querySelectorAll('.project-card');
+  function bindCards() {
+    allCards().forEach((card) => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.dataset.projectIndex);
+        openProject(index);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const index = parseInt(card.dataset.projectIndex);
+          openProject(index);
+        }
+      });
+    });
+  }
+  bindCards();
 
   function openProject(index) {
     const p = projectsData[index];
     if (!p) return;
 
+    const card = allCards()[index];
+
+    if (!prefersReduced && card) {
+      gsap.to(card, {
+        scale: 0.95,
+        opacity: 0.6,
+        duration: 0.15,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(card, { clearProps: 'all' });
+          showWindow(p);
+        },
+      });
+    } else {
+      showWindow(p);
+    }
+  }
+
+  function showWindow(p) {
     titleEl.textContent = p.title;
 
     bodyEl.innerHTML = `
@@ -230,27 +282,46 @@ const projectsData = projects.map(p => ({
     padding-bottom: 80px;
   }
 
-  .projects-terminal {
-    margin-bottom: 32px;
+  .section-heading {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0 0 24px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .heading-accent {
+    color: var(--accent-green);
+  }
+
+  .heading-count {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .projects-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 769px) and (max-width: 1024px) {
     .projects-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>

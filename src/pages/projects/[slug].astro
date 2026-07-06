@@ -36,6 +36,11 @@ const { Content } = await render(project);
         <span class="terminal-title">{project.data.title} — details</span>
       </div>
       <div class="terminal-body">
+        {project.data.coverImage && (
+          <div class="detail-cover">
+            <img src={project.data.coverImage} alt="" />
+          </div>
+        )}
         <div class="detail-meta">
           <div class="meta-row"><span class="field-label">role</span> <span class="field-value">{project.data.role}</span></div>
           <div class="meta-row"><span class="field-label">year</span> <span class="field-value">{project.data.year}</span></div>
@@ -69,6 +74,18 @@ const { Content } = await render(project);
 
   .back-link:hover {
     color: var(--accent-green);
+  }
+
+  .detail-cover {
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+  }
+
+  .detail-cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(40%) contrast(1.1);
   }
 
   .detail-meta {

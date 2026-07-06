@@ -1,4 +1,4 @@
-<div class="hero-section section" id="hero-section">
+<div class="hero-section section" id="hero-section" style="display: none;">
   <div class="terminal-window" id="main-terminal">
     <div class="terminal-titlebar">
       <span class="terminal-dots">
@@ -292,6 +292,9 @@
   });
 
   function startHero() {
+    const heroSection = document.getElementById('hero-section');
+    if (heroSection) heroSection.style.display = 'block';
+
     if (!prefersReduced) {
       gsap.from(terminal,
         {
@@ -316,7 +319,7 @@
     });
   }
 
-  document.addEventListener('boot-complete', startHero, { once: true });
+  document.addEventListener('open-terminal', startHero, { once: true });
 </script>
 
 <style>
