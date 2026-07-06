@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css';
-import NameHeader from '../components/NameHeader.astro';
 import TaskBar from '../components/TaskBar.astro';
 
 export interface Props {
@@ -24,7 +23,6 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to content</a>
-    <NameHeader />
     <main id="main-content">
       <slot />
     </main>

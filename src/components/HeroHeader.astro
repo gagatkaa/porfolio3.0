@@ -1,0 +1,247 @@
+<section class="hero-header" id="hero-header">
+  <div class="pixel-grid" id="pixel-grid"></div>
+  <div class="hero-header-content">
+    <h1 class="hero-name" id="hero-name-display">
+      <span class="name-line name-line-1" data-text="AGATA">AGATA</span>
+      <span class="name-line name-line-2" data-text="TOMASZEWSKA">TOMASZEWSKA</span>
+    </h1>
+    <div class="hero-title-line" id="hero-title-line">
+      <span class="title-bracket">[</span>
+      <span class="title-text" id="title-text">Digital Designer</span>
+      <span class="title-bracket">]</span>
+    </div>
+    <div class="hero-decor" id="hero-decor">
+      <span class="decor-block"></span>
+      <span class="decor-block"></span>
+      <span class="decor-block"></span>
+      <span class="decor-block"></span>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+
+  const pixelGrid = document.getElementById('pixel-grid');
+  const nameDisplay = document.getElementById('hero-name-display');
+  const titleLine = document.getElementById('hero-title-line');
+  const decor = document.getElementById('hero-decor');
+
+  function buildPixelGrid() {
+    const cols = Math.floor(window.innerWidth / 32);
+    const rows = Math.floor(window.innerHeight / 32);
+    const total = Math.min(cols * rows, 300);
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < total; i++) {
+      const pixel = document.createElement('span');
+      pixel.className = 'pixel';
+      pixel.dataset.index = i;
+      fragment.appendChild(pixel);
+    }
+    pixelGrid.appendChild(fragment);
+  }
+
+  function animatePixels() {
+    const pixels = pixelGrid.querySelectorAll('.pixel');
+    pixels.forEach((p) => {
+      const delay = Math.random() * 3;
+      const duration = 0.4 + Math.random() * 1.2;
+      gsap.to(p, {
+        opacity: 0.15 + Math.random() * 0.6,
+        backgroundColor: Math.random() > 0.5 ? 'var(--accent-purple)' : 'var(--accent-green)',
+        duration,
+        delay,
+        repeat: -1,
+        yoyo: true,
+        ease: 'power1.inOut',
+      });
+    });
+  }
+
+  function animateHeader() {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReduced) {
+      pixelGrid.querySelectorAll('.pixel').forEach(p => p.style.opacity = '0.15');
+      return;
+    }
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    tl.fromTo(nameDisplay, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 })
+      .fromTo('.name-line-1', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.6')
+      .fromTo('.name-line-2', { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.4')
+      .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.2')
+      .fromTo(decor, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.inOut' }, '-=0.2');
+
+    animatePixels();
+  }
+
+  buildPixelGrid();
+  document.addEventListener('boot-complete', animateHeader, { once: true });
+</script>
+
+<style>
+  .hero-header {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pixel-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 32px);
+    grid-template-rows: repeat(auto-fill, 32px);
+    gap: 0;
+    z-index: 0;
+  }
+
+  .pixel {
+    width: 32px;
+    height: 32px;
+    opacity: 0;
+    background: transparent;
+  }
+
+  .hero-header-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px;
+  }
+
+  .hero-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    opacity: 0;
+  }
+
+  .name-line {
+    font-size: clamp(2.5rem, 10vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  .name-line::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 2px;
+    color: var(--accent-purple);
+    opacity: 0.15;
+    pointer-events: none;
+    animation: glitch-scan 6s infinite linear;
+  }
+
+  .name-line::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: -2px;
+    color: var(--accent-green);
+    opacity: 0.1;
+    pointer-events: none;
+    animation: glitch-scan 5s infinite linear reverse;
+  }
+
+  .hero-title-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    margin-bottom: 28px;
+  }
+
+  .title-bracket {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--accent-purple);
+    font-weight: 300;
+  }
+
+  .title-text {
+    font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+    color: var(--accent-green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .hero-decor {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    opacity: 0;
+    transform-origin: center;
+  }
+
+  .decor-block {
+    width: 12px;
+    height: 12px;
+    background: var(--accent-purple);
+    border: 1px solid var(--accent-purple-dim);
+  }
+
+  .decor-block:nth-child(2) {
+    background: var(--accent-green);
+    border-color: var(--accent-green-dim);
+  }
+
+  .decor-block:nth-child(3) {
+    background: var(--accent-green);
+    border-color: var(--accent-green-dim);
+  }
+
+  .decor-block:nth-child(4) {
+    background: var(--accent-purple);
+    border-color: var(--accent-purple-dim);
+  }
+
+  @keyframes glitch-scan {
+    0%, 90%, 100% { transform: translate(0); opacity: 0.08; }
+    92% { transform: translate(-2px, 1px); opacity: 0.4; }
+    94% { transform: translate(2px, -1px); opacity: 0.15; }
+    96% { transform: translate(-1px, 2px); opacity: 0.3; }
+    98% { transform: translate(1px, -2px); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .name-line::before,
+    .name-line::after {
+      animation: none;
+      opacity: 0;
+    }
+
+    .pixel {
+      opacity: 0.1 !important;
+      background: var(--border) !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-header {
+      min-height: 70vh;
+    }
+
+    .hero-header-content {
+      padding: 24px 16px;
+    }
+
+    .decor-block {
+      width: 8px;
+      height: 8px;
+    }
+  }
+</style>
