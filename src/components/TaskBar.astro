@@ -1,6 +1,9 @@
 <footer class="taskbar" id="taskbar">
   <div class="taskbar-left">
-    <button class="start-btn" id="start-btn" aria-label="Start menu">▲ Start</button>
+    <button class="start-btn" id="start-btn" aria-label="Start menu">
+      <span class="start-icon">▲</span>
+      <span class="start-label">Start</span>
+    </button>
   </div>
   <div class="taskbar-right">
     <span class="taskbar-clock" id="clock">00:00</span>
@@ -9,18 +12,18 @@
 
 <nav class="start-menu" id="start-menu" aria-label="Start menu">
   <div class="start-menu-header">◆ Portfolio</div>
-  <a href="/" class="start-item">Home</a>
-  <a href="/#about-section" class="start-item">About</a>
-  <a href="/#projects-section" class="start-item">Projects</a>
-  <button class="start-item" id="start-terminal-btn">Terminal</button>
+  <button class="start-item" data-section="hero-section">Terminal</button>
+  <button class="start-item" data-section="about-section">About</button>
+  <button class="start-item" data-section="projects-section">Projects</button>
+  <button class="start-item" data-section="contact-section">Contact</button>
   <div class="start-menu-footer">Agata Tomaszewska · Digital Designer</div>
 </nav>
 
 <script>
   const startBtn = document.getElementById('start-btn');
   const startMenu = document.getElementById('start-menu');
-  const startTerminal = document.getElementById('start-terminal-btn');
   const clockEl = document.getElementById('clock');
+  const startItems = startMenu.querySelectorAll('[data-section]');
 
   function updateClock() {
     const now = new Date();
@@ -48,16 +51,22 @@
     }
   });
 
-  startTerminal.addEventListener('click', () => {
-    closeStart();
-    const el = document.getElementById('hero-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.href = '/#hero-section';
-    }
+  startItems.forEach((item) => {
+    item.addEventListener('click', () => {
+      closeStart();
+      const sectionId = item.dataset.section;
+      const revealFn = window.revealSection;
+      if (revealFn) {
+        revealFn(sectionId);
+      } else {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.classList.remove('hidden-section');
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
   });
-
 </script>
 
 <style>
@@ -66,14 +75,14 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 36px;
+    height: 44px;
     z-index: 8000;
     background: var(--bg-tertiary);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 0 4px;
-    font-size: 0.75rem;
+    padding: 0 6px;
+    font-size: 0.8rem;
   }
 
   .taskbar-left,
@@ -90,47 +99,53 @@
   .start-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 10px;
-    height: 28px;
-    font-size: 0.78rem;
+    gap: 6px;
+    padding: 4px 14px;
+    height: 32px;
+    font-size: 0.85rem;
     font-family: var(--font-mono);
     color: var(--accent-green);
     background: var(--bg-surface);
     border: 1px solid var(--border-light);
     cursor: pointer;
-    transition: background 0.1s;
+    transition: background 0.1s, border-color 0.2s;
   }
 
   .start-btn:hover,
   .start-btn:focus-visible {
     background: var(--bg-tertiary);
     border-color: var(--accent-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
+  }
+
+  .start-icon {
+    font-size: 0.75rem;
   }
 
   .taskbar-clock {
-    padding: 2px 10px;
-    height: 28px;
+    padding: 4px 12px;
+    height: 32px;
     display: flex;
     align-items: center;
-    font-size: 0.72rem;
+    font-size: 0.8rem;
     color: var(--accent-green);
     border-left: 1px solid var(--border);
-    margin-left: 4px;
+    margin-left: 6px;
     font-family: var(--font-mono);
   }
 
   .start-menu {
     position: fixed;
-    bottom: 40px;
-    left: 4px;
+    bottom: 48px;
+    left: 6px;
     z-index: 8001;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-bottom: none;
-    min-width: 180px;
+    min-width: 200px;
     display: none;
     flex-direction: column;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 
   .start-menu.visible {
@@ -138,15 +153,15 @@
   }
 
   .start-menu-header {
-    padding: 10px 14px 6px;
-    font-size: 0.8rem;
+    padding: 12px 16px 8px;
+    font-size: 0.85rem;
     color: var(--accent-purple);
     border-bottom: 1px solid var(--border);
   }
 
   .start-item {
-    padding: 8px 14px;
-    font-size: 0.78rem;
+    padding: 10px 16px;
+    font-size: 0.82rem;
     font-family: var(--font-mono);
     color: var(--text-primary);
     text-decoration: none;
@@ -164,8 +179,8 @@
   }
 
   .start-menu-footer {
-    padding: 6px 14px 8px;
-    font-size: 0.65rem;
+    padding: 8px 16px 10px;
+    font-size: 0.68rem;
     color: var(--text-dim);
     border-top: 1px solid var(--border);
     margin-top: 4px;
@@ -173,26 +188,31 @@
 
   @media (max-width: 640px) {
     .taskbar {
-      height: 32px;
-      font-size: 0.65rem;
+      height: 38px;
+      font-size: 0.75rem;
       padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
     .start-btn {
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      height: 24px;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      height: 28px;
     }
 
     .taskbar-clock {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      height: 24px;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      height: 28px;
     }
 
     .start-menu {
-      min-width: 150px;
-      bottom: 36px;
+      min-width: 170px;
+      bottom: 42px;
+    }
+
+    .start-item {
+      padding: 8px 14px;
+      font-size: 0.76rem;
     }
   }
 </style>
