@@ -1,28 +1,482 @@
+---
+import mePhoto from '../assets/me.png';
+const photoUrl = mePhoto.src;
+---
+
 <div class="about-section section hidden-section" id="about-section">
-  <div class="terminal-window">
+  <div class="terminal-window" id="about-terminal">
     <div class="terminal-titlebar">
       <span class="terminal-dots">
         <span class="dot close"></span>
         <span class="dot minimize"></span>
         <span class="dot maximize"></span>
       </span>
-      <span class="terminal-title">about.txt — nano</span>
+      <span class="terminal-title">about — bash — 80×24</span>
     </div>
-    <div class="terminal-body">
-      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat about.txt</span>
-<span class="terminal-output">
-  A multidisciplinary digital designer working at the intersection of
-  visual identity, editorial design, web experiences, and creative
-  technology. I explore how form and function can coexist in
-  minimal, intentional design systems.
+    <div class="terminal-body" id="about-terminal-body" tabindex="0">
+      <pre id="about-hero-output">
+<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">./about --interactive</span>
+<span class="terminal-output" id="about-welcome-msg"></span>
+      </pre>
 
-  My practice spans brand identity, interactive installations,
-  typographic systems, and web development — always with a focus
-  on clarity, concept, and craft.
-</span></pre>
+      <div id="about-interactive" style="display: none;">
+        <div id="about-history"></div>
+        <div class="input-line" id="about-input-line">
+          <span class="terminal-prompt">user@portfolio:~$</span>
+          <span id="about-typed-text"></span>
+          <span class="cursor-blink" id="about-cursor">&#x258A;</span>
+        </div>
+      </div>
     </div>
   </div>
+  <div id="about-photo-data" data-src={photoUrl} style="display: none;"></div>
 </div>
+
+<script>
+  import gsap from 'gsap';
+
+  const section = document.getElementById('about-section');
+  const terminal = document.getElementById('about-terminal');
+  const welcomeMsg = document.getElementById('about-welcome-msg');
+  const interactive = document.getElementById('about-interactive');
+  const history = document.getElementById('about-history');
+  const typedText = document.getElementById('about-typed-text');
+  const terminalBody = document.getElementById('about-terminal-body');
+  const photoData = document.getElementById('about-photo-data');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PHOTO_URL = photoData?.dataset.src || '/me.png';
+
+  let cmdBuffer = '';
+  let isInteractive = false;
+  let cmdHistory = [];
+  let historyIndex = -1;
+  let hasStarted = false;
+
+  function typeText(el, text, cb) {
+    if (prefersReduced) {
+      el.textContent = text;
+      if (cb) cb();
+      return;
+    }
+    let i = 0;
+    el.textContent = '';
+    const interval = setInterval(() => {
+      el.textContent += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (cb) cb();
+      }
+    }, 25);
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function addHistory(cmd, output, type) {
+    const line = document.createElement('div');
+    line.className = 'history-item';
+    line.innerHTML = `<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">${escapeHtml(cmd)}</span>`;
+    history.appendChild(line);
+    if (output !== undefined && output !== null) {
+      const outLine = document.createElement('div');
+      outLine.className = 'history-output';
+      if (typeof output === 'string') {
+        outLine.innerHTML = type === 'html' ? output : output.replace(/\n/g, '<br>');
+      }
+      history.appendChild(outLine);
+    }
+    history.scrollTop = history.scrollHeight;
+  }
+
+  function focusInput() {
+    terminalBody.focus();
+  }
+
+  function updateTypedDisplay() {
+    typedText.textContent = cmdBuffer;
+  }
+
+  function enterInteractiveMode() {
+    interactive.style.display = 'block';
+    isInteractive = true;
+    focusInput();
+    if (!prefersReduced) {
+      gsap.from(interactive, { opacity: 0, duration: 0.3 });
+    }
+  }
+
+  function animateSkillBars() {
+    if (prefersReduced) {
+      document.querySelectorAll('#about-history .skill-bar-fill').forEach(el => {
+        el.style.width = el.dataset.width + '%';
+      });
+      return;
+    }
+    const fills = document.querySelectorAll('#about-history .skill-bar-fill');
+    fills.forEach(fill => {
+      const target = fill.dataset.width;
+      gsap.fromTo(fill,
+        { width: '0%' },
+        { width: target + '%', duration: 0.8, ease: 'power3.out' }
+      );
+    });
+  }
+
+  function animateTimeline() {
+    if (prefersReduced) return;
+    const entries = document.querySelectorAll('#about-history .timeline-entry');
+    gsap.fromTo(entries,
+      { opacity: 0, x: -15 },
+      { opacity: 1, x: 0, duration: 0.4, stagger: 0.12, ease: 'power2.out' }
+    );
+  }
+
+  function animatePhoto() {
+    if (prefersReduced) {
+      const img = document.querySelector('#about-history .about-photo');
+      if (img) img.style.opacity = '1';
+      return;
+    }
+    const img = document.querySelector('#about-history .about-photo');
+    if (img) {
+      gsap.to(img, { opacity: 1, duration: 0.6, ease: 'power2.out' });
+    }
+  }
+
+  const HELP_HTML = [
+    '',
+    '  <div class="help-title">Available commands:</div>',
+    '  <div class="help-divider">&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</div>',
+    '  <div class="help-row"><span class="help-cmd">bio</span>        <span class="help-dash">&mdash;</span> <span class="help-desc">Read my biography</span></div>',
+    '  <div class="help-row"><span class="help-cmd">skills</span>     <span class="help-dash">&mdash;</span> <span class="help-desc">View my skills &amp; tools</span></div>',
+    '  <div class="help-row"><span class="help-cmd">experience</span> <span class="help-dash">&mdash;</span> <span class="help-desc">Work &amp; freelance history</span></div>',
+    '  <div class="help-row"><span class="help-cmd">education</span>   <span class="help-dash">&mdash;</span> <span class="help-desc">Academic background</span></div>',
+    '  <div class="help-row"><span class="help-cmd">interests</span>   <span class="help-dash">&mdash;</span> <span class="help-desc">Things I enjoy</span></div>',
+    '  <div class="help-row"><span class="help-cmd">photo</span>      <span class="help-dash">&mdash;</span> <span class="help-desc">Show my photo</span></div>',
+    '  <div class="help-row"><span class="help-cmd">social</span>     <span class="help-dash">&mdash;</span> <span class="help-desc">Find me online</span></div>',
+    '  <div class="help-row"><span class="help-cmd">ls</span>         <span class="help-dash">&mdash;</span> <span class="help-desc">List available topics</span></div>',
+    '  <div class="help-row"><span class="help-cmd">clear</span>      <span class="help-dash">&mdash;</span> <span class="help-desc">Clear terminal</span></div>',
+    '  <div class="help-row"><span class="help-cmd">help</span>       <span class="help-dash">&mdash;</span> <span class="help-desc">Show this message</span></div>',
+    '',
+  ].join('\n');
+
+  function processCommand(cmd) {
+    const trimmed = cmd.trim();
+    if (!trimmed) return { output: '', type: 'text', afterRender: null };
+
+    const parts = trimmed.split(/\s+/);
+    const command = parts[0].toLowerCase();
+
+    const renderAfter = (fn) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => fn()));
+    };
+
+    switch (command) {
+      case 'help':
+        return { output: HELP_HTML, type: 'html', afterRender: null };
+
+      case 'bio':
+        return {
+          output: [
+            '',
+            '  I\'m a Digital Designer from Poland, currently studying at',
+            '  Howest | Devine in Kortrijk, Belgium. My work is driven by',
+            '  visual storytelling, combining colour, form, motion, and',
+            '  the space where art meets technology.',
+            '',
+            '  Before joining Devine, I graduated from a technical printing',
+            '  and design school in Poland and later completed my first year',
+            '  of Game Graphic Production at Howest DAE. Today, I\'m focused',
+            '  on web design and development \u2014 a natural fit for both my',
+            '  creative and technical interests.',
+            '',
+            '  I\'m curious by nature and enjoy experimenting across different',
+            '  tools, mediums, and ideas. Rather than limiting myself to one',
+            '  discipline, I like exploring a bit of everything and letting',
+            '  those influences come together in my work.',
+            '',
+          ].join('\n'),
+          type: 'text',
+          afterRender: null,
+        };
+
+      case 'skills':
+        return {
+          output: [
+            '<div class="skill-categories">',
+            '  <div class="skill-category">',
+            '    <div class="skill-header">',
+            '      <span class="skill-name">Design</span>',
+            '      <span class="skill-pct">90%</span>',
+            '    </div>',
+            '    <div class="skill-bar-track">',
+            '      <div class="skill-bar-fill" data-width="90"></div>',
+            '    </div>',
+            '    <div class="skill-tags">Figma, Adobe Creative Suite, UI/UX Design, Wireframing &amp; Prototyping, Visual Identity, Editorial Design, Layout Design</div>',
+            '  </div>',
+            '  <div class="skill-category">',
+            '    <div class="skill-header">',
+            '      <span class="skill-name">Development</span>',
+            '      <span class="skill-pct">78%</span>',
+            '    </div>',
+            '    <div class="skill-bar-track">',
+            '      <div class="skill-bar-fill" data-width="78"></div>',
+            '    </div>',
+            '    <div class="skill-tags">HTML / CSS / JS, React, Astro, PHP, Git / GitHub, Strapi</div>',
+            '  </div>',
+            '  <div class="skill-category">',
+            '    <div class="skill-header">',
+            '      <span class="skill-name">3D &amp; Motion</span>',
+            '      <span class="skill-pct">65%</span>',
+            '    </div>',
+            '    <div class="skill-bar-track">',
+            '      <div class="skill-bar-fill" data-width="65"></div>',
+            '    </div>',
+            '    <div class="skill-tags">Blender, Maya, After Effects, Motion Design, Substance Painter, Basics of Zbrush</div>',
+            '  </div>',
+            '  <div class="skill-category">',
+            '    <div class="skill-header">',
+            '      <span class="skill-name">AI &amp; Workflow</span>',
+            '      <span class="skill-pct">75%</span>',
+            '    </div>',
+            '    <div class="skill-bar-track">',
+            '      <div class="skill-bar-fill" data-width="75"></div>',
+            '    </div>',
+            '    <div class="skill-tags">AI-assisted Design, Prompt Engineering, AI Workflow Automation</div>',
+            '  </div>',
+            '</div>',
+          ].join('\n'),
+          type: 'html',
+          afterRender: () => renderAfter(animateSkillBars),
+        };
+
+      case 'experience':
+        return {
+          output: [
+            '<div class="timeline">',
+            '  <div class="timeline-entry">',
+            '    <div class="timeline-dot"></div>',
+            '    <div class="timeline-content">',
+            '      <div class="timeline-date">2019 &ndash; Present</div>',
+            '      <div class="timeline-title">Freelance Designer</div>',
+            '      <div class="timeline-desc">Selected client and academic projects. Created print and digital materials including flyers, posters, business cards, CVs, infographics, and social media assets.</div>',
+            '    </div>',
+            '  </div>',
+            '  <div class="timeline-entry">',
+            '    <div class="timeline-dot"></div>',
+            '    <div class="timeline-content">',
+            '      <div class="timeline-date">2022 &ndash; Present</div>',
+            '      <div class="timeline-title">Bartender / Waitress (Part-time)</div>',
+            '      <div class="timeline-desc">Worked alongside full-time studies, managing customer service, multitasking in a fast-paced environment, and staying organized under pressure.</div>',
+            '    </div>',
+            '  </div>',
+            '</div>',
+          ].join('\n'),
+          type: 'html',
+          afterRender: () => renderAfter(animateTimeline),
+        };
+
+      case 'education':
+        return {
+          output: [
+            '<div class="timeline">',
+            '  <div class="timeline-entry">',
+            '    <div class="timeline-dot"></div>',
+            '    <div class="timeline-content">',
+            '      <div class="timeline-date">2023 &ndash; Present</div>',
+            '      <div class="timeline-title">Howest University of Applied Sciences &mdash; DEVINE</div>',
+            '      <div class="timeline-desc">Kortrijk, Belgium &mdash; B.A. Digital Design and Development</div>',
+            '    </div>',
+            '  </div>',
+            '  <div class="timeline-entry">',
+            '    <div class="timeline-dot"></div>',
+            '    <div class="timeline-content">',
+            '      <div class="timeline-date">2022 &ndash; 2023</div>',
+            '      <div class="timeline-title">Howest University of Applied Sciences &mdash; DAE</div>',
+            '      <div class="timeline-desc">Kortrijk, Belgium &mdash; Coursework in Game Graphic Production</div>',
+            '    </div>',
+            '  </div>',
+            '  <div class="timeline-entry">',
+            '    <div class="timeline-dot"></div>',
+            '    <div class="timeline-content">',
+            '      <div class="timeline-date">2017 &ndash; 2022</div>',
+            '      <div class="timeline-title">Technical School No. 15</div>',
+            '      <div class="timeline-desc">Wroc\u0142aw, Poland &mdash; Technician Diploma in Graphic Design &amp; Digital Printing</div>',
+            '    </div>',
+            '  </div>',
+            '</div>',
+          ].join('\n'),
+          type: 'html',
+          afterRender: () => renderAfter(animateTimeline),
+        };
+
+      case 'interests':
+        return {
+          output: [
+            '',
+            '  <span class="about-interest">&bull;</span> Bouldering',
+            '  <span class="about-interest">&bull;</span> Traveling',
+            '  <span class="about-interest">&bull;</span> Snowboarding',
+            '  <span class="about-interest">&bull;</span> Games',
+            '  <span class="about-interest">&bull;</span> Music',
+            '  <span class="about-interest">&bull;</span> Movies',
+            '',
+          ].join('\n'),
+          type: 'text',
+          afterRender: null,
+        };
+
+      case 'photo':
+        return {
+          output: [
+            '<div class="about-photo-container">',
+            `  <img src="${escapeHtml(PHOTO_URL)}" alt="Agata Tomaszewska" class="about-photo" style="opacity: 0;" loading="lazy">`,
+            '</div>',
+          ].join('\n'),
+          type: 'html',
+          afterRender: () => renderAfter(animatePhoto),
+        };
+
+      case 'social':
+        return {
+          output: [
+            '<div class="social-links">',
+            '  <div class="social-row"><span class="social-label">github</span><span class="social-sep">:</span><a href="https://github.com/agatatom" target="_blank" rel="noopener noreferrer" class="social-value">github.com/agatatom</a></div>',
+            '  <div class="social-row"><span class="social-label">linkedin</span><span class="social-sep">:</span><a href="https://linkedin.com/in/agatatom" target="_blank" rel="noopener noreferrer" class="social-value">linkedin.com/in/agatatom</a></div>',
+            '  <div class="social-row"><span class="social-label">linktree</span><span class="social-sep">:</span><a href="[linktree_url_here]" target="_blank" rel="noopener noreferrer" class="social-value">linktr.ee/agatatom</a></div>',
+            '  <div class="social-row"><span class="social-label">cv</span><span class="social-sep">:</span><a href="[cv_url_here]" target="_blank" rel="noopener noreferrer" class="social-value">download CV</a></div>',
+            '</div>',
+          ].join('\n'),
+          type: 'html',
+          afterRender: null,
+        };
+
+      case 'ls':
+        return {
+          output: 'bio/  skills/  experience/  education/  interests/  photo/  social/',
+          type: 'text',
+          afterRender: null,
+        };
+
+      case 'clear':
+        history.innerHTML = '';
+        return { output: '__CLEAR_ONLY__', type: 'text', afterRender: null };
+
+      default:
+        return {
+          output: `zsh: command not found: ${escapeHtml(parts[0])}. Type 'help' for available commands.`,
+          type: 'text',
+          afterRender: null,
+        };
+    }
+  }
+
+  function processAndRecord(cmd) {
+    const trimmed = cmd.trim();
+    if (trimmed) {
+      cmdHistory.push(trimmed);
+    }
+    historyIndex = cmdHistory.length;
+    return processCommand(cmd);
+  }
+
+  function handleCommand(cmd) {
+    const result = processAndRecord(cmd);
+    if (result.output === '__CLEAR_ONLY__') return;
+    addHistory(cmd, result.output, result.type);
+    if (result.afterRender) {
+      result.afterRender();
+    }
+  }
+
+  terminalBody.addEventListener('keydown', (e) => {
+    if (!isInteractive) return;
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const cmd = cmdBuffer;
+      cmdBuffer = '';
+      updateTypedDisplay();
+      handleCommand(cmd);
+    } else if (e.key === 'Backspace') {
+      e.preventDefault();
+      cmdBuffer = cmdBuffer.slice(0, -1);
+      updateTypedDisplay();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (cmdHistory.length > 0) {
+        historyIndex = Math.max(0, historyIndex - 1);
+        cmdBuffer = cmdHistory[historyIndex] || '';
+        updateTypedDisplay();
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex < cmdHistory.length - 1) {
+        historyIndex++;
+        cmdBuffer = cmdHistory[historyIndex] || '';
+      } else {
+        historyIndex = cmdHistory.length;
+        cmdBuffer = '';
+      }
+      updateTypedDisplay();
+    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      cmdBuffer += e.key;
+      updateTypedDisplay();
+    }
+  });
+
+  terminalBody.addEventListener('click', focusInput);
+
+  function startAboutAnimation() {
+    if (hasStarted) return;
+    hasStarted = true;
+
+    const welcomeLines = [
+      '',
+      '  Welcome to my interactive about section!',
+      '  Type \'help\' to explore \u2014 or start typing any command.',
+      '',
+    ].join('\n');
+
+    if (!prefersReduced) {
+      gsap.from(terminal, {
+        opacity: 0, scale: 0.95, y: 10,
+        duration: 0.4, ease: 'power2.out',
+        onComplete: () => {
+          setTimeout(() => {
+            typeText(welcomeMsg, welcomeLines, () => {
+              setTimeout(() => {
+                enterInteractiveMode();
+              }, 300);
+            });
+          }, 200);
+        },
+      });
+    } else {
+      welcomeMsg.textContent = welcomeLines;
+      setTimeout(() => enterInteractiveMode(), 200);
+    }
+  }
+
+  const observer = new MutationObserver(() => {
+    if (!section.classList.contains('hidden-section')) {
+      observer.disconnect();
+      startAboutAnimation();
+    }
+  });
+  observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+
+  if (!section.classList.contains('hidden-section')) {
+    observer.disconnect();
+    startAboutAnimation();
+  }
+</script>
 
 <style>
   .about-section {
@@ -30,8 +484,306 @@
     padding-bottom: 40px;
   }
 
-  .terminal-output {
-    display: block;
-    padding-top: 8px;
+  #about-terminal {
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 12px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  #about-terminal-body {
+    cursor: text;
+    min-height: 200px;
+  }
+
+  #about-terminal-body:focus-within {
+    outline: none;
+  }
+
+  #about-interactive {
+    display: none;
+  }
+
+  #about-history {
+    margin-bottom: 4px;
+  }
+
+  .history-item {
+    line-height: 1.7;
+  }
+
+  .history-output {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .help-title {
+    color: var(--accent-purple);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .help-divider {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .help-row {
+    line-height: 1.5;
+    margin-bottom: 1px;
+  }
+
+  .help-cmd {
+    color: var(--accent-green);
+    font-size: 0.8rem;
+  }
+
+  .help-dash {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin: 0 4px;
+  }
+
+  .help-desc {
+    color: var(--text-dim);
+    font-size: 0.72rem;
+  }
+
+  .input-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  #about-typed-text {
+    color: var(--text-primary);
+    white-space: pre;
+  }
+
+  .cursor-blink {
+    color: var(--accent-green);
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  .skill-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 4px 0;
+  }
+
+  .skill-category {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skill-name {
+    color: var(--accent-purple);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .skill-pct {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+  }
+
+  .skill-bar-track {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-green);
+  }
+
+  .skill-tags {
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 4px 0;
+  }
+
+  .timeline-entry {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+
+  .timeline-entry:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 14px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-dot {
+    width: 11px;
+    height: 11px;
+    min-width: 11px;
+    border-radius: 50%;
+    background: var(--accent-purple);
+    border: 1px solid var(--accent-purple-dim);
+    margin-top: 3px;
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .timeline-date {
+    color: var(--text-dim);
+    font-size: 0.72rem;
+  }
+
+  .timeline-title {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .timeline-desc {
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+
+  .about-interest {
+    color: var(--accent-green);
+    font-size: 0.8rem;
+  }
+
+  .about-photo-container {
+    padding: 8px 0;
+  }
+
+  .about-photo {
+    max-width: 240px;
+    height: auto;
+    border: 1px solid var(--border);
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px 0;
+  }
+
+  .social-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.6;
+  }
+
+  .social-label {
+    color: var(--accent-green);
+    font-size: 0.8rem;
+    min-width: 72px;
+  }
+
+  .social-sep {
+    color: var(--text-dim);
+  }
+
+  .social-value {
+    color: var(--accent-purple);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .social-value:hover {
+    color: var(--accent-green);
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-blink {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .about-section {
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+
+    .history-output {
+      font-size: 0.75rem;
+    }
+
+    .input-line {
+      font-size: 0.75rem;
+    }
+
+    .help-cmd {
+      font-size: 0.72rem;
+    }
+
+    .help-desc {
+      font-size: 0.65rem;
+    }
+
+    .about-photo {
+      max-width: 180px;
+    }
+
+    .skill-name,
+    .social-label {
+      font-size: 0.72rem;
+    }
+
+    .skill-tags {
+      font-size: 0.65rem;
+    }
+
+    .timeline-title {
+      font-size: 0.72rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.65rem;
+    }
   }
 </style>

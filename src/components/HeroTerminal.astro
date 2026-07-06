@@ -286,7 +286,8 @@
 
   document.addEventListener('keydown', (e) => {
     if (isInteractive && !e.ctrlKey && !e.metaKey && !e.altKey && e.key !== 'Tab') {
-      if (document.activeElement !== hiddenInput) {
+      const inAbout = document.activeElement?.closest('#about-section');
+      if (document.activeElement !== hiddenInput && !inAbout) {
         focusInput();
       }
     }
