@@ -13,7 +13,8 @@
 <span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">whoami</span>
 <span class="terminal-output" id="hero-name"></span>
 <span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">echo $ROLE</span>
-<span class="terminal-output" id="hero-role"></span></pre>
+<span class="terminal-output" id="hero-role"></span>
+<span class="terminal-output" id="hero-prompt"></span></pre>
 
       <div id="terminal-interactive" style="display: none;">
         <div id="terminal-history"></div>
@@ -29,8 +30,12 @@
 </div>
 
 <script>
+  import gsap from 'gsap';
+
+  const terminal = document.getElementById('main-terminal');
   const nameEl = document.getElementById('hero-name');
   const roleEl = document.getElementById('hero-role');
+  const heroPrompt = document.getElementById('hero-prompt');
   const heroOutput = document.getElementById('hero-output');
   const terminalInteractive = document.getElementById('terminal-interactive');
   const terminalHistory = document.getElementById('terminal-history');
@@ -86,6 +91,42 @@
     return div.innerHTML;
   }
 
+  function revealSection(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('hidden-section');
+    if (!prefersReduced) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      gsap.to(el, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power3.out',
+        onComplete: () => {
+          el.style.opacity = '';
+          el.style.transform = '';
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        },
+      });
+    } else {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  const HELP_HTML = [
+    '',
+    '  <div class="help-title">Available commands:</div>',
+    '  <div class="help-divider">──────────────</div>',
+    '  <div class="help-row"><span class="help-cmd">about</span>     <span class="help-dash">—</span> <span class="help-desc">Open about section</span></div>',
+    '  <div class="help-row"><span class="help-cmd">projects</span>  <span class="help-dash">—</span> <span class="help-desc">Open projects</span></div>',
+    '  <div class="help-row"><span class="help-cmd">contact</span>   <span class="help-dash">—</span> <span class="help-desc">Open contact info</span></div>',
+    '  <div class="help-row"><span class="help-cmd">clear</span>     <span class="help-dash">—</span> <span class="help-desc">Clear terminal</span></div>',
+    '  <div class="help-row"><span class="help-cmd">ls</span>        <span class="help-dash">—</span> <span class="help-desc">List sections</span></div>',
+    '  <div class="help-row"><span class="help-cmd">help</span>      <span class="help-dash">—</span> <span class="help-desc">Show this message</span></div>',
+    '',
+  ].join('\n');
+
   function processCommand(cmd) {
     const trimmed = cmd.trim();
     if (!trimmed) return '';
@@ -94,49 +135,17 @@
     const command = parts[0].toLowerCase();
 
     switch (command) {
-      case 'help': {
-        const lines = [
-          '',
-          '  Available commands:',
-          '  ───────────────────────────',
-          '  about          Scroll to about section',
-          '  projects       Scroll to projects section',
-          '  clear          Clear terminal',
-          '  whoami         Display current user',
-          '  echo $ROLE     Display current role',
-          '  date           Display current date and time',
-          '  ls             List sections',
-          '  cat about      Display about info',
-          '  pwd            Print working directory',
-          '  hostname       Display hostname',
-          '  uptime         Display uptime',
-          '  history        Show command history',
-          '  sudo           Try superuser',
-          '  help           Show this message',
-          '',
-        ];
-        return lines.join('\n');
-      }
-      case 'about': {
-        const el = document.getElementById('about-section');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          el.style.transition = 'box-shadow 0.5s';
-          el.style.boxShadow = '0 0 30px rgba(179,0,255,0.15)';
-          setTimeout(() => { el.style.boxShadow = 'none'; }, 2000);
-        }
+      case 'help':
+        return HELP_HTML;
+      case 'about':
+        revealSection('about-section');
         return 'Opening about section...';
-      }
-      case 'projects': {
-        const el = document.getElementById('projects-section');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          el.style.transition = 'box-shadow 0.5s';
-          el.style.boxShadow = '0 0 30px rgba(179,0,255,0.15)';
-          setTimeout(() => { el.style.boxShadow = 'none'; }, 2000);
-        }
+      case 'projects':
+        revealSection('projects-section');
         return 'Opening projects section...';
-      }
+      case 'contact':
+        revealSection('contact-section');
+        return 'Opening contact section...';
       case 'clear':
         terminalHistory.innerHTML = '';
         return '__CLEAR_ONLY__';
@@ -161,7 +170,7 @@
         });
       }
       case 'ls':
-        return 'about/  projects/  terminal/';
+        return 'about/  projects/  contact/';
       case 'cat': {
         const arg = parts.slice(1).join(' ');
         if (arg === 'about') {
@@ -225,31 +234,6 @@
 
   function enterInteractiveMode() {
     terminalInteractive.style.display = 'block';
-
-    addHistory('help', [
-      '',
-      '  Welcome to Agata Tomaszewska\'s portfolio terminal.',
-      '  Type a command to navigate. Use ↑ for history.',
-      '',
-      '  Available commands:',
-      '  ───────────────────────────',
-      '  about          Scroll to about section',
-      '  projects       Scroll to projects section',
-      '  clear          Clear terminal',
-      '  whoami         Display current user',
-      '  echo $ROLE     Display current role',
-      '  date           Display current date and time',
-      '  ls             List sections',
-      '  cat about      Display about info',
-      '  pwd            Print working directory',
-      '  hostname       Display hostname',
-      '  uptime         Display uptime',
-      '  history        Show command history',
-      '  sudo           Try superuser',
-      '  help           Show this message',
-      '',
-    ].join('\n'));
-
     isInteractive = true;
     focusInput();
   }
@@ -307,14 +291,26 @@
     }
   });
 
-  // Boot animation: type hero output, then enter interactive mode
   function startHero() {
+    if (!prefersReduced) {
+      gsap.from(terminal,
+        {
+          opacity: 0, scale: 0.85, y: 30,
+          duration: 0.6, ease: 'back.out(1.7)',
+        }
+      );
+    }
+
     typeText(nameEl, 'Agata Tomaszewska', () => {
       setTimeout(() => {
         typeText(roleEl, 'Digital Designer', () => {
           setTimeout(() => {
-            enterInteractiveMode();
-          }, 500);
+            typeText(heroPrompt, '→ Type \'help\' to explore', () => {
+              setTimeout(() => {
+                enterInteractiveMode();
+              }, 400);
+            });
+          }, 400);
         });
       }, 300);
     });
@@ -327,6 +323,12 @@
   .hero-section {
     padding-top: 60px;
     padding-bottom: 40px;
+  }
+
+  #main-terminal {
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 12px 48px rgba(0, 0, 0, 0.5);
   }
 
   #terminal-body {
@@ -357,6 +359,50 @@
     margin-bottom: 4px;
     white-space: pre-wrap;
     word-break: break-word;
+  }
+
+  .help-title {
+    color: var(--accent-purple);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .help-divider {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin-bottom: 6px;
+  }
+
+  .help-row {
+    line-height: 1.5;
+    margin-bottom: 1px;
+  }
+
+  .help-cmd {
+    color: var(--accent-green);
+    font-size: 0.8rem;
+  }
+
+  .help-dash {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    margin: 0 4px;
+  }
+
+  .help-desc {
+    color: var(--text-dim);
+    font-size: 0.72rem;
+  }
+
+  .help-welcome {
+    color: var(--accent-purple);
+    font-size: 0.85rem;
+  }
+
+  .help-hint {
+    color: var(--text-dim);
+    font-size: 0.72rem;
   }
 
   .input-line {
@@ -410,6 +456,14 @@
 
     .input-line {
       font-size: 0.75rem;
+    }
+
+    .help-cmd {
+      font-size: 0.72rem;
+    }
+
+    .help-desc {
+      font-size: 0.65rem;
     }
   }
 </style>

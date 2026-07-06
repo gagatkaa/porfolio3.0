@@ -84,12 +84,14 @@
 <style>
   .hero-header {
     position: relative;
-    min-height: 80vh;
+    min-height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     border-bottom: 1px solid var(--border);
+    padding-top: 60px;
+    padding-bottom: 40px;
   }
 
   .pixel-grid {
@@ -232,7 +234,7 @@
 
   @media (max-width: 640px) {
     .hero-header {
-      min-height: 70vh;
+      min-height: auto;
     }
 
     .hero-header-content {

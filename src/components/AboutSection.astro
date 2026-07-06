@@ -1,4 +1,4 @@
-<div class="about-section section" id="about-section">
+<div class="about-section section hidden-section" id="about-section">
   <div class="terminal-window">
     <div class="terminal-titlebar">
       <span class="terminal-dots">
@@ -23,34 +23,6 @@
     </div>
   </div>
 </div>
-
-<script>
-  import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function animateAbout() {
-    const el = document.getElementById('about-section');
-    if (!el || prefersReduced) return;
-    gsap.from(el, {
-      opacity: 0,
-      y: 40,
-      duration: 0.8,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 85%',
-      },
-    });
-  }
-
-  document.addEventListener('boot-complete', () => {
-    setTimeout(animateAbout, 200);
-  });
-</script>
 
 <style>
   .about-section {

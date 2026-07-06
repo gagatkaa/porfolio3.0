@@ -285,3 +285,7 @@ code {
 .skip-link:focus {
   top: 4px;
 }
+
+.hidden-section {
+  display: none;
+}

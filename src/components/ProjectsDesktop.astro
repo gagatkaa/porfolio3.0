@@ -16,7 +16,7 @@ const projectsData = projects.map(p => ({
 }));
 ---
 
-<section class="projects-section section" id="projects-section">
+<section class="projects-section section hidden-section" id="projects-section">
   <div class="terminal-window projects-terminal">
     <div class="terminal-titlebar">
       <span class="terminal-dots">
@@ -46,9 +46,6 @@ const projectsData = projects.map(p => ({
 
 <script>
   import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
 
   const projectsData = window.__pd;
 
@@ -225,26 +222,6 @@ const projectsData = projects.map(p => ({
   document.addEventListener('touchend', () => {
     isDragging = false;
   }, { passive: true });
-
-  const cardsContainer = document.querySelector('.projects-grid');
-
-  function initGsapAnimations() {
-    if (!prefersReduced) {
-      gsap.from(cardsContainer?.children || [], {
-        opacity: 0,
-        y: 30,
-        stagger: 0.12,
-        duration: 0.6,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#projects-section',
-          start: 'top 80%',
-        },
-      });
-    }
-  }
-
-  document.addEventListener('boot-complete', initGsapAnimations, { once: true });
 </script>
 
 <style>

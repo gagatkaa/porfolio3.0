@@ -1,0 +1,73 @@
+<div class="contact-section section hidden-section" id="contact-section">
+  <div class="terminal-window">
+    <div class="terminal-titlebar">
+      <span class="terminal-dots">
+        <span class="dot close"></span>
+        <span class="dot minimize"></span>
+        <span class="dot maximize"></span>
+      </span>
+      <span class="terminal-title">contact — mail</span>
+    </div>
+    <div class="terminal-body">
+      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat contact.txt</span>
+<span class="terminal-output">
+  <span class="contact-row">
+    <span class="contact-label">email</span>
+    <span class="contact-sep">:</span>
+    <a href="mailto:hello@agatatomaszewska.com" class="contact-value">hello@agatatomaszewska.com</a>
+  </span>
+  <span class="contact-row">
+    <span class="contact-label">github</span>
+    <span class="contact-sep">:</span>
+    <a href="https://github.com/agatatom" target="_blank" rel="noopener noreferrer" class="contact-value">github.com/agatatom</a>
+  </span>
+  <span class="contact-row">
+    <span class="contact-label">linkedin</span>
+    <span class="contact-sep">:</span>
+    <a href="https://linkedin.com/in/agatatom" target="_blank" rel="noopener noreferrer" class="contact-value">linkedin.com/in/agatatom</a>
+  </span>
+</span></pre>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contact-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .terminal-output {
+    display: block;
+    padding-top: 8px;
+  }
+
+  .contact-row {
+    display: block;
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+
+  .contact-label {
+    display: inline-block;
+    width: 72px;
+    color: var(--accent-green);
+    font-size: 0.8rem;
+  }
+
+  .contact-sep {
+    color: var(--text-dim);
+    margin-right: 8px;
+  }
+
+  .contact-value {
+    color: var(--accent-purple);
+    font-size: 0.8rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .contact-value:hover {
+    color: var(--accent-green);
+  }
+</style>
