@@ -69,7 +69,7 @@
     }, 35);
   }
 
-  function addHistory(cmd, output) {
+  function addHistory(cmd, output, type) {
     const line = document.createElement('div');
     line.className = 'history-item';
     line.innerHTML = `<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">${escapeHtml(cmd)}</span>`;
@@ -78,7 +78,7 @@
       const outLine = document.createElement('div');
       outLine.className = 'history-output';
       if (typeof output === 'string') {
-        outLine.innerHTML = output.replace(/\n/g, '<br>');
+        outLine.innerHTML = type === 'html' ? output : output.replace(/\n/g, '<br>');
       }
       terminalHistory.appendChild(outLine);
     }
@@ -118,13 +118,13 @@
   const HELP_HTML = [
     '',
     '  <div class="help-title">Available commands:</div>',
-    '  <div class="help-divider">──────────────</div>',
-    '  <div class="help-row"><span class="help-cmd">about</span>     <span class="help-dash">—</span> <span class="help-desc">Open about section</span></div>',
-    '  <div class="help-row"><span class="help-cmd">projects</span>  <span class="help-dash">—</span> <span class="help-desc">Open projects</span></div>',
-    '  <div class="help-row"><span class="help-cmd">contact</span>   <span class="help-dash">—</span> <span class="help-desc">Open contact info</span></div>',
-    '  <div class="help-row"><span class="help-cmd">clear</span>     <span class="help-dash">—</span> <span class="help-desc">Clear terminal</span></div>',
-    '  <div class="help-row"><span class="help-cmd">ls</span>        <span class="help-dash">—</span> <span class="help-desc">List sections</span></div>',
-    '  <div class="help-row"><span class="help-cmd">help</span>      <span class="help-dash">—</span> <span class="help-desc">Show this message</span></div>',
+    '  <div class="help-divider">&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</div>',
+    '  <div class="help-row"><span class="help-cmd">about</span>    <span class="help-dash">&mdash;</span> <span class="help-desc">Open about section</span></div>',
+    '  <div class="help-row"><span class="help-cmd">projects</span> <span class="help-dash">&mdash;</span> <span class="help-desc">Open projects</span></div>',
+    '  <div class="help-row"><span class="help-cmd">contact</span>  <span class="help-dash">&mdash;</span> <span class="help-desc">Open contact info</span></div>',
+    '  <div class="help-row"><span class="help-cmd">clear</span>    <span class="help-dash">&mdash;</span> <span class="help-desc">Clear terminal</span></div>',
+    '  <div class="help-row"><span class="help-cmd">ls</span>       <span class="help-dash">&mdash;</span> <span class="help-desc">List sections</span></div>',
+    '  <div class="help-row"><span class="help-cmd">help</span>     <span class="help-dash">&mdash;</span> <span class="help-desc">Show this message</span></div>',
     '',
   ].join('\n');
 
@@ -137,7 +137,7 @@
 
     switch (command) {
       case 'help':
-        return HELP_HTML;
+        return { output: HELP_HTML, type: 'html' };
       case 'about':
         revealSection('about-section');
         return 'Opening about section...';
@@ -175,7 +175,7 @@
       case 'cat': {
         const arg = parts.slice(1).join(' ');
         if (arg === 'about') {
-          return [
+          return { output: [
             '',
             '  Agata Tomaszewska',
             '  Digital Designer',
@@ -187,9 +187,9 @@
             '  Craft: brand identity, typographic systems,',
             '  interactive installations, web development.',
             '',
-          ].join('\n');
+          ].join('\n'), type: 'html' };
         }
-        return `cat: ${arg}: No such file or directory`;
+        return { output: `cat: ${arg}: No such file or directory`, type: 'text' };
       }
       case 'pwd':
         return '/home/agata/portfolio';
@@ -224,13 +224,17 @@
       cmdHistory.push(trimmed);
     }
     historyIndex = cmdHistory.length;
-    return processCommand(cmd);
+    let result = processCommand(cmd);
+    if (typeof result === 'string') {
+      result = { output: result, type: 'text' };
+    }
+    return result;
   }
 
   function handleCommand(cmd) {
-    const output = processAndRecord(cmd);
-    if (output === '__CLEAR_ONLY__') return;
-    addHistory(cmd, output);
+    const result = processAndRecord(cmd);
+    if (result.output === '__CLEAR_ONLY__') return;
+    addHistory(cmd, result.output, result.type);
   }
 
   function enterInteractiveMode() {
