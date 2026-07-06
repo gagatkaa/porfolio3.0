@@ -1,0 +1,254 @@
+<footer class="taskbar" id="taskbar">
+  <div class="taskbar-left">
+    <button class="start-btn" id="start-btn" aria-label="Start menu">▲ Start</button>
+  </div>
+  <div class="taskbar-center">
+    <button class="taskbar-btn" data-target="about">About</button>
+    <button class="taskbar-btn" data-target="projects">Projects</button>
+    <button class="taskbar-btn" data-target="hero-section">Terminal</button>
+  </div>
+  <div class="taskbar-right">
+    <span class="taskbar-clock" id="clock">00:00</span>
+  </div>
+</footer>
+
+<nav class="start-menu" id="start-menu" aria-label="Start menu">
+  <div class="start-menu-header">◆ Portfolio</div>
+  <a href="/" class="start-item">Home</a>
+  <a href="/#about-section" class="start-item">About</a>
+  <a href="/#projects-section" class="start-item">Projects</a>
+  <button class="start-item" id="start-terminal-btn">Terminal</button>
+  <div class="start-menu-footer">Agata Tomaszewska · Digital Designer</div>
+</nav>
+
+<script>
+  const startBtn = document.getElementById('start-btn');
+  const startMenu = document.getElementById('start-menu');
+  const startTerminal = document.getElementById('start-terminal-btn');
+  const navBtns = document.querySelectorAll('.taskbar-btn');
+  const clockEl = document.getElementById('clock');
+
+  function updateClock() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    clockEl.textContent = `${h}:${m}`;
+  }
+  updateClock();
+  setInterval(updateClock, 10000);
+
+  function toggleStart(e) {
+    e.stopPropagation();
+    startMenu.classList.toggle('visible');
+  }
+
+  function closeStart() {
+    startMenu.classList.remove('visible');
+  }
+
+  startBtn.addEventListener('click', toggleStart);
+
+  document.addEventListener('click', (e) => {
+    if (!startMenu.contains(e.target) && e.target !== startBtn) {
+      closeStart();
+    }
+  });
+
+  startTerminal.addEventListener('click', () => {
+    closeStart();
+    const el = document.getElementById('hero-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      window.location.href = '/#hero-section';
+    }
+  });
+
+  navBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      closeStart();
+      const target = btn.dataset.target;
+      if (target === 'hero-section') {
+        const el = document.getElementById('hero-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.location.href = `/#${target}`;
+        }
+      } else {
+        const el = document.getElementById(target);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          window.location.href = `/#${target}`;
+        }
+      }
+    });
+  });
+</script>
+
+<style>
+  .taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    z-index: 8000;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    font-size: 0.75rem;
+  }
+
+  .taskbar-left,
+  .taskbar-right {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+  }
+
+  .taskbar-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .start-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 10px;
+    height: 28px;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--accent-green);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .start-btn:hover,
+  .start-btn:focus-visible {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-green);
+  }
+
+  .taskbar-btn {
+    padding: 2px 10px;
+    height: 28px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: color 0.1s, background 0.1s, border-color 0.1s;
+  }
+
+  .taskbar-btn:hover,
+  .taskbar-btn:focus-visible {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    border-color: var(--border);
+  }
+
+  .taskbar-clock {
+    padding: 2px 10px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    font-size: 0.72rem;
+    color: var(--accent-green);
+    border-left: 1px solid var(--border);
+    margin-left: 4px;
+    font-family: var(--font-mono);
+  }
+
+  .start-menu {
+    position: fixed;
+    bottom: 40px;
+    left: 4px;
+    z-index: 8001;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    min-width: 180px;
+    display: none;
+    flex-direction: column;
+  }
+
+  .start-menu.visible {
+    display: flex;
+  }
+
+  .start-menu-header {
+    padding: 10px 14px 6px;
+    font-size: 0.8rem;
+    color: var(--accent-purple);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .start-item {
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .start-item:hover,
+  .start-item:focus-visible {
+    background: var(--bg-surface);
+    color: var(--accent-green);
+  }
+
+  .start-menu-footer {
+    padding: 6px 14px 8px;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  @media (max-width: 640px) {
+    .taskbar {
+      height: 32px;
+      font-size: 0.65rem;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .start-btn {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      height: 24px;
+    }
+
+    .taskbar-btn {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      height: 24px;
+    }
+
+    .taskbar-clock {
+      font-size: 0.65rem;
+      padding: 2px 6px;
+      height: 24px;
+    }
+
+    .start-menu {
+      min-width: 150px;
+      bottom: 36px;
+    }
+  }
+</style>

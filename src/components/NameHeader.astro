@@ -1,0 +1,159 @@
+<header class="site-header" id="site-header">
+  <div class="header-inner">
+    <a href="/" class="header-name" data-text="Agata Tomaszewska">
+      <span class="name-glitch-layer">Agata Tomaszewska</span>
+      <span class="name-glitch-layer name-glitch-purple">Agata Tomaszewska</span>
+      <span class="name-glitch-layer name-glitch-green">Agata Tomaszewska</span>
+      <span class="prompt-char">&gt;</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/#about-section" class="header-link">About</a>
+      <a href="/#projects-section" class="header-link">Projects</a>
+      <a href="/#hero-section" class="header-link">Terminal</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    z-index: 8000;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+  }
+
+  .header-name {
+    position: relative;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-green);
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-name:hover {
+    color: var(--text-primary);
+  }
+
+  .name-glitch-layer {
+    position: relative;
+  }
+
+  .name-glitch-purple {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--accent-purple);
+    clip-path: inset(0 0 60% 0);
+    animation: glitch1 4s infinite linear alternate-reverse;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .name-glitch-green {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: var(--accent-green);
+    opacity: 0.6;
+    clip-path: inset(60% 0 0 0);
+    animation: glitch2 3s infinite linear alternate;
+    pointer-events: none;
+  }
+
+  .prompt-char {
+    color: var(--text-dim);
+    animation: blink 1s step-end infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .name-glitch-purple,
+    .name-glitch-green {
+      animation: none;
+      opacity: 0;
+    }
+
+    .prompt-char {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translate(0); opacity: 0; }
+    92% { transform: translate(-2px, 1px); opacity: 0.7; }
+    94% { transform: translate(2px, -1px); opacity: 0.3; }
+    96% { transform: translate(-1px, 2px); opacity: 0.6; }
+    98% { transform: translate(1px, -2px); opacity: 0; }
+  }
+
+  @keyframes glitch2 {
+    0%, 85%, 100% { transform: translate(0); }
+    87% { transform: translate(2px, -1px); }
+    89% { transform: translate(-2px, 1px); }
+    91% { transform: translate(1px, 2px); }
+    93% { transform: translate(-1px, -2px); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 4px;
+  }
+
+  .header-link {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    font-family: var(--font-mono);
+  }
+
+  .header-link:hover {
+    color: var(--accent-green);
+    border-color: var(--border);
+    background: rgba(0, 255, 65, 0.04);
+  }
+
+  @media (max-width: 640px) {
+    .site-header {
+      height: 44px;
+    }
+
+    .header-name {
+      font-size: 0.85rem;
+    }
+
+    .header-link {
+      font-size: 0.7rem;
+      padding: 4px 8px;
+    }
+
+    .header-inner {
+      padding: 0 12px;
+    }
+  }
+</style>

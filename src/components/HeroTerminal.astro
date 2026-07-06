@@ -1,0 +1,415 @@
+<div class="hero-section section" id="hero-section">
+  <div class="terminal-window" id="main-terminal">
+    <div class="terminal-titlebar">
+      <span class="terminal-dots">
+        <span class="dot close"></span>
+        <span class="dot minimize"></span>
+        <span class="dot maximize"></span>
+      </span>
+      <span class="terminal-title">user@portfolio: ~ — bash — 80×24</span>
+    </div>
+    <div class="terminal-body" id="terminal-body" tabindex="0">
+      <pre id="hero-output">
+<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">whoami</span>
+<span class="terminal-output" id="hero-name"></span>
+<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">echo $ROLE</span>
+<span class="terminal-output" id="hero-role"></span></pre>
+
+      <div id="terminal-interactive" style="display: none;">
+        <div id="terminal-history"></div>
+        <div class="input-line" id="input-line">
+          <span class="terminal-prompt">user@portfolio:~$</span>
+          <span id="typed-text"></span>
+          <span class="cursor-blink" id="cursor">▊</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="text" id="terminal-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+</div>
+
+<script>
+  const nameEl = document.getElementById('hero-name');
+  const roleEl = document.getElementById('hero-role');
+  const heroOutput = document.getElementById('hero-output');
+  const terminalInteractive = document.getElementById('terminal-interactive');
+  const terminalHistory = document.getElementById('terminal-history');
+  const typedText = document.getElementById('typed-text');
+  const cursor = document.getElementById('cursor');
+  const hiddenInput = document.getElementById('terminal-input');
+  const terminalBody = document.getElementById('terminal-body');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cmdBuffer = '';
+  let isInteractive = false;
+  let cmdHistory = [];
+  let historyIndex = -1;
+  const bootTime = Date.now();
+
+  function typeText(el, text, cb) {
+    if (prefersReduced) {
+      el.textContent = text;
+      if (cb) cb();
+      return;
+    }
+    let i = 0;
+    el.textContent = '';
+    const interval = setInterval(() => {
+      el.textContent += text[i];
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        if (cb) cb();
+      }
+    }, 35);
+  }
+
+  function addHistory(cmd, output) {
+    const line = document.createElement('div');
+    line.className = 'history-item';
+    line.innerHTML = `<span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">${escapeHtml(cmd)}</span>`;
+    terminalHistory.appendChild(line);
+    if (output !== undefined && output !== null) {
+      const outLine = document.createElement('div');
+      outLine.className = 'history-output';
+      if (typeof output === 'string') {
+        outLine.innerHTML = output.replace(/\n/g, '<br>');
+      }
+      terminalHistory.appendChild(outLine);
+    }
+    terminalHistory.scrollTop = terminalHistory.scrollHeight;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function processCommand(cmd) {
+    const trimmed = cmd.trim();
+    if (!trimmed) return '';
+
+    const parts = trimmed.split(/\s+/);
+    const command = parts[0].toLowerCase();
+
+    switch (command) {
+      case 'help': {
+        const lines = [
+          '',
+          '  Available commands:',
+          '  ───────────────────────────',
+          '  about          Scroll to about section',
+          '  projects       Scroll to projects section',
+          '  clear          Clear terminal',
+          '  whoami         Display current user',
+          '  echo $ROLE     Display current role',
+          '  date           Display current date and time',
+          '  ls             List sections',
+          '  cat about      Display about info',
+          '  pwd            Print working directory',
+          '  hostname       Display hostname',
+          '  uptime         Display uptime',
+          '  history        Show command history',
+          '  sudo           Try superuser',
+          '  help           Show this message',
+          '',
+        ];
+        return lines.join('\n');
+      }
+      case 'about': {
+        const el = document.getElementById('about-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.style.transition = 'box-shadow 0.5s';
+          el.style.boxShadow = '0 0 30px rgba(179,0,255,0.15)';
+          setTimeout(() => { el.style.boxShadow = 'none'; }, 2000);
+        }
+        return 'Opening about section...';
+      }
+      case 'projects': {
+        const el = document.getElementById('projects-section');
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          el.style.transition = 'box-shadow 0.5s';
+          el.style.boxShadow = '0 0 30px rgba(179,0,255,0.15)';
+          setTimeout(() => { el.style.boxShadow = 'none'; }, 2000);
+        }
+        return 'Opening projects section...';
+      }
+      case 'clear':
+        terminalHistory.innerHTML = '';
+        return '__CLEAR_ONLY__';
+      case 'whoami':
+        return 'Agata Tomaszewska';
+      case 'echo': {
+        const arg = parts.slice(1).join(' ');
+        if (arg === '$ROLE' || arg === 'ROLE') return 'Digital Designer';
+        return arg;
+      }
+      case 'date': {
+        const now = new Date();
+        return now.toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          timeZoneName: 'short',
+        });
+      }
+      case 'ls':
+        return 'about/  projects/  terminal/';
+      case 'cat': {
+        const arg = parts.slice(1).join(' ');
+        if (arg === 'about') {
+          return [
+            '',
+            '  Agata Tomaszewska',
+            '  Digital Designer',
+            '  ─────────────────────────────────',
+            '  Multidisciplinary designer working at the',
+            '  intersection of visual identity, editorial',
+            '  design, web experiences, and creative tech.',
+            '',
+            '  Craft: brand identity, typographic systems,',
+            '  interactive installations, web development.',
+            '',
+          ].join('\n');
+        }
+        return `cat: ${arg}: No such file or directory`;
+      }
+      case 'pwd':
+        return '/home/agata/portfolio';
+      case 'hostname':
+        return 'portfolio';
+      case 'uptime': {
+        const seconds = Math.floor((Date.now() - bootTime) / 1000);
+        const mins = Math.floor(seconds / 60);
+        const hrs = Math.floor(mins / 60);
+        if (hrs > 0) return `up ${hrs} hour${hrs > 1 ? 's' : ''}, ${mins % 60} minute${mins % 60 !== 1 ? 's' : ''}`;
+        return `up ${mins} minute${mins !== 1 ? 's' : ''}`;
+      }
+      case 'history':
+        if (cmdHistory.length === 0) return 'No commands in history.';
+        return cmdHistory.map((c, i) => `  ${i + 1}  ${c}`).join('\n');
+      case 'sudo':
+        return [
+          '',
+          '  Sorry, user agata is not allowed to execute',
+          '  \'sudo\' as root on portfolio.local.',
+          '  This incident will be reported.',
+          '',
+        ].join('\n');
+      default:
+        return `zsh: command not found: ${trimmed.split(/\s+/)[0]}`;
+    }
+  }
+
+  function processAndRecord(cmd) {
+    const trimmed = cmd.trim();
+    if (trimmed) {
+      cmdHistory.push(trimmed);
+    }
+    historyIndex = cmdHistory.length;
+    return processCommand(cmd);
+  }
+
+  function handleCommand(cmd) {
+    const output = processAndRecord(cmd);
+    if (output === '__CLEAR_ONLY__') return;
+    addHistory(cmd, output);
+  }
+
+  function enterInteractiveMode() {
+    terminalInteractive.style.display = 'block';
+
+    addHistory('help', [
+      '',
+      '  Welcome to Agata Tomaszewska\'s portfolio terminal.',
+      '  Type a command to navigate. Use ↑ for history.',
+      '',
+      '  Available commands:',
+      '  ───────────────────────────',
+      '  about          Scroll to about section',
+      '  projects       Scroll to projects section',
+      '  clear          Clear terminal',
+      '  whoami         Display current user',
+      '  echo $ROLE     Display current role',
+      '  date           Display current date and time',
+      '  ls             List sections',
+      '  cat about      Display about info',
+      '  pwd            Print working directory',
+      '  hostname       Display hostname',
+      '  uptime         Display uptime',
+      '  history        Show command history',
+      '  sudo           Try superuser',
+      '  help           Show this message',
+      '',
+    ].join('\n'));
+
+    isInteractive = true;
+    focusInput();
+  }
+
+  function focusInput() {
+    hiddenInput.focus();
+  }
+
+  function updateTypedDisplay() {
+    typedText.textContent = cmdBuffer;
+  }
+
+  hiddenInput.addEventListener('input', () => {
+    cmdBuffer = hiddenInput.value;
+    updateTypedDisplay();
+  });
+
+  hiddenInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const cmd = cmdBuffer;
+      cmdBuffer = '';
+      hiddenInput.value = '';
+      updateTypedDisplay();
+      handleCommand(cmd);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (cmdHistory.length > 0) {
+        historyIndex = Math.max(0, historyIndex - 1);
+        cmdBuffer = cmdHistory[historyIndex] || '';
+        hiddenInput.value = cmdBuffer;
+        updateTypedDisplay();
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex < cmdHistory.length - 1) {
+        historyIndex++;
+        cmdBuffer = cmdHistory[historyIndex] || '';
+      } else {
+        historyIndex = cmdHistory.length;
+        cmdBuffer = '';
+      }
+      hiddenInput.value = cmdBuffer;
+      updateTypedDisplay();
+    }
+  });
+
+  terminalBody.addEventListener('click', focusInput);
+
+  document.addEventListener('keydown', (e) => {
+    if (isInteractive && !e.ctrlKey && !e.metaKey && !e.altKey && e.key !== 'Tab') {
+      if (document.activeElement !== hiddenInput) {
+        focusInput();
+      }
+    }
+  });
+
+  // Boot animation: type hero output, then enter interactive mode
+  function startHero() {
+    typeText(nameEl, 'Agata Tomaszewska', () => {
+      setTimeout(() => {
+        typeText(roleEl, 'Digital Designer', () => {
+          setTimeout(() => {
+            enterInteractiveMode();
+          }, 500);
+        });
+      }, 300);
+    });
+  }
+
+  document.addEventListener('boot-complete', startHero, { once: true });
+</script>
+
+<style>
+  .hero-section {
+    padding-top: 32px;
+    padding-bottom: 20px;
+  }
+
+  #terminal-body {
+    cursor: text;
+    min-height: 200px;
+  }
+
+  #terminal-body:focus-within {
+    outline: none;
+  }
+
+  #terminal-interactive {
+    display: none;
+  }
+
+  #terminal-history {
+    margin-bottom: 4px;
+  }
+
+  .history-item {
+    line-height: 1.7;
+  }
+
+  .history-output {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .input-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  #typed-text {
+    color: var(--text-primary);
+    white-space: pre;
+  }
+
+  .cursor-blink {
+    color: var(--accent-green);
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  #terminal-input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+    left: -9999px;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-blink {
+      animation: none;
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-section {
+      padding-top: 48px;
+    }
+
+    .history-output {
+      font-size: 0.75rem;
+    }
+
+    .input-line {
+      font-size: 0.75rem;
+    }
+  }
+</style>

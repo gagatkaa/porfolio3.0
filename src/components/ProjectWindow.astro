@@ -1,0 +1,159 @@
+<div class="window-overlay" id="project-window-overlay" tabindex="-1" aria-hidden="true">
+  <div class="project-window" id="project-window" role="dialog" aria-modal="true" aria-label="Project details">
+    <div class="window-titlebar" id="window-drag-handle">
+      <span class="window-title" id="window-title">Project</span>
+      <button class="window-close" id="window-close-btn" aria-label="Close project window">&times;</button>
+    </div>
+    <div class="window-body" id="window-body"></div>
+  </div>
+</div>
+
+<style>
+  .window-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+  }
+
+  .window-overlay.visible {
+    display: flex;
+  }
+
+  .project-window {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+
+  .window-titlebar {
+    display: flex;
+    align-items: center;
+    height: var(--titlebar-height);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .window-titlebar:active {
+    cursor: grabbing;
+  }
+
+  .window-title {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    flex: 1;
+  }
+
+  .window-close {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    border-radius: 0;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+  }
+
+  .window-close:hover {
+    background: #ff5f56;
+    color: #fff;
+    border-color: #ff5f56;
+  }
+
+  .window-body {
+    padding: 20px;
+    overflow-y: auto;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .window-body pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .window-body .field {
+    margin-bottom: 12px;
+  }
+
+  .window-body .field-label {
+    color: var(--accent-green);
+    font-size: 0.75rem;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .window-body .field-value {
+    color: var(--text-primary);
+  }
+
+  .window-body .description {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .window-body .ext-link {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--accent-purple);
+    text-decoration: underline;
+  }
+
+  .tool-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    margin: 2px 4px 2px 0;
+    border: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--accent-purple);
+  }
+
+  @media (max-width: 640px) {
+    .project-window {
+      width: 100%;
+      max-width: 100%;
+      max-height: 100dvh;
+      height: 100%;
+      border: none;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .window-titlebar {
+      cursor: default;
+    }
+
+    .window-overlay {
+      align-items: flex-end;
+    }
+
+    .window-body {
+      padding: 16px;
+      font-size: 0.8rem;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+    }
+  }
+</style>

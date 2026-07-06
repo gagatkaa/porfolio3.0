@@ -1,0 +1,136 @@
+<div class="loading-screen" id="loading-screen">
+  <div class="loading-content">
+    <div class="loading-lines" id="loading-lines">
+      <span class="loading-line" data-index="0"></span>
+      <span class="loading-line" data-index="1"></span>
+      <span class="loading-line" data-index="2"></span>
+      <span class="loading-line" data-index="3"></span>
+      <span class="loading-line" data-index="4"></span>
+      <span class="loading-line" data-index="5"></span>
+    </div>
+    <div class="progress-track" id="boot-progress-track">
+      <div class="progress-fill" id="boot-progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+
+  const PREFIX = '[0x00';
+  const LINES = [
+    'Initializing portfolio...',
+    'Loading assets...',
+    'Booting creative system...',
+    'Establishing connection...',
+    'Starting services...',
+    'Ready.',
+  ];
+
+  const screen = document.getElementById('loading-screen');
+  const lineEls = document.querySelectorAll('#loading-lines .loading-line');
+  const progressFill = document.getElementById('boot-progress-fill');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function typeText(el, text) {
+    let i = 0;
+    const interval = setInterval(() => {
+      el.textContent += text[i];
+      i++;
+      if (i >= text.length) clearInterval(interval);
+    }, 20);
+  }
+
+  if (prefersReduced) {
+    LINES.forEach((text, i) => {
+      lineEls[i].textContent = PREFIX + i + '] ' + text;
+    });
+    progressFill.style.width = '100%';
+    setTimeout(() => {
+      gsap.to(screen, { opacity: 0, duration: 0.3, onComplete: () => { screen.style.display = 'none'; } });
+    }, 500);
+  } else {
+    const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+
+    LINES.forEach((text, i) => {
+      tl.call(() => {
+        lineEls[i].textContent = PREFIX + i + '] ';
+        typeText(lineEls[i], text);
+      }, [], '>')
+      .to(lineEls[i], { opacity: 1, duration: 0.01 }, '>')
+      .to({}, { duration: 0.4 });
+    });
+
+    tl.to(progressFill, {
+      width: '100%',
+      duration: 0.8,
+      ease: 'power1.inOut',
+    })
+    .to(screen, {
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => {
+        screen.style.display = 'none';
+        document.dispatchEvent(new CustomEvent('boot-complete'));
+      },
+    });
+  }
+</script>
+
+<style>
+  .loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+  }
+
+  .loading-content {
+    width: 90%;
+    max-width: 520px;
+  }
+
+  .loading-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 24px;
+    min-height: 160px;
+  }
+
+  .loading-line {
+    color: var(--accent-green);
+    font-size: 0.875rem;
+    opacity: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    min-height: 1.4em;
+  }
+
+  .loading-line::before {
+    content: '';
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--accent-green);
+  }
+
+  @media (max-width: 640px) {
+    .loading-line {
+      font-size: 0.75rem;
+    }
+  }
+</style>

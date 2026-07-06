@@ -1,0 +1,65 @@
+<div class="about-section section" id="about-section">
+  <div class="terminal-window">
+    <div class="terminal-titlebar">
+      <span class="terminal-dots">
+        <span class="dot close"></span>
+        <span class="dot minimize"></span>
+        <span class="dot maximize"></span>
+      </span>
+      <span class="terminal-title">about.txt — nano</span>
+    </div>
+    <div class="terminal-body">
+      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat about.txt</span>
+<span class="terminal-output">
+  A multidisciplinary digital designer working at the intersection of
+  visual identity, editorial design, web experiences, and creative
+  technology. I explore how form and function can coexist in
+  minimal, intentional design systems.
+
+  My practice spans brand identity, interactive installations,
+  typographic systems, and web development — always with a focus
+  on clarity, concept, and craft.
+</span></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateAbout() {
+    const el = document.getElementById('about-section');
+    if (!el || prefersReduced) return;
+    gsap.from(el, {
+      opacity: 0,
+      y: 40,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: el,
+        start: 'top 85%',
+      },
+    });
+  }
+
+  document.addEventListener('boot-complete', () => {
+    setTimeout(animateAbout, 200);
+  });
+</script>
+
+<style>
+  .about-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .terminal-output {
+    display: block;
+    padding-top: 8px;
+  }
+</style>
