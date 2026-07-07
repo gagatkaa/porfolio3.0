@@ -1,0 +1,110 @@
+<canvas id="particle-bg" aria-hidden="true"></canvas>
+
+<script>
+  const canvas = document.getElementById('particle-bg');
+  if (!canvas) throw new Error('particle-bg not found');
+  const ctx = canvas.getContext('2d');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReduced) {
+    canvas.style.display = 'none';
+  } else {
+    let particles = [];
+    let animId = null;
+
+    function getColors() {
+      const style = getComputedStyle(document.documentElement);
+      return {
+        purple: style.getPropertyValue('--accent-purple').trim(),
+        green: style.getPropertyValue('--accent-green').trim(),
+        dim: style.getPropertyValue('--text-dim').trim(),
+      };
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function isLightMode() {
+      return document.documentElement.classList.contains('light-mode');
+    }
+
+    function createParticles() {
+      const light = isLightMode();
+      const count = Math.min(Math.floor((window.innerWidth * window.innerHeight) / 20000), 70);
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: 2 + Math.random() * 3,
+        speed: 0.15 + Math.random() * 0.3,
+        opacity: light ? 0.15 + Math.random() * 0.25 : 0.08 + Math.random() * 0.2,
+        colorType: Math.random(),
+        phase: Math.random() * Math.PI * 2,
+        drift: -0.1 + Math.random() * 0.2,
+      }));
+    }
+
+    let colors = getColors();
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const time = Date.now() / 2000;
+
+      for (const p of particles) {
+        p.y -= p.speed;
+        p.x += Math.sin(time + p.phase) * 0.12 + p.drift;
+
+        if (p.y < -4) {
+          p.y = canvas.height + 4;
+          p.x = Math.random() * canvas.width;
+        }
+        if (p.x < -4) p.x = canvas.width + 4;
+        if (p.x > canvas.width + 4) p.x = -4;
+
+        ctx.globalAlpha = p.opacity * (0.6 + 0.4 * Math.sin(time * 0.3 + p.phase));
+
+        if (p.colorType < 0.4) ctx.fillStyle = colors.purple;
+        else if (p.colorType < 0.7) ctx.fillStyle = colors.green;
+        else ctx.fillStyle = colors.dim;
+
+        ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+      }
+
+      animId = requestAnimationFrame(draw);
+    }
+
+    function start() {
+      if (animId) cancelAnimationFrame(animId);
+      resize();
+      createParticles();
+      draw();
+    }
+
+    const themeObserver = new MutationObserver(() => {
+      colors = getColors();
+      createParticles();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(start, 200);
+    });
+
+    start();
+  }
+</script>
+
+<style>
+  #particle-bg {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+  }
+</style>

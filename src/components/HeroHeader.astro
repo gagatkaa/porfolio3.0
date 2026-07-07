@@ -1,5 +1,4 @@
 <section class="hero-header" id="hero-header">
-  <div class="pixel-grid" id="pixel-grid"></div>
   <div class="hero-header-content">
     <h1 class="hero-name" id="hero-name-display">
       <span class="name-line name-line-1" data-text="AGATA">AGATA</span>
@@ -27,61 +26,49 @@
 <script>
   import gsap from 'gsap';
 
-  const pixelGrid = document.getElementById('pixel-grid');
   const nameDisplay = document.getElementById('hero-name-display');
   const titleLine = document.getElementById('hero-title-line');
   const decor = document.getElementById('hero-decor');
   const terminalBtn = document.getElementById('open-terminal-btn');
 
-  function buildPixelGrid() {
-    const cols = Math.floor(window.innerWidth / 32);
-    const rows = Math.floor(window.innerHeight / 32);
-    const total = Math.min(cols * rows, 300);
-    const fragment = document.createDocumentFragment();
-    for (let i = 0; i < total; i++) {
-      const pixel = document.createElement('span');
-      pixel.className = 'pixel';
-      pixel.dataset.index = i;
-      fragment.appendChild(pixel);
+  function typeSubtitle(el, text, speed) {
+    let i = 0;
+    el.textContent = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    cursor.textContent = '▊';
+    el.parentNode.insertBefore(cursor, el.nextSibling);
+    function tick() {
+      if (i < text.length) {
+        el.textContent += text[i];
+        i++;
+        setTimeout(tick, speed);
+      } else {
+        cursor.style.animation = 'none';
+        cursor.style.opacity = '0';
+      }
     }
-    pixelGrid.appendChild(fragment);
-  }
-
-  function animatePixels() {
-    const pixels = pixelGrid.querySelectorAll('.pixel');
-    pixels.forEach((p) => {
-      const delay = Math.random() * 3;
-      const duration = 0.4 + Math.random() * 1.2;
-      gsap.to(p, {
-        opacity: 0.15 + Math.random() * 0.6,
-        backgroundColor: Math.random() > 0.5 ? 'var(--accent-purple)' : 'var(--accent-green)',
-        duration,
-        delay,
-        repeat: -1,
-        yoyo: true,
-        ease: 'power1.inOut',
-      });
-    });
+    setTimeout(tick, speed);
   }
 
   function animateHeader() {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const titleText = document.getElementById('title-text');
 
     if (prefersReduced) {
-      pixelGrid.querySelectorAll('.pixel').forEach(p => p.style.opacity = '0.15');
+      titleText.textContent = 'Digital Designer';
       return;
     }
 
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo(nameDisplay, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1 })
-      .fromTo('.name-line-1', { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.6')
-      .fromTo('.name-line-2', { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.6 }, '-=0.4')
-      .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6 }, '-=0.2')
+    tl.fromTo(nameDisplay, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8 })
+      .fromTo('.name-line-1', { x: -30 }, { x: 0, duration: 0.5 }, '-=0.4')
+      .fromTo('.name-line-2', { x: 30 }, { x: 0, duration: 0.5 }, '-=0.3')
+      .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
+      .call(() => { typeSubtitle(titleText, 'Digital Designer', 55); }, [], '>')
       .fromTo(decor, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.inOut' }, '-=0.2')
       .fromTo(terminalBtn, { opacity: 0, y: 16, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' }, '-=0.1');
-
-    animatePixels();
   }
 
   terminalBtn.addEventListener('click', () => {
@@ -92,7 +79,6 @@
     }
   });
 
-  buildPixelGrid();
   document.addEventListener('boot-complete', animateHeader, { once: true });
 </script>
 
@@ -107,23 +93,6 @@
     border-bottom: 1px solid var(--border);
     padding-top: 60px;
     padding-bottom: 40px;
-  }
-
-  .pixel-grid {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 32px);
-    grid-template-rows: repeat(auto-fill, 32px);
-    gap: 0;
-    z-index: 0;
-  }
-
-  .pixel {
-    width: 32px;
-    height: 32px;
-    opacity: 0;
-    background: transparent;
   }
 
   .hero-header-content {
@@ -264,6 +233,12 @@
     animation: blink-cursor 1s step-end infinite;
   }
 
+  .typing-cursor {
+    color: var(--accent-green);
+    animation: blink-cursor 1s step-end infinite;
+    margin-left: 2px;
+  }
+
   @keyframes blink-cursor {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
@@ -273,6 +248,11 @@
     .btn-cursor {
       animation: none;
       opacity: 1;
+    }
+
+    .typing-cursor {
+      animation: none;
+      opacity: 0;
     }
   }
 
@@ -289,11 +269,6 @@
     .name-line::after {
       animation: none;
       opacity: 0;
-    }
-
-    .pixel {
-      opacity: 0.1 !important;
-      background: var(--border) !important;
     }
   }
 
