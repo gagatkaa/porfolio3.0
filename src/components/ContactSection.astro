@@ -1,3 +1,17 @@
+---
+import { socialLinks, getSocialIcon } from '../data/social';
+const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const contactEntries = [
+  { label: 'email', url: 'mailto:atomaszewska361@gmail.com', display: 'atomaszewska361@gmail.com', isExternal: false },
+  ...socialLinks.map(s => ({
+    label: s.label,
+    url: s.label === 'cv' ? cvUrl : s.url,
+    display: s.display,
+    isExternal: true,
+  })),
+];
+---
+
 <div class="contact-section section hidden-section" id="contact-section">
   <div class="terminal-window">
     <div class="terminal-titlebar">
@@ -11,21 +25,16 @@
     <div class="terminal-body">
       <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat contact.txt</span>
 <span class="terminal-output">
-  <span class="contact-row">
-    <span class="contact-label">email</span>
-    <span class="contact-sep">:</span>
-    <a href="mailto:hello@agatatomaszewska.com" class="contact-value">hello@agatatomaszewska.com</a>
-  </span>
-  <span class="contact-row">
-    <span class="contact-label">github</span>
-    <span class="contact-sep">:</span>
-    <a href="https://github.com/agatatom" target="_blank" rel="noopener noreferrer" class="contact-value">github.com/agatatom</a>
-  </span>
-  <span class="contact-row">
-    <span class="contact-label">linkedin</span>
-    <span class="contact-sep">:</span>
-    <a href="https://linkedin.com/in/agatatom" target="_blank" rel="noopener noreferrer" class="contact-value">linkedin.com/in/agatatom</a>
-  </span>
+  {
+    contactEntries.map(entry => (
+      <span class="contact-row">
+        <span class="contact-icon" aria-hidden="true" set:html={getSocialIcon(entry.label === 'email' ? 'mail' : entry.label)} />
+        <span class="contact-label">{entry.label}</span>
+        <span class="contact-sep">:</span>
+        <a href={entry.url} class="contact-value" {...(entry.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{entry.display}</a>
+      </span>
+    ))
+  }
 </span></pre>
     </div>
   </div>
@@ -43,13 +52,24 @@
   }
 
   .contact-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .contact-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 6px;
+    color: var(--accent-purple);
+    line-height: 0;
+  }
+
+  .contact-icon svg {
     display: block;
-    margin-bottom: 6px;
-    line-height: 1.6;
   }
 
   .contact-label {
-    display: inline-block;
     width: 72px;
     color: var(--accent-green);
     font-size: 0.8rem;

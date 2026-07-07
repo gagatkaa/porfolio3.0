@@ -1,6 +1,13 @@
 ---
 import mePhoto from '../assets/me.png';
+import { socialLinks, getSocialIcon } from '../data/social';
 const photoUrl = mePhoto.src;
+const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const resolvedSocials = socialLinks.map(s => ({
+  ...s,
+  url: s.label === 'cv' ? cvUrl : s.url,
+  icon: getSocialIcon(s.label),
+}));
 ---
 
 <div class="about-section section hidden-section" id="about-section">
@@ -29,7 +36,7 @@ const photoUrl = mePhoto.src;
       </div>
     </div>
   </div>
-  <div id="about-photo-data" data-src={photoUrl} style="display: none;"></div>
+  <div id="about-photo-data" data-src={photoUrl} data-socials={JSON.stringify(resolvedSocials)} style="display: none;"></div>
 </div>
 
 <script>
@@ -43,6 +50,7 @@ const photoUrl = mePhoto.src;
   const typedText = document.getElementById('about-typed-text');
   const terminalBody = document.getElementById('about-terminal-body');
   const photoData = document.getElementById('about-photo-data');
+  const resolvedSocials = JSON.parse(photoData?.dataset.socials || '[]');
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const PHOTO_URL = photoData?.dataset.src || '/me.png';
@@ -346,10 +354,9 @@ const photoUrl = mePhoto.src;
         return {
           output: [
             '<div class="social-links">',
-            '  <div class="social-row"><span class="social-label">github</span><span class="social-sep">:</span><a href="https://github.com/agatatom" target="_blank" rel="noopener noreferrer" class="social-value">github.com/agatatom</a></div>',
-            '  <div class="social-row"><span class="social-label">linkedin</span><span class="social-sep">:</span><a href="https://linkedin.com/in/agatatom" target="_blank" rel="noopener noreferrer" class="social-value">linkedin.com/in/agatatom</a></div>',
-            '  <div class="social-row"><span class="social-label">linktree</span><span class="social-sep">:</span><a href="[linktree_url_here]" target="_blank" rel="noopener noreferrer" class="social-value">linktr.ee/agatatom</a></div>',
-            '  <div class="social-row"><span class="social-label">cv</span><span class="social-sep">:</span><a href="[cv_url_here]" target="_blank" rel="noopener noreferrer" class="social-value">download CV</a></div>',
+            ...resolvedSocials.map(s =>
+              `  <div class="social-row"><span class="social-icon" aria-hidden="true">${s.icon}</span><span class="social-label">${s.label}</span><span class="social-sep">:</span><a href="${s.url}" target="_blank" rel="noopener noreferrer" class="social-value">${s.display}</a></div>`
+            ),
             '</div>',
           ].join('\n'),
           type: 'html',
@@ -699,7 +706,7 @@ const photoUrl = mePhoto.src;
   .social-links {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     padding: 4px 0;
   }
 
@@ -729,6 +736,18 @@ const photoUrl = mePhoto.src;
 
   .social-value:hover {
     color: var(--accent-green);
+  }
+
+  .social-icon {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-right: 4px;
+    color: var(--accent-purple);
+    line-height: 0;
+  }
+
+  .social-icon svg {
+    display: block;
   }
 
   @keyframes blink {
