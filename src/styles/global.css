@@ -20,6 +20,25 @@
   --titlebar-height: 32px;
 }
 
+html.light-mode {
+  --bg-primary: #f4f4f4;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e8e8e8;
+  --bg-surface: #ececec;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --text-dim: #999999;
+  --accent-purple: #8b00cc;
+  --accent-purple-dim: #6a0099;
+  --accent-purple-glow: rgba(139, 0, 204, 0.2);
+  --accent-green: #008c2e;
+  --accent-green-dim: #006622;
+  --accent-green-glow: rgba(0, 140, 46, 0.2);
+  --border: #cccccc;
+  --border-color: #cccccc;
+  --border-light: #bbbbbb;
+}
+
 *,
 *::before,
 *::after {
@@ -77,6 +96,16 @@ body::after {
     transparent 2px,
     rgba(0, 0, 0, 0.06) 2px,
     rgba(0, 0, 0, 0.06) 4px
+  );
+}
+
+.light-mode body::after {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.15) 2px,
+    rgba(255, 255, 255, 0.15) 4px
   );
 }
 
@@ -143,6 +172,12 @@ code {
   box-shadow:
     0 0 0 1px var(--border-light),
     inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.light-mode .terminal-window {
+  box-shadow:
+    0 0 0 1px var(--border-light),
+    0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .terminal-titlebar {

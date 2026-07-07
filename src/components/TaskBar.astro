@@ -6,6 +6,9 @@
     </button>
   </div>
   <div class="taskbar-right">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span id="theme-icon">☀</span>
+    </button>
     <span class="taskbar-clock" id="clock">00:00</span>
   </div>
 </footer>
@@ -24,6 +27,8 @@
   const startMenu = document.getElementById('start-menu');
   const clockEl = document.getElementById('clock');
   const startItems = startMenu.querySelectorAll('[data-section]');
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
 
   function updateClock() {
     const now = new Date();
@@ -42,6 +47,27 @@
   function closeStart() {
     startMenu.classList.remove('visible');
   }
+
+  function setTheme(mode) {
+    if (mode === 'light') {
+      document.documentElement.classList.add('light-mode');
+      themeIcon.textContent = '☾';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.remove('light-mode');
+      themeIcon.textContent = '☀';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  if (localStorage.getItem('theme') === 'light') {
+    themeIcon.textContent = '☾';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const isLight = document.documentElement.classList.contains('light-mode');
+    setTheme(isLight ? 'dark' : 'light');
+  });
 
   startBtn.addEventListener('click', toggleStart);
 
@@ -122,6 +148,28 @@
     font-size: 0.75rem;
   }
 
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    color: var(--accent-green);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.2s;
+    font-family: var(--font-mono);
+    line-height: 1;
+  }
+
+  .theme-toggle:hover,
+  .theme-toggle:focus-visible {
+    background: var(--bg-surface);
+    border-color: var(--accent-green);
+  }
+
   .taskbar-clock {
     padding: 4px 12px;
     height: 32px;
@@ -130,7 +178,6 @@
     font-size: 0.8rem;
     color: var(--accent-green);
     border-left: 1px solid var(--border);
-    margin-left: 6px;
     font-family: var(--font-mono);
   }
 
@@ -197,6 +244,12 @@
       font-size: 0.78rem;
       padding: 3px 10px;
       height: 28px;
+    }
+
+    .theme-toggle {
+      width: 28px;
+      height: 28px;
+      font-size: 0.85rem;
     }
 
     .taskbar-clock {
