@@ -16,6 +16,7 @@
   --border-color: #2a2a2a;
   --border-light: #3a3a3a;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-display: 'Source Code Pro', monospace;
   --radius: 0;
   --titlebar-height: 32px;
 }
