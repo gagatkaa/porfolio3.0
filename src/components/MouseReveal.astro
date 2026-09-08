@@ -1,0 +1,54 @@
+<div class="reveal-layer" id="reveal-layer" aria-hidden="true"></div>
+
+<script>
+  const layer = document.getElementById('reveal-layer');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let targetX = -999;
+  let targetY = -999;
+  let curX = targetX;
+  let curY = targetY;
+
+  function apply() {
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.6;
+    layer.style.background = `radial-gradient(circle ${size}px at ${curX}px ${curY}px, var(--reveal-color) 0%, transparent 70%)`;
+  }
+
+  function loop() {
+    curX += (targetX - curX) * 0.08;
+    curY += (targetY - curY) * 0.08;
+    apply();
+    requestAnimationFrame(loop);
+  }
+
+  if (prefersReduced) {
+    apply();
+  } else {
+    window.addEventListener('pointermove', (e) => {
+      targetX = e.clientX;
+      targetY = e.clientY;
+    });
+    requestAnimationFrame(loop);
+  }
+</script>
+
+<style>
+  :global(:root) {
+    --reveal-color: var(--accent-purple-glow);
+  }
+
+  .reveal-layer {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  html.light-mode .reveal-layer {
+    mix-blend-mode: multiply;
+  }
+</style>
