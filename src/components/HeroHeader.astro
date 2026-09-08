@@ -9,12 +9,6 @@
       <span class="title-text" id="title-text"></span>
       <span class="title-bracket">]</span>
     </div>
-    <div class="hero-decor" id="hero-decor">
-      <span class="decor-block"></span>
-      <span class="decor-block"></span>
-      <span class="decor-block"></span>
-      <span class="decor-block"></span>
-    </div>
     <button class="open-terminal-btn" id="open-terminal-btn" aria-label="Open terminal">
       <span class="btn-arrow">&gt;</span>
       <span class="btn-text">open terminal</span>
@@ -28,7 +22,6 @@
 
   const nameDisplay = document.getElementById('hero-name-display');
   const titleLine = document.getElementById('hero-title-line');
-  const decor = document.getElementById('hero-decor');
   const terminalBtn = document.getElementById('open-terminal-btn');
 
   function typeSubtitle(el, text, speed) {
@@ -67,7 +60,6 @@
       .fromTo('.name-line-2', { x: 30 }, { x: 0, duration: 0.5 }, '-=0.3')
       .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
       .call(() => { typeSubtitle(titleText, 'Digital Designer', 55); }, [], '>')
-      .fromTo(decor, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: 'power2.inOut' }, '-=0.2')
       .fromTo(terminalBtn, { opacity: 0, y: 16, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' }, '-=0.1');
   }
 
@@ -142,36 +134,6 @@
     color: var(--accent-green);
     letter-spacing: 0.15em;
     text-transform: uppercase;
-  }
-
-  .hero-decor {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    opacity: 0;
-    transform-origin: center;
-  }
-
-  .decor-block {
-    width: 12px;
-    height: 12px;
-    background: var(--accent-purple);
-    border: 1px solid var(--accent-purple-dim);
-  }
-
-  .decor-block:nth-child(2) {
-    background: var(--accent-green);
-    border-color: var(--accent-green-dim);
-  }
-
-  .decor-block:nth-child(3) {
-    background: var(--accent-green);
-    border-color: var(--accent-green-dim);
-  }
-
-  .decor-block:nth-child(4) {
-    background: var(--accent-purple);
-    border-color: var(--accent-purple-dim);
   }
 
   .open-terminal-btn {
@@ -258,11 +220,6 @@
 
     .hero-header-content {
       padding: 24px 16px;
-    }
-
-    .decor-block {
-      width: 8px;
-      height: 8px;
     }
   }
 </style>
