@@ -94,6 +94,12 @@
   function revealSection(id) {
     const el = document.getElementById(id);
     if (!el) return;
+    if (id === 'hero-section') {
+      document.dispatchEvent(new CustomEvent('open-terminal'));
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
     el.classList.remove('hidden-section');
     if (id === 'about-section') {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
