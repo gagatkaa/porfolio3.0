@@ -149,50 +149,56 @@ const shortcuts = [
 
   @media (max-width: 1099px) {
     .desktop-icons {
-      left: auto;
-      right: 10px;
-      bottom: 52px;
+      left: 0;
+      right: 0;
+      bottom: 0;
       top: auto;
       flex-direction: row;
+      justify-content: space-around;
       transform: translateY(8px);
-      gap: 6px;
-      padding: 6px 8px;
+      gap: 4px;
+      padding: 8px 12px 6px;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom, 0));
       background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+      border: none;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
     }
 
     .desktop-icons.visible {
       transform: translateY(0);
     }
 
+    .desktop-shortcut[data-section="hero-section"] {
+      display: none;
+    }
+
     .desktop-shortcut {
-      min-width: 48px;
+      min-width: 56px;
       padding: 4px;
     }
 
     .desktop-shortcut-icon {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
     }
 
     .desktop-shortcut-icon svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
     }
 
     .desktop-shortcut-label {
       font-size: 0.56rem;
-      max-width: 48px;
+      max-width: 56px;
     }
   }
 
   @media (max-width: 640px) {
     .desktop-icons {
-      right: 6px;
-      bottom: 46px;
       gap: 4px;
-      padding: 4px 6px;
+      padding: 6px 8px 4px;
+      padding-bottom: calc(4px + env(safe-area-inset-bottom, 0));
     }
   }
 </style>

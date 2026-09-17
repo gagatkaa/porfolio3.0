@@ -68,9 +68,15 @@ html.light-mode body {
   background: var(--bg-primary);
 }
 
+@media (max-width: 1099px) {
+  body {
+    padding-bottom: 68px;
+  }
+}
+
 @media (max-width: 640px) {
   body {
-    padding-bottom: 32px;
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 }
 
