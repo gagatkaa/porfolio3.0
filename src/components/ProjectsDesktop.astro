@@ -2,12 +2,16 @@
 import { getCollection, render } from 'astro:content';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
+import ExtrasGallery from './ExtrasGallery.astro';
 
 const projects = await getCollection('projects');
+const designMotion = projects.filter(p => p.data.category === 'design-motion');
+const devWeb = projects.filter(p => p.data.category === 'dev-web');
+const ordered = [...designMotion, ...devWeb];
 
 const rendered = [];
-for (let i = 0; i < projects.length; i++) {
-  const p = projects[i];
+for (let i = 0; i < ordered.length; i++) {
+  const p = ordered[i];
   const { Content } = await render(p);
   rendered.push({
     slug: p.id.replace(/\.(md|mdx)$/, ''),
@@ -23,6 +27,10 @@ for (let i = 0; i < projects.length; i++) {
 }
 
 const projectsData = rendered.map(({ Content, ...rest }) => rest);
+const categories = [
+  { key: 'design-motion', label: 'design & motion', items: designMotion },
+  { key: 'dev-web', label: 'dev / web', items: devWeb },
+];
 ---
 
 <section class="projects-section section hidden-section" id="projects-section">
@@ -31,17 +39,30 @@ const projectsData = rendered.map(({ Content, ...rest }) => rest);
     <span class="heading-count">{projectsData.length} files</span>
   </h2>
 
-  <div class="projects-grid" id="projects-grid">
-    {projectsData.map((project, index) => (
-      <ProjectCard
-        title={project.title}
-        shortDescription={project.shortDescription}
-        tools={project.tools}
-        coverImage={project.coverImage}
-        index={index}
-      />
-    ))}
-  </div>
+  {categories.map(cat => {
+    const startIndex = ordered.indexOf(cat.items[0]);
+    return (
+      <div class="projects-category" data-category={cat.key}>
+        <h3 class="category-heading">
+          <span class="heading-accent">&gt;</span> {cat.label}
+          <span class="heading-count">{cat.items.length} files</span>
+        </h3>
+        <div class="projects-grid">
+          {cat.items.map((project, i) => (
+            <ProjectCard
+              title={project.data.title}
+              shortDescription={project.data.shortDescription}
+              tools={project.data.tools}
+              coverImage={project.data.coverImage}
+              index={startIndex + i}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  })}
+
+  <ExtrasGallery />
 </section>
 
 <ProjectWindow count={projectsData.length} />
@@ -89,7 +110,6 @@ const projectsData = rendered.map(({ Content, ...rest }) => rest);
   const nextBtn = document.getElementById('window-next-btn');
   const counterEl = document.getElementById('window-counter');
   const section = document.getElementById('projects-section');
-  const grid = document.getElementById('projects-grid');
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -101,11 +121,24 @@ const projectsData = rendered.map(({ Content, ...rest }) => rest);
 
   /* ---- stagger on reveal ---- */
   if (section && !prefersReduced) {
+    const showCards = () => {
+      const cards = section.querySelectorAll('.project-card');
+      cards.forEach(c => {
+        c.style.opacity = '';
+        c.style.transform = '';
+      });
+    };
     const observer = new MutationObserver(() => {
       if (!section.classList.contains('hidden-section') && !hasAnimated) {
         hasAnimated = true;
         observer.disconnect();
-        const cards = grid.querySelectorAll('.project-card');
+        // If the section is still hidden (display:none) at reveal time,
+        // skip the animation entirely so cards are never left invisible.
+        if (section.offsetParent === null) {
+          showCards();
+          return;
+        }
+        const cards = section.querySelectorAll('.project-card');
         gsap.fromTo(
           cards,
           { opacity: 0, y: 40, scale: 0.96 },
@@ -116,14 +149,12 @@ const projectsData = rendered.map(({ Content, ...rest }) => rest);
             duration: 0.55,
             stagger: { each: 0.12, from: 'start' },
             ease: 'power3.out',
-            onComplete: () => {
-              cards.forEach(c => {
-                c.style.opacity = '';
-                c.style.transform = '';
-              });
-            },
+            onComplete: showCards,
+            onInterrupt: showCards,
           }
         );
+        // Safety net: never leave cards stuck invisible.
+        window.setTimeout(showCards, 3000);
       }
     });
     observer.observe(section, { attributes: true, attributeFilter: ['class'] });
@@ -368,6 +399,27 @@ const projectsData = rendered.map(({ Content, ...rest }) => rest);
     color: var(--text-dim);
     letter-spacing: 0.08em;
     text-transform: uppercase;
+  }
+
+  .projects-category {
+    margin-bottom: 40px;
+  }
+
+  .projects-category:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .category-heading {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .projects-grid {
