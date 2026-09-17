@@ -10,7 +10,9 @@
       <span class="title-bracket">]</span>
     </div>
     <p class="hero-hint" id="hero-hint">
-      <span class="hint-comment"># explore the portfolio —</span> type in the terminal or hit <span class="hint-start">Start</span>
+      <span class="hint-comment"># explore the portfolio —</span>
+      <span class="hint-desktop">use the terminal or press the icons to open sections</span>
+      <span class="hint-mobile">press the icons on the bottom to start exploring</span>
     </p>
     <button class="open-terminal-btn" id="open-terminal-btn" aria-label="Open terminal">
       <span class="btn-arrow">&gt;</span>
@@ -144,8 +146,9 @@
   .hero-hint {
     margin: 24px 0 0;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     letter-spacing: 0.03em;
+    line-height: 1.6;
     color: var(--text-secondary);
     opacity: 0;
   }
@@ -158,6 +161,20 @@
     color: var(--accent-purple);
   }
 
+  .hint-mobile {
+    display: none;
+  }
+
+  @media (max-width: 1099px) {
+    .hint-desktop {
+      display: none;
+    }
+
+    .hint-mobile {
+      display: inline;
+    }
+  }
+
   .open-terminal-btn {
     display: inline-flex;
     align-items: center;
@@ -168,7 +185,7 @@
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     cursor: pointer;
     opacity: 0;
     transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;

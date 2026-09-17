@@ -333,7 +333,7 @@ const tabs = [
 
   .about-heading {
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: var(--fs-md);
     font-weight: 400;
     color: var(--text-primary);
     margin: 0 0 24px;
@@ -349,7 +349,7 @@ const tabs = [
   }
 
   .about-heading-count {
-    font-size: 0.65rem;
+    font-size: var(--fs-2xs);
     color: var(--text-dim);
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -378,7 +378,7 @@ const tabs = [
     flex-shrink: 0;
     padding: 5px 14px;
     height: 30px;
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     font-family: var(--font-mono);
     color: var(--text-secondary);
     background: var(--bg-surface);
@@ -410,7 +410,7 @@ const tabs = [
   .about-subheading {
     display: inline-block;
     margin: 24px 0 12px;
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
     font-weight: 400;
     color: var(--accent-green);
     letter-spacing: 0.02em;
@@ -424,7 +424,7 @@ const tabs = [
 
   .bio-prompt {
     margin: 0 0 18px;
-    font-size: 0.82rem;
+    font-size: var(--fs-sm);
   }
 
   .profile-meta {
@@ -439,7 +439,7 @@ const tabs = [
   }
 
   .profile-row {
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     line-height: 1.6;
   }
 
@@ -490,12 +490,12 @@ const tabs = [
   }
 
   .bio-photo-caption {
-    font-size: 0.62rem;
+    font-size: var(--fs-3xs);
     color: var(--text-dim);
   }
 
   .bio-text .bio-paragraph {
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     color: var(--text-secondary);
     line-height: 1.7;
     margin: 0 0 10px;
@@ -512,7 +512,7 @@ const tabs = [
 
   .interest-pill {
     padding: 3px 10px;
-    font-size: 0.68rem;
+    font-size: var(--fs-2xs);
     color: var(--accent-purple);
     border: 1px solid var(--accent-purple-dim);
     background: rgba(179, 0, 255, 0.06);
@@ -547,7 +547,7 @@ const tabs = [
 
   .about-social-label {
     color: var(--accent-green);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     min-width: 72px;
   }
 
@@ -557,7 +557,7 @@ const tabs = [
 
   .about-social-value {
     color: var(--text-secondary);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     text-decoration: underline;
     text-underline-offset: 3px;
     transition: color 0.2s;
@@ -606,7 +606,7 @@ const tabs = [
 
   .skill-name {
     color: var(--accent-purple);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     font-weight: 500;
     margin: 0;
   }
@@ -624,7 +624,7 @@ const tabs = [
   .skill-item {
     position: relative;
     color: var(--text-secondary);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     line-height: 1.5;
   }
 
@@ -633,7 +633,7 @@ const tabs = [
     position: absolute;
     left: -14px;
     color: var(--accent-green);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
   }
 
   /* ---- timelines ---- */
@@ -678,18 +678,18 @@ const tabs = [
 
   .timeline-date {
     color: var(--text-dim);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
   }
 
   .timeline-title {
     color: var(--text-primary);
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
     font-weight: 500;
   }
 
   .timeline-desc {
     color: var(--text-secondary);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     line-height: 1.55;
     margin: 0;
   }
@@ -714,36 +714,12 @@ const tabs = [
     }
 
     .about-tab {
-      font-size: 0.72rem;
       padding: 4px 12px;
       height: 28px;
     }
 
     .about-skill-card {
       padding: 10px 12px;
-    }
-
-    .skill-item {
-      font-size: 0.65rem;
-    }
-
-    .skill-item::before {
-      font-size: 0.65rem;
-    }
-
-    .bio-paragraph,
-    .profile-row,
-    .about-social-label,
-    .about-social-value {
-      font-size: 0.72rem;
-    }
-
-    .about-timeline .timeline-title {
-      font-size: 0.72rem;
-    }
-
-    .about-timeline .timeline-desc {
-      font-size: 0.65rem;
     }
   }
 </style>

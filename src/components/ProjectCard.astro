@@ -135,7 +135,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 0.62rem;
+    font-size: var(--fs-3xs);
     color: var(--text-dim);
     letter-spacing: 0.03em;
     flex: 1;
@@ -209,7 +209,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
   }
 
   .card-title {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     font-weight: 600;
     color: var(--accent-green);
     margin: 0;
@@ -225,7 +225,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
 
   .tag {
     display: inline-block;
-    font-size: 0.6rem;
+    font-size: var(--fs-2xs);
     padding: 2px 6px;
     border: 1px solid var(--accent-purple);
     color: var(--accent-purple);
@@ -235,7 +235,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
   }
 
   .card-desc {
-    font-size: 0.7rem;
+    font-size: var(--fs-xs);
     color: var(--text-secondary);
     line-height: 1.55;
     margin: 0;
@@ -270,7 +270,7 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
   }
 
   .status-text {
-    font-size: 0.55rem;
+    font-size: var(--fs-2xs);
     color: var(--text-dim);
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -283,12 +283,6 @@ const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '
   @media (max-width: 640px) {
     .card-content {
       padding: 10px 12px 8px;
-    }
-    .card-title {
-      font-size: 0.8rem;
-    }
-    .card-desc {
-      font-size: 0.68rem;
     }
     .card-titlebar {
       padding: 5px 8px;

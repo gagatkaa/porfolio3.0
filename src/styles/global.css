@@ -19,6 +19,14 @@
   --font-display: 'Source Code Pro', monospace;
   --radius: 0;
   --titlebar-height: 32px;
+  --fs-3xs: clamp(0.78rem, 0.74rem + 0.2vw, 0.85rem);
+  --fs-2xs: clamp(0.85rem, 0.8rem + 0.25vw, 0.95rem);
+  --fs-xs: clamp(0.92rem, 0.87rem + 0.28vw, 1rem);
+  --fs-sm: clamp(1rem, 0.95rem + 0.3vw, 1.05rem);
+  --fs-base: clamp(1.05rem, 1rem + 0.3vw, 1.125rem);
+  --fs-md: clamp(1.15rem, 1.08rem + 0.4vw, 1.25rem);
+  --fs-lg: clamp(1.35rem, 1.2rem + 0.8vw, 1.6rem);
+  --fs-xl: clamp(1.6rem, 1.35rem + 1.4vw, 2rem);
 }
 
 html.light-mode {
@@ -160,7 +168,7 @@ code {
 
 .terminal-title {
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: var(--fs-xs);
   flex: 1;
   text-align: center;
   letter-spacing: 0.02em;
@@ -200,7 +208,7 @@ code {
 
 .terminal-body pre {
   color: var(--text-primary);
-  font-size: 0.875rem;
+  font-size: var(--fs-base);
   line-height: 1.7;
   white-space: pre-wrap;
   word-break: break-word;
@@ -221,10 +229,6 @@ code {
 @media (max-width: 640px) {
   .terminal-body {
     padding: 12px;
-  }
-
-  .terminal-body pre {
-    font-size: 0.75rem;
   }
 }
 
@@ -277,7 +281,7 @@ code {
   left: 4px;
   z-index: 10001;
   padding: 6px 14px;
-  font-size: 0.78rem;
+  font-size: var(--fs-xs);
   font-family: var(--font-mono);
   color: var(--accent-green);
   background: var(--bg-primary);

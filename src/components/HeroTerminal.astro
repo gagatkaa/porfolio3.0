@@ -374,7 +374,7 @@
 
   .history-output {
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: var(--fs-sm);
     line-height: 1.6;
     margin-bottom: 4px;
     white-space: pre-wrap;
@@ -383,14 +383,14 @@
 
   .help-title {
     color: var(--accent-purple);
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
     font-weight: 500;
     margin-bottom: 4px;
   }
 
   .help-divider {
     color: var(--text-dim);
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     margin-bottom: 6px;
   }
 
@@ -401,35 +401,35 @@
 
   .help-cmd {
     color: var(--accent-green);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
   }
 
   .help-dash {
     color: var(--text-dim);
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     margin: 0 4px;
   }
 
   .help-desc {
     color: var(--text-dim);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
   }
 
   .help-welcome {
     color: var(--accent-purple);
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
   }
 
   .help-hint {
     color: var(--text-dim);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
   }
 
   .input-line {
     display: flex;
     align-items: center;
     gap: 0;
-    font-size: 0.875rem;
+    font-size: var(--fs-sm);
     line-height: 1.7;
   }
 
@@ -468,22 +468,6 @@
   @media (max-width: 640px) {
     .hero-section {
       padding-top: 48px;
-    }
-
-    .history-output {
-      font-size: 0.75rem;
-    }
-
-    .input-line {
-      font-size: 0.75rem;
-    }
-
-    .help-cmd {
-      font-size: 0.72rem;
-    }
-
-    .help-desc {
-      font-size: 0.65rem;
     }
   }
 </style>

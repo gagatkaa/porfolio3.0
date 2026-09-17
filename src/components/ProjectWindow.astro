@@ -70,7 +70,7 @@ const { count = 0 } = Astro.props;
 
   .window-title {
     color: var(--text-primary);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     flex: 1;
     min-width: 0;
     overflow: hidden;
@@ -112,7 +112,7 @@ const { count = 0 } = Astro.props;
 
   .window-counter {
     color: var(--text-dim);
-    font-size: 0.72rem;
+    font-size: var(--fs-xs);
     min-width: 34px;
     text-align: center;
     user-select: none;
@@ -143,7 +143,7 @@ const { count = 0 } = Astro.props;
     padding: 20px;
     overflow-y: auto;
     color: var(--text-primary);
-    font-size: 0.875rem;
+    font-size: var(--fs-base);
     line-height: 1.7;
   }
 
@@ -158,7 +158,7 @@ const { count = 0 } = Astro.props;
 
   .window-body .field-label {
     color: var(--accent-green);
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     display: block;
     margin-bottom: 2px;
   }
@@ -186,7 +186,7 @@ const { count = 0 } = Astro.props;
     padding: 2px 8px;
     margin: 2px 4px 2px 0;
     border: 1px solid var(--border);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     color: var(--accent-purple);
   }
 
@@ -219,7 +219,7 @@ const { count = 0 } = Astro.props;
   }
 
   .meta-row {
-    font-size: 0.78rem;
+    font-size: var(--fs-xs);
   }
 
   .meta-row .field-label {
@@ -232,14 +232,14 @@ const { count = 0 } = Astro.props;
   }
 
   .case-content {
-    font-size: 0.875rem;
+    font-size: var(--fs-base);
     line-height: 1.7;
     color: var(--text-secondary);
   }
 
   .case-content h2 {
     color: var(--accent-purple);
-    font-size: 1rem;
+    font-size: var(--fs-md);
     font-weight: 500;
     margin: 28px 0 12px;
     text-transform: uppercase;
@@ -248,7 +248,7 @@ const { count = 0 } = Astro.props;
 
   .case-content h3 {
     color: var(--accent-green);
-    font-size: 0.9rem;
+    font-size: var(--fs-sm);
     font-weight: 500;
     margin: 24px 0 10px;
   }
@@ -289,7 +289,7 @@ const { count = 0 } = Astro.props;
     padding-top: 14px;
     border-top: 1px solid var(--border);
     color: var(--text-dim);
-    font-size: 0.7rem;
+    font-size: var(--fs-2xs);
     text-decoration: none;
   }
 
@@ -317,7 +317,6 @@ const { count = 0 } = Astro.props;
 
     .window-body {
       padding: 16px;
-      font-size: 0.8rem;
       padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
     }
 
