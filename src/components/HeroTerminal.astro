@@ -103,9 +103,7 @@
     el.classList.remove('hidden-section');
     if (id === 'about-section') {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
-    }
-    if (!prefersReduced) {
+    } else if (!prefersReduced) {
       el.style.opacity = '0';
       el.style.transform = 'translateY(20px)';
       gsap.to(el, {
@@ -121,6 +119,9 @@
       });
     } else {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (id === 'about-section' || id === 'projects-section' || id === 'contact-section') {
+      document.dispatchEvent(new CustomEvent('section-opened', { detail: { id } }));
     }
   }
   window.revealSection = revealSection;

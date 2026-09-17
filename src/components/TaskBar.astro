@@ -4,6 +4,7 @@
       <span class="start-icon">▲</span>
       <span class="start-label">Start</span>
     </button>
+    <div class="taskbar-tabs" id="taskbar-tabs"></div>
   </div>
   <div class="taskbar-right">
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
@@ -29,6 +30,89 @@
   const startItems = startMenu.querySelectorAll('[data-section]');
   const themeToggle = document.getElementById('theme-toggle');
   const themeIcon = document.getElementById('theme-icon');
+  const tabsContainer = document.getElementById('taskbar-tabs');
+
+  const openTabs = new Map();
+
+  const TAB_DEFS = {
+    'about-section': 'about',
+    'projects-section': 'projects',
+    'contact-section': 'contact',
+  };
+
+  function openSection(id) {
+    const revealFn = window.revealSection;
+    if (revealFn) {
+      revealFn(id);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('hidden-section');
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  function addTab(id) {
+    const label = TAB_DEFS[id];
+    if (!label) return;
+
+    const existing = openTabs.get(id);
+    if (existing) {
+      existing.classList.add('active');
+      return;
+    }
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tab-btn active';
+    btn.setAttribute('aria-label', `Open ${label}`);
+
+    const close = document.createElement('span');
+    close.className = 'tab-close';
+    close.textContent = '×';
+    close.setAttribute('aria-label', `Close ${label}`);
+    close.title = `Close ${label}`;
+
+    const text = document.createElement('span');
+    text.className = 'tab-label';
+    text.textContent = label;
+
+    btn.append(close, text);
+
+    btn.addEventListener('click', (e) => {
+      if (e.target.closest('.tab-close')) {
+        closeTab(id, btn);
+        return;
+      }
+      tabsContainer.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      openSection(id);
+    });
+
+    tabsContainer.appendChild(btn);
+    openTabs.set(id, btn);
+  }
+
+  function closeTab(id, btn) {
+    openTabs.delete(id);
+    btn.remove();
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('hidden-section');
+    }
+    const remaining = tabsContainer.querySelector('.tab-btn.active');
+    if (remaining) remaining.classList.remove('active');
+  }
+
+  function trackOpenSection(e) {
+    const id = e.detail && e.detail.id;
+    if (!id) return;
+    tabsContainer.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    addTab(id);
+  }
+
+  document.addEventListener('section-opened', trackOpenSection);
 
   function updateClock() {
     const now = new Date();
@@ -120,6 +204,74 @@
 
   .taskbar-left {
     flex: 1;
+    min-width: 0;
+  }
+
+  :global(.taskbar-tabs) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  :global(.tab-btn) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    height: 32px;
+    max-width: 160px;
+    font-size: 0.82rem;
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  :global(.tab-btn .tab-label) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.tab-btn:hover),
+  :global(.tab-btn:focus-visible) {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-green);
+    outline: none;
+  }
+
+  :global(.tab-btn.active) {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
+  }
+
+  :global(.tab-close) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--accent-purple);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  :global(.tab-close:hover) {
+    color: #fff;
+    background: #ff5f56;
   }
 
   .start-btn {
@@ -256,6 +408,19 @@
       font-size: 0.72rem;
       padding: 3px 8px;
       height: 28px;
+    }
+
+    :global(.taskbar-tabs) {
+      margin-left: 6px;
+      padding-left: 6px;
+      gap: 3px;
+    }
+
+    :global(.tab-btn) {
+      height: 28px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      max-width: 120px;
     }
 
     .start-menu {

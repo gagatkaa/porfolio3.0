@@ -1,20 +1,28 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
 
 const projects = await getCollection('projects');
 
-const projectsData = projects.map(p => ({
-  slug: p.id.replace(/\.(md|mdx)$/, ''),
-  title: p.data.title,
-  shortDescription: p.data.shortDescription,
-  role: p.data.role,
-  year: p.data.year,
-  tools: p.data.tools,
-  coverImage: p.data.coverImage,
-  externalLink: p.data.externalLink,
-}));
+const rendered = [];
+for (let i = 0; i < projects.length; i++) {
+  const p = projects[i];
+  const { Content } = await render(p);
+  rendered.push({
+    slug: p.id.replace(/\.(md|mdx)$/, ''),
+    title: p.data.title,
+    shortDescription: p.data.shortDescription,
+    role: p.data.role,
+    year: p.data.year,
+    tools: p.data.tools,
+    coverImage: p.data.coverImage,
+    externalLink: p.data.externalLink,
+    Content,
+  });
+}
+
+const projectsData = rendered.map(({ Content, ...rest }) => rest);
 ---
 
 <section class="projects-section section hidden-section" id="projects-section">
@@ -36,7 +44,33 @@ const projectsData = projects.map(p => ({
   </div>
 </section>
 
-<ProjectWindow />
+<ProjectWindow count={projectsData.length} />
+
+{
+  rendered.map((p, index) => (
+    <template id={`project-template-${index}`}>
+      <div class="case-study">
+        {p.coverImage && (
+          <div class="case-cover">
+            <img src={p.coverImage} alt="" loading="lazy" />
+          </div>
+        )}
+        <div class="case-meta">
+          <div class="meta-row"><span class="field-label">role</span> <span class="field-value">{p.role}</span></div>
+          <div class="meta-row"><span class="field-label">year</span> <span class="field-value">{p.year}</span></div>
+          <div class="meta-row meta-tools"><span class="field-label">tools</span> <span class="field-value">{p.tools.map(t => <span class="tool-tag">{t}</span>)}</span></div>
+        </div>
+        {p.externalLink && (
+          <a href={p.externalLink} target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>
+        )}
+        <div class="case-content">
+          <p.Content />
+        </div>
+        <a class="case-footer-link" href={`/projects/${p.slug}`}>open full page: /projects/{p.slug}</a>
+      </div>
+    </template>
+  ))
+}
 
 <script define:vars={{ pd: projectsData }}>window.__pd = pd;</script>
 
@@ -51,6 +85,9 @@ const projectsData = projects.map(p => ({
   const bodyEl = document.getElementById('window-body');
   const closeBtn = document.getElementById('window-close-btn');
   const dragHandle = document.getElementById('window-drag-handle');
+  const prevBtn = document.getElementById('window-prev-btn');
+  const nextBtn = document.getElementById('window-next-btn');
+  const counterEl = document.getElementById('window-counter');
   const section = document.getElementById('projects-section');
   const grid = document.getElementById('projects-grid');
 
@@ -60,6 +97,7 @@ const projectsData = projects.map(p => ({
   let isDragging = false;
   let dragStartX, dragStartY, winStartX, winStartY;
   let hasAnimated = false;
+  let currentIndex = 0;
 
   /* ---- stagger on reveal ---- */
   if (section && !prefersReduced) {
@@ -124,27 +162,24 @@ const projectsData = projects.map(p => ({
         ease: 'power2.in',
         onComplete: () => {
           gsap.set(card, { clearProps: 'all' });
-          showWindow(p);
+          showWindow(index);
         },
       });
     } else {
-      showWindow(p);
+      showWindow(index);
     }
   }
 
-  function showWindow(p) {
+  function showWindow(index) {
+    currentIndex = index;
+    const p = projectsData[index];
+    if (!p) return;
+
     titleEl.textContent = p.title;
 
-    bodyEl.innerHTML = `
-      <div class="field"><span class="field-label">role</span><span class="field-value">${escHtml(p.role)}</span></div>
-      <div class="field"><span class="field-label">year</span><span class="field-value">${p.year}</span></div>
-      <div class="field"><span class="field-label">tools</span><span class="field-value">${p.tools.map(t => `<span class="tool-tag">${escHtml(t)}</span>`).join('')}</span></div>
-      ${p.shortDescription ? `<div class="description">${escHtml(p.shortDescription)}</div>` : ''}
-      ${p.externalLink ? `<a href="${escHtml(p.externalLink)}" target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>` : ''}
-      <div class="field" style="margin-top:16px">
-        <a href="/projects/${escHtml(p.slug)}" class="ext-link">[ view full case study → ]</a>
-      </div>
-    `;
+    const tpl = document.getElementById('project-template-' + index);
+    bodyEl.innerHTML = tpl ? tpl.innerHTML : '';
+    if (counterEl) counterEl.textContent = `${index + 1} / ${projectsData.length}`;
 
     overlay.classList.add('visible');
 
@@ -160,6 +195,29 @@ const projectsData = projects.map(p => ({
     document.addEventListener('keydown', handleKeydown);
     overlay.focus();
     document.body.style.overflow = 'hidden';
+  }
+
+  function navigate(offset) {
+    if (!isOpen) return;
+    const next = (currentIndex + offset + projectsData.length) % projectsData.length;
+    if (!prefersReduced) {
+      gsap.to(windowEl, {
+        x: -offset * 24,
+        opacity: 0,
+        duration: 0.18,
+        ease: 'power2.in',
+        onComplete: () => {
+          windowEl.style.transform = '';
+          showWindow(next);
+          gsap.fromTo(windowEl,
+            { x: offset * 24, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.22, ease: 'power2.out' }
+          );
+        },
+      });
+    } else {
+      showWindow(next);
+    }
   }
 
   function closeProject() {
@@ -192,6 +250,16 @@ const projectsData = projects.map(p => ({
       closeProject();
       return;
     }
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      navigate(-1);
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      navigate(1);
+      return;
+    }
     if (e.key === 'Tab') {
       const focusable = overlay.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -210,6 +278,8 @@ const projectsData = projects.map(p => ({
   }
 
   closeBtn.addEventListener('click', closeProject);
+  if (prevBtn) prevBtn.addEventListener('click', () => navigate(-1));
+  if (nextBtn) nextBtn.addEventListener('click', () => navigate(1));
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeProject();
   });
@@ -218,12 +288,6 @@ const projectsData = projects.map(p => ({
     windowEl.style.left = '';
     windowEl.style.top = '';
     windowEl.style.transform = '';
-  }
-
-  function escHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   dragHandle.addEventListener('mousedown', (e) => {
