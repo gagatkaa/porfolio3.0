@@ -9,6 +9,9 @@
       <span class="title-text" id="title-text"></span>
       <span class="title-bracket">]</span>
     </div>
+    <p class="hero-hint" id="hero-hint">
+      <span class="hint-comment"># explore the portfolio —</span> type in the terminal or hit <span class="hint-start">Start</span>
+    </p>
     <button class="open-terminal-btn" id="open-terminal-btn" aria-label="Open terminal">
       <span class="btn-arrow">&gt;</span>
       <span class="btn-text">open terminal</span>
@@ -23,6 +26,7 @@
   const nameDisplay = document.getElementById('hero-name-display');
   const titleLine = document.getElementById('hero-title-line');
   const terminalBtn = document.getElementById('open-terminal-btn');
+  const hint = document.getElementById('hero-hint');
 
   function typeSubtitle(el, text, speed) {
     let i = 0;
@@ -60,6 +64,7 @@
       .fromTo('.name-line-2', { x: 30 }, { x: 0, duration: 0.5 }, '-=0.3')
       .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
       .call(() => { typeSubtitle(titleText, 'Digital Designer', 55); }, [], '>')
+      .fromTo(hint, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.1')
       .fromTo(terminalBtn, { opacity: 0, y: 16, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' }, '-=0.1');
   }
 
@@ -136,12 +141,29 @@
     text-transform: uppercase;
   }
 
+  .hero-hint {
+    margin: 24px 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+    opacity: 0;
+  }
+
+  .hint-comment {
+    color: var(--accent-green);
+  }
+
+  .hint-start {
+    color: var(--accent-purple);
+  }
+
   .open-terminal-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 10px 20px;
-    margin-top: 32px;
+    margin-top: 16px;
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-secondary);
@@ -188,6 +210,10 @@
   @media (prefers-reduced-motion: reduce) {
     .btn-cursor {
       animation: none;
+      opacity: 1;
+    }
+
+    .hero-hint {
       opacity: 1;
     }
 

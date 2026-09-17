@@ -22,22 +22,22 @@
 }
 
 html.light-mode {
-  --bg-primary: #f4f4f4;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #e8e8e8;
-  --bg-surface: #ececec;
-  --text-primary: #1a1a1a;
-  --text-secondary: #555555;
-  --text-dim: #999999;
-  --accent-purple: #8b00cc;
-  --accent-purple-dim: #6a0099;
-  --accent-purple-glow: rgba(139, 0, 204, 0.35);
-  --accent-green: #008c2e;
-  --accent-green-dim: #006622;
-  --accent-green-glow: rgba(0, 140, 46, 0.3);
-  --border: #cccccc;
-  --border-color: #cccccc;
-  --border-light: #bbbbbb;
+  --bg-primary: #cab4d0;
+  --bg-secondary: #e7d9ef;
+  --bg-tertiary: #dcc9e5;
+  --bg-surface: #d3c0dc;
+  --text-primary: #2b1d33;
+  --text-secondary: #5b4a68;
+  --text-dim: #8a7697;
+  --accent-purple: #7c2db8;
+  --accent-purple-dim: #64269b;
+  --accent-purple-glow: rgba(124, 45, 184, 0.3);
+  --accent-green: #0a7a3d;
+  --accent-green-dim: #086a35;
+  --accent-green-glow: rgba(10, 122, 61, 0.32);
+  --border: #b29bbf;
+  --border-color: #b29bbf;
+  --border-light: #a68eb3;
 }
 
 *,
