@@ -1,30 +1,95 @@
 ---
-title: 'Algorave'
-category: 'design-motion'
-shortDescription: 'A live-coding performance project blending generative visuals, sound engine work, and an accessible no-code performance tool.'
-role: 'Creative Technologist'
-year: 2025
+title: 'Sounds Like Antwerp'
+
+category: 'dev-web'
+
+shortDescription: 'An interactive platform that transforms Antwerp city data into generative music and visuals.'
+
+role: 'Lead Developer'
+
+year: 2026
+
 tools:
-  - 'Original sound engine'
-  - 'No-code performance tool'
-  - 'Live visuals'
-  - 'TouchDesigner'
+  - 'Astro'
+  - 'React'
   - 'JavaScript'
-coverImage: ''
+  - 'Node.js'
+  - 'p5.js'
+  - 'Strudel'
+  - 'React Flow'
+  - 'GSAP'
+  - 'Vite'
+  - 'Vitest'
+
+coverImage: '/projects/sounds-like-antwerp/cover.jpg'
+
+galleryImages:
+  - '/projects/sounds-like-antwerp/mockup-01.jpg'
+  - '/projects/sounds-like-antwerp/mockup-02.jpg'
+  - '/projects/sounds-like-antwerp/mockup-03.jpg'
+
+externalLink: 'https://int-4-algorave-antwerp.vercel.app'
 ---
 
 ## Overview
 
-Algorave is a live audio-visual performance practice built around algorithmic, code-driven music and imagery. The project lives on two sides: the live visual identity and performance concept of the Algorave night, and the technical tools that make it run — a custom sound engine and an approachable no-code interface for performing with it.
+Sounds Like Antwerp was created for a Visit Antwerp brief focused on attracting younger urban travellers.
 
-## Visual & motion concept
+Our concept explored Antwerp’s **24/7 Pulse** — using city data to show that Antwerp is constantly moving, changing and alive.
 
-The visual language leans on generative geometry reacting to audio in real time. Patterns mutate with the tempo and energy of the track rather than following a fixed script, giving each performance its own spontaneous composition.
+The result was an interactive platform that transforms city activity into **generative music and visuals**, allowing users to experience the city before visiting it.
 
-## Sound engine & no-code tool
+![Sounds Like Antwerp website](/projects/sounds-like-antwerp/mockup-01.jpg)
 
-The dev side of the project pairs a custom sound engine with a no-code performance tool, so the Algorave experience isn't locked behind traditional code. The interface turns the underlying audio system into a playable instrument — musicians can trigger, layer, and manipulate sounds without writing, making algorithmic music performance more approachable while the engine handles the heavy lifting.
+## My role
+
+I was the **Lead Developer** and owned most of the technical implementation.
+
+Together with our project manager, I designed the system architecture and built the main technical components:
+
+- public website
+- city-data API and proxy layer
+- generative sound engine
+- interactive visualisation layer
+- application state
+- React Flow-based no-code tool
+
+I worked across the full system rather than only on the frontend.
+
+## City data, sound and visuals
+
+The platform was designed to consume external city-data sources and normalize them into a shared representation of Antwerp’s current **pulse**.
+
+Signals such as traffic, crowds, noise and events can then influence both the visual and audio experience.
+
+The sound engine was built with **Strudel**, while **p5.js** powers the generative visuals.
+
+![Interactive Sounds Like Antwerp experience](/projects/sounds-like-antwerp/mockup-02.jpg)
+
+## No-code tool
+
+I also built a custom **React Flow-based no-code interface** for configuring parts of the experience without changing the underlying application code.
+
+This made it easier for the team to experiment with instruments, behaviours and creative mappings.
+
+![Sounds Like Antwerp no-code tool](/projects/sounds-like-antwerp/mockup-03.jpg)
+
+## Architecture
+
+The system was split into independent layers for data, state, sound, visuals and presentation.
+
+External data flows through a dedicated proxy, is normalized, and is then consumed by the interactive engines.
+
+![Sounds Like Antwerp technical architecture](/projects/sounds-like-antwerp/architecture-3.0.jpg)
+
+The main flow is:
+
+**City data → API proxy → normalized pulse → application state → sound + visuals**
+
+The website itself was built with **Astro**, using React for the more interactive parts.
 
 ## Outcome
 
-_Details to be added after brief: year, tools, links, gallery._
+Sounds Like Antwerp became a working prototype for turning city infrastructure into an interactive cultural experience.
+
+For me, it was a chance to take ownership of a technically broad product — from architecture and APIs to frontend development, generative audio and creative tooling.
