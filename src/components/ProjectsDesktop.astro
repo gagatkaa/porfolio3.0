@@ -1,5 +1,5 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
 import ExtrasGallery from './ExtrasGallery.astro';
@@ -7,12 +7,11 @@ import ExtrasGallery from './ExtrasGallery.astro';
 const projects = await getCollection('projects');
 const designMotion = projects.filter(p => p.data.category === 'design-motion');
 const devWeb = projects.filter(p => p.data.category === 'dev-web');
-const ordered = [...designMotion, ...devWeb];
+const ordered = [...devWeb, ...designMotion];
 
 const rendered = [];
 for (let i = 0; i < ordered.length; i++) {
   const p = ordered[i];
-  const { Content } = await render(p);
   rendered.push({
     slug: p.id.replace(/\.(md|mdx)$/, ''),
     title: p.data.title,
@@ -22,14 +21,13 @@ for (let i = 0; i < ordered.length; i++) {
     tools: p.data.tools,
     coverImage: p.data.coverImage,
     externalLink: p.data.externalLink,
-    Content,
   });
 }
 
-const projectsData = rendered.map(({ Content, ...rest }) => rest);
+const projectsData = rendered;
 const categories = [
-  { key: 'design-motion', label: 'design & motion', items: designMotion },
   { key: 'dev-web', label: 'dev / web', items: devWeb },
+  { key: 'design-motion', label: 'design & motion', items: designMotion },
 ];
 ---
 
@@ -79,15 +77,13 @@ const categories = [
         <div class="case-meta">
           <div class="meta-row"><span class="field-label">role</span> <span class="field-value">{p.role}</span></div>
           <div class="meta-row"><span class="field-label">year</span> <span class="field-value">{p.year}</span></div>
-          <div class="meta-row meta-tools"><span class="field-label">tools</span> <span class="field-value">{p.tools.map(t => <span class="tool-tag">{t}</span>)}</span></div>
+          <div class="meta-row meta-tools"><span class="field-label">tools</span> <span class="field-value">{p.tools.join(', ')}</span></div>
         </div>
         {p.externalLink && (
           <a href={p.externalLink} target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>
         )}
-        <div class="case-content">
-          <p.Content />
-        </div>
-        <a class="case-footer-link" href={`/projects/${p.slug}`}>open full page: /projects/{p.slug}</a>
+        <p class="case-teaser">{p.shortDescription}</p>
+        <a class="case-cta" href={`/projects/${p.slug}`}>view full case study &rarr;</a>
       </div>
     </template>
   ))
@@ -438,6 +434,92 @@ const categories = [
   @media (min-width: 769px) and (max-width: 1024px) {
     .projects-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ---- project window (modal content injected from the templates above) ---- */
+  .case-study {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .case-cover {
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    margin: -20px -20px 0;
+  }
+
+  .case-cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(40%) contrast(1.1);
+  }
+
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meta-row {
+    font-size: var(--fs-xs);
+  }
+
+  .meta-row .field-label {
+    color: var(--accent-green);
+    margin-right: 6px;
+  }
+
+  .meta-tools {
+    width: 100%;
+  }
+
+  .case-teaser {
+    margin: 0;
+    padding: 12px 14px;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-green);
+    background: var(--bg-tertiary);
+  }
+
+  .ext-link {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--accent-purple);
+    text-decoration: underline;
+  }
+
+  .case-cta {
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.05em;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .case-cta:hover,
+  .case-cta:focus-visible {
+    background: var(--accent-green);
+    color: var(--bg-primary);
+    outline: none;
+  }
+
+  @media (max-width: 640px) {
+    .case-cover {
+      margin: -16px -16px 0;
     }
   }
 </style>
