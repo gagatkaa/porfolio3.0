@@ -1,0 +1,138 @@
+---
+title: 'Sounds Like Antwerp'
+
+category: 'dev-web'
+
+shortDescription: 'An interactive platform that transforms Antwerp city data into generative music and visuals.'
+
+role: 'Lead Developer'
+
+year: 2026
+
+tools:
+  - 'Astro'
+  - 'React'
+  - 'JavaScript'
+  - 'Node.js'
+  - 'p5.js'
+  - 'Strudel'
+  - 'React Flow'
+  - 'GSAP'
+  - 'Vite'
+  - 'Vitest'
+
+coverImage: '../../assets/projects/sounds-like-antwerp/hero-image.png'
+
+galleryImages:
+  - '../../assets/projects/sounds-like-antwerp/laptop-mockup.png'
+  - '../../assets/projects/sounds-like-antwerp/no-code-tool.png'
+  - '../../assets/projects/sounds-like-antwerp/architecture.png'
+
+externalLink: 'https://int-4-algorave-antwerp.vercel.app'
+---
+
+import { Image } from 'astro:assets';
+import Callout from '../../components/Callout.astro';
+import laptopMockup from '../../assets/projects/sounds-like-antwerp/laptop-mockup.png';
+import noCodeTool from '../../assets/projects/sounds-like-antwerp/no-code-tool.png';
+import architecture from '../../assets/projects/sounds-like-antwerp/architecture.png';
+
+
+<div class="case-section">
+
+## Overview
+
+Sounds Like Antwerp was created for a Visit Antwerp brief focused on attracting younger urban travellers.
+
+Our concept explored Antwerp’s **24/7 Pulse** — using city data to show that Antwerp is constantly moving, changing and alive.
+
+The result was an interactive platform that transforms city activity into **generative music and visuals**, allowing users to experience the city before visiting it.
+
+<Callout type="key" title="key fact">
+  The concept: Antwerp’s **24/7 Pulse** — live city data turned into **generative music and visuals**, so visitors can feel the city before they arrive.
+</Callout>
+
+<Image src={laptopMockup} alt="Sounds Like Antwerp website" />
+
+</div>
+
+<div class="case-section">
+
+## My role
+
+I was the **Lead Developer** and owned most of the technical implementation.
+
+<Callout type="key" title="my role">
+  **Lead Developer** — I owned the system architecture, the city-data API, the generative sound engine and the no-code tool, working end-to-end rather than only frontend.
+</Callout>
+
+Together with our project manager, I designed the system architecture and built the main technical components:
+
+- public website
+- city-data API and proxy layer
+- generative sound engine
+- interactive visualisation layer
+- application state
+- React Flow-based no-code tool
+
+I worked across the full system rather than only on the frontend.
+
+</div>
+
+<div class="case-section">
+
+## City data, sound and visuals
+
+The platform was designed to consume external city-data sources and normalize them into a shared representation of Antwerp’s current **pulse**.
+
+Signals such as traffic, crowds, noise and events can then influence both the visual and audio experience.
+
+The sound engine was built with **Strudel**, while **p5.js** powers the generative visuals.
+
+</div>
+
+<div class="case-section">
+
+## No-code tool
+
+I also built a custom **React Flow-based no-code interface** for configuring parts of the experience without changing the underlying application code.
+
+This made it easier for the team to experiment with instruments, behaviours and creative mappings.
+
+<Image src={noCodeTool} alt="Sounds Like Antwerp no-code tool" />
+
+</div>
+
+<div class="case-section">
+
+## Architecture
+
+The system was split into independent layers for data, state, sound, visuals and presentation.
+
+External data flows through a dedicated proxy, is normalized, and is then consumed by the interactive engines.
+
+<Image src={architecture} alt="Sounds Like Antwerp technical architecture" />
+
+The main flow is:
+
+<Callout type="key" title="data flow">
+  **City data → API proxy → normalized pulse → application state → sound + visuals**
+</Callout>
+
+The website itself was built with **Astro**, using React for the more interactive parts.
+
+</div>
+
+<div class="case-section">
+
+## Outcome
+
+Sounds Like Antwerp became a working prototype for turning city infrastructure into an interactive cultural experience.
+
+For me, it was a chance to take ownership of a technically broad product — from architecture and APIs to frontend development, generative audio and creative tooling.
+
+<Callout type="note" title="takeaway">
+  City infrastructure, made audible and visible — a working prototype for a new kind of cultural experience.
+</Callout>
+
+</div>

@@ -1,0 +1,155 @@
+---
+title: 'Craft in Motion'
+
+category: 'dev-web'
+
+shortDescription: 'An interactive motion experience exploring the rhythm, performance and hidden exhaustion of working behind a bar.'
+
+role: 'Creative Developer'
+
+year: 2026
+
+tools:
+  - 'JavaScript'
+  - 'ml5.js'
+  - 'PoseNet'
+  - 'FaceAPI'
+  - 'GSAP'
+  - 'ScrollTrigger'
+  - 'Flip'
+  - 'MotionPathPlugin'
+
+coverImage: '../../assets/projects/craft-in-motion/cover.png'
+
+galleryImages:
+  - '../../assets/projects/craft-in-motion/mockup-01.png'
+  - '../../assets/projects/craft-in-motion/mockup-02.png'
+  - '../../assets/projects/craft-in-motion/mockup-03.png'
+
+externalLink: 'https://atomaszewska.be/app/index.html'
+---
+
+import { Image } from 'astro:assets';
+import Callout from '../../components/Callout.astro';
+import mockup01 from '../../assets/projects/craft-in-motion/mockup-01.png';
+import mockup02 from '../../assets/projects/craft-in-motion/mockup-02.png';
+import mockup03 from '../../assets/projects/craft-in-motion/mockup-03.png';
+
+<div class="case-section">
+
+## Overview
+
+**Craft in Motion** is an interactive experience about the contrast between performance and exhaustion behind the bar.
+
+Bartending can look effortless from the outside: precise movements, fast service, conversation and a constant smile. Behind that performance is repetition, physical fatigue and the pressure to stay composed while everything around you moves faster.
+
+The experience uses **body tracking, motion, sound and animation** to make that invisible effort tangible.
+
+<Callout type="key" title="key fact">
+  The concept: the **invisible effort behind the bar** — performance versus exhaustion — made tangible through body tracking, motion and sound.
+</Callout>
+
+<Image src={mockup01} alt="Craft in Motion interactive experience" />
+
+</div>
+
+<div class="case-section">
+
+## Personal context
+
+I worked as a bartender for four years.
+
+It was creative and social, but also physically and emotionally demanding. Even when exhausted, you keep moving, stay precise and continue performing for the people in front of you.
+
+Craft in Motion grew from that experience.
+
+Rather than recreating bartending literally, I wanted to capture its rhythm: **staying in control while pressure, fatigue and repetition gradually build around you.**
+
+</div>
+
+<div class="case-section">
+
+## Motion tracking
+
+The interaction uses **PoseNet through ml5.js** to track upper-body movement while the user performs a bartending motion with a physical cocktail shaker.
+
+The system looks at signals such as:
+
+- arm and elbow position
+- shaking tempo
+- movement consistency
+- changes in rhythm over time
+
+Those measurements feed a **live feedback panel** — shaking tempo, elbow angle as a proxy for “form”, and a smile reading from my custom ML model — rather than being presented as raw data.
+
+<Image src={mockup02} alt="Motion tracking interaction" />
+
+</div>
+
+<div class="case-section">
+
+## Performance under pressure
+
+A second layer uses a **custom machine-learning tool I built**: a smile model that calibrates eye-region dynamics across frames and estimates whether the expression reads more **artificial or genuine**.
+
+That reading drives a **performance or “mask” meter**.
+
+<Callout type="key" title="my own ml tool">
+  A custom **machine-learning smile model** I built and trained myself: it calibrates eye-region dynamics across frames and estimates whether a smile reads as **artificial or genuine**.
+</Callout>
+
+The intention is not to determine what the user truly feels, but to explore the contrast between physical effort and the composed expression expected during service.
+
+Around the interaction, a **service-pressure layer** stacks up the night: orders arrive with deadlines and ETAs that start to slip the moment your rhythm breaks.
+
+Recorded bar ambience, glasses, orders, ticket-machine sounds and short calls such as *“Faster!”* recreate the feeling of a busy service environment.
+
+</div>
+
+<div class="case-section">
+
+## Motion and storytelling
+
+I used **GSAP** to connect the interactive experiment with the surrounding narrative.
+
+ScrollTrigger controls the opening story, while Flip and MotionPathPlugin create transitions and movement throughout the experience.
+
+The visual system reacts alongside the body tracking, turning changes in movement and rhythm into part of the interface.
+
+<Image src={mockup03} alt="Craft in Motion visual experience" />
+
+</div>
+
+<div class="case-section">
+
+## Physical + digital
+
+A cocktail shaker — real or improvised — is used as part of the interaction.
+
+Combining a physical object with webcam-based tracking was important because I wanted the experience to feel performed rather than simply controlled with a mouse or keyboard.
+
+The final interaction connects:
+
+<Callout type="key" title="the interaction">
+  **Body movement → motion tracking → rhythm analysis → sound + visual feedback**
+</Callout>
+
+As the user loses consistency, the environment becomes more demanding, recreating some of the tension of working through a busy service.
+
+</div>
+
+<div class="case-section">
+
+## Outcome
+
+Craft in Motion turns a personal experience into an interactive one.
+
+Instead of explaining that bartending can be exhausting, the project asks the user to **perform, maintain rhythm and stay composed under increasing pressure**.
+
+For me, it was an experiment in using machine learning and motion design not simply to measure movement, but to communicate something human through interaction.
+
+<Callout type="note" title="takeaway">
+  Making the invisible part of the job feelable — a performative experiment where the user, not the explanation, carries the pressure.
+</Callout>
+
+</div>

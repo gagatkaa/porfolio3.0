@@ -1,32 +1,118 @@
 <footer class="taskbar" id="taskbar">
   <div class="taskbar-left">
-    <button class="start-btn" id="start-btn" aria-label="Start menu">▲ Start</button>
-  </div>
-  <div class="taskbar-center">
-    <button class="taskbar-btn" data-target="about">About</button>
-    <button class="taskbar-btn" data-target="projects">Projects</button>
-    <button class="taskbar-btn" data-target="hero-section">Terminal</button>
+    <button class="start-btn" id="start-btn" aria-label="Start menu">
+      <span class="start-icon">▲</span>
+      <span class="start-label">Start</span>
+    </button>
+    <div class="taskbar-tabs" id="taskbar-tabs"></div>
   </div>
   <div class="taskbar-right">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span id="theme-icon">☀</span>
+    </button>
     <span class="taskbar-clock" id="clock">00:00</span>
   </div>
 </footer>
 
 <nav class="start-menu" id="start-menu" aria-label="Start menu">
   <div class="start-menu-header">◆ Portfolio</div>
-  <a href="/" class="start-item">Home</a>
-  <a href="/#about-section" class="start-item">About</a>
-  <a href="/#projects-section" class="start-item">Projects</a>
-  <button class="start-item" id="start-terminal-btn">Terminal</button>
+  <button class="start-item" data-section="hero-section">Terminal</button>
+  <button class="start-item" data-section="about-section">About</button>
+  <button class="start-item" data-section="projects-section">Projects</button>
+  <button class="start-item" data-section="contact-section">Contact</button>
   <div class="start-menu-footer">Agata Tomaszewska · Digital Designer</div>
 </nav>
 
 <script>
   const startBtn = document.getElementById('start-btn');
   const startMenu = document.getElementById('start-menu');
-  const startTerminal = document.getElementById('start-terminal-btn');
-  const navBtns = document.querySelectorAll('.taskbar-btn');
   const clockEl = document.getElementById('clock');
+  const startItems = startMenu.querySelectorAll('[data-section]');
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeIcon = document.getElementById('theme-icon');
+  const tabsContainer = document.getElementById('taskbar-tabs');
+
+  const openTabs = new Map();
+
+  const TAB_DEFS = {
+    'about-section': 'about',
+    'projects-section': 'projects',
+    'contact-section': 'contact',
+  };
+
+  function openSection(id) {
+    const revealFn = window.revealSection;
+    if (revealFn) {
+      revealFn(id);
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.classList.remove('hidden-section');
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
+
+  function addTab(id) {
+    const label = TAB_DEFS[id];
+    if (!label) return;
+
+    const existing = openTabs.get(id);
+    if (existing) {
+      existing.classList.add('active');
+      return;
+    }
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tab-btn active';
+    btn.setAttribute('aria-label', `Open ${label}`);
+
+    const close = document.createElement('span');
+    close.className = 'tab-close';
+    close.textContent = '×';
+    close.setAttribute('aria-label', `Close ${label}`);
+    close.title = `Close ${label}`;
+
+    const text = document.createElement('span');
+    text.className = 'tab-label';
+    text.textContent = label;
+
+    btn.append(close, text);
+
+    btn.addEventListener('click', (e) => {
+      if (e.target.closest('.tab-close')) {
+        closeTab(id, btn);
+        return;
+      }
+      tabsContainer.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      openSection(id);
+    });
+
+    tabsContainer.appendChild(btn);
+    openTabs.set(id, btn);
+  }
+
+  function closeTab(id, btn) {
+    openTabs.delete(id);
+    btn.remove();
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('hidden-section');
+    }
+    const remaining = tabsContainer.querySelector('.tab-btn.active');
+    if (remaining) remaining.classList.remove('active');
+  }
+
+  function trackOpenSection(e) {
+    const id = e.detail && e.detail.id;
+    if (!id) return;
+    tabsContainer.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    addTab(id);
+  }
+
+  document.addEventListener('section-opened', trackOpenSection);
 
   function updateClock() {
     const now = new Date();
@@ -46,6 +132,27 @@
     startMenu.classList.remove('visible');
   }
 
+  function setTheme(mode) {
+    if (mode === 'light') {
+      document.documentElement.classList.add('light-mode');
+      themeIcon.textContent = '☾';
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.classList.remove('light-mode');
+      themeIcon.textContent = '☀';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
+
+  if (localStorage.getItem('theme') === 'light') {
+    themeIcon.textContent = '☾';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    const isLight = document.documentElement.classList.contains('light-mode');
+    setTheme(isLight ? 'dark' : 'light');
+  });
+
   startBtn.addEventListener('click', toggleStart);
 
   document.addEventListener('click', (e) => {
@@ -54,33 +161,18 @@
     }
   });
 
-  startTerminal.addEventListener('click', () => {
-    closeStart();
-    const el = document.getElementById('hero-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } else {
-      window.location.href = '/#hero-section';
-    }
-  });
-
-  navBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
+  startItems.forEach((item) => {
+    item.addEventListener('click', () => {
       closeStart();
-      const target = btn.dataset.target;
-      if (target === 'hero-section') {
-        const el = document.getElementById('hero-section');
-        if (el) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          window.location.href = `/#${target}`;
-        }
+      const sectionId = item.dataset.section;
+      const revealFn = window.revealSection;
+      if (revealFn) {
+        revealFn(sectionId);
       } else {
-        const el = document.getElementById(target);
+        const el = document.getElementById(sectionId);
         if (el) {
+          el.classList.remove('hidden-section');
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-          window.location.href = `/#${target}`;
         }
       }
     });
@@ -93,14 +185,14 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 36px;
+    height: 44px;
     z-index: 8000;
     background: var(--bg-tertiary);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
-    padding: 0 4px;
-    font-size: 0.75rem;
+    padding: 0 6px;
+    font-size: var(--fs-sm);
   }
 
   .taskbar-left,
@@ -110,77 +202,149 @@
     align-items: center;
   }
 
-  .taskbar-center {
+  .taskbar-left {
     flex: 1;
+    min-width: 0;
+  }
+
+  :global(.taskbar-tabs) {
     display: flex;
     align-items: center;
+    gap: 4px;
+    margin-left: 8px;
+    padding-left: 8px;
+    border-left: 1px solid var(--border);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  :global(.tab-btn) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    height: 32px;
+    max-width: 160px;
+    font-size: var(--fs-sm);
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+
+  :global(.tab-btn .tab-label) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :global(.tab-btn:hover),
+  :global(.tab-btn:focus-visible) {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-green);
+    outline: none;
+  }
+
+  :global(.tab-btn.active) {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
+  }
+
+  :global(.tab-close) {
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    gap: 2px;
+    width: 16px;
+    height: 16px;
+    font-size: 0.9rem;
+    line-height: 1;
+    color: var(--accent-purple);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  :global(.tab-close:hover) {
+    color: #fff;
+    background: #ff5f56;
   }
 
   .start-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 10px;
-    height: 28px;
-    font-size: 0.78rem;
+    gap: 6px;
+    padding: 4px 14px;
+    height: 32px;
+    font-size: var(--fs-sm);
     font-family: var(--font-mono);
     color: var(--accent-green);
     background: var(--bg-surface);
     border: 1px solid var(--border-light);
     cursor: pointer;
-    transition: background 0.1s;
+    transition: background 0.1s, border-color 0.2s;
   }
 
   .start-btn:hover,
   .start-btn:focus-visible {
     background: var(--bg-tertiary);
     border-color: var(--accent-green);
+    box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
   }
 
-  .taskbar-btn {
-    padding: 2px 10px;
-    height: 28px;
-    font-size: 0.72rem;
-    font-family: var(--font-mono);
-    color: var(--text-secondary);
+  .start-icon {
+    font-size: 0.75rem;
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    color: var(--accent-green);
     background: transparent;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: color 0.1s, background 0.1s, border-color 0.1s;
+    transition: background 0.1s, border-color 0.2s;
+    font-family: var(--font-mono);
+    line-height: 1;
   }
 
-  .taskbar-btn:hover,
-  .taskbar-btn:focus-visible {
-    color: var(--text-primary);
+  .theme-toggle:hover,
+  .theme-toggle:focus-visible {
     background: var(--bg-surface);
-    border-color: var(--border);
+    border-color: var(--accent-green);
   }
 
   .taskbar-clock {
-    padding: 2px 10px;
-    height: 28px;
+    padding: 4px 12px;
+    height: 32px;
     display: flex;
     align-items: center;
-    font-size: 0.72rem;
+    font-size: var(--fs-sm);
     color: var(--accent-green);
     border-left: 1px solid var(--border);
-    margin-left: 4px;
     font-family: var(--font-mono);
   }
 
   .start-menu {
     position: fixed;
-    bottom: 40px;
-    left: 4px;
+    bottom: 48px;
+    left: 6px;
     z-index: 8001;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
     border-bottom: none;
-    min-width: 180px;
+    min-width: 200px;
     display: none;
     flex-direction: column;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
   }
 
   .start-menu.visible {
@@ -188,15 +352,15 @@
   }
 
   .start-menu-header {
-    padding: 10px 14px 6px;
-    font-size: 0.8rem;
+    padding: 12px 16px 8px;
+    font-size: var(--fs-sm);
     color: var(--accent-purple);
     border-bottom: 1px solid var(--border);
   }
 
   .start-item {
-    padding: 8px 14px;
-    font-size: 0.78rem;
+    padding: 10px 16px;
+    font-size: var(--fs-sm);
     font-family: var(--font-mono);
     color: var(--text-primary);
     text-decoration: none;
@@ -214,8 +378,8 @@
   }
 
   .start-menu-footer {
-    padding: 6px 14px 8px;
-    font-size: 0.65rem;
+    padding: 8px 16px 10px;
+    font-size: var(--fs-2xs);
     color: var(--text-dim);
     border-top: 1px solid var(--border);
     margin-top: 4px;
@@ -223,32 +387,57 @@
 
   @media (max-width: 640px) {
     .taskbar {
-      height: 32px;
-      font-size: 0.65rem;
+      height: 38px;
+      font-size: 0.75rem;
       padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
     .start-btn {
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      height: 24px;
+      font-size: 0.78rem;
+      padding: 3px 10px;
+      height: 28px;
     }
 
-    .taskbar-btn {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      height: 24px;
+    .theme-toggle {
+      width: 28px;
+      height: 28px;
+      font-size: 0.85rem;
     }
 
     .taskbar-clock {
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      height: 24px;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      height: 28px;
+    }
+
+    :global(.taskbar-tabs) {
+      margin-left: 6px;
+      padding-left: 6px;
+      gap: 3px;
+    }
+
+    :global(.tab-btn) {
+      height: 28px;
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      max-width: 120px;
     }
 
     .start-menu {
-      min-width: 150px;
-      bottom: 36px;
+      min-width: 170px;
+      bottom: 42px;
+    }
+
+    .start-item {
+      padding: 8px 14px;
+      font-size: 0.76rem;
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .taskbar,
+    .start-menu {
+      display: none;
     }
   }
 </style>

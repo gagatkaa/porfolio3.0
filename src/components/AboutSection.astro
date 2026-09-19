@@ -1,65 +1,725 @@
-<div class="about-section section" id="about-section">
-  <div class="terminal-window">
+---
+import mePhoto from '../assets/me.png';
+import { socialLinks, getSocialIcon } from '../data/social';
+import { getSkillIcon } from '../data/skills';
+
+const photoUrl = mePhoto.src;
+const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const resolvedSocials = socialLinks.map(s => ({
+  ...s,
+  url: s.label === 'cv' ? cvUrl : s.url,
+  icon: getSocialIcon(s.label),
+}));
+
+const skillCategories = [
+  {
+    key: 'design',
+    name: 'Design',
+    tags: ['Figma', 'Adobe Creative Suite', 'UI/UX Design', 'Wireframing & Prototyping', 'Visual Identity', 'Editorial Design', 'Layout Design'],
+  },
+  {
+    key: 'development',
+    name: 'Development',
+    tags: ['HTML / CSS / JS', 'React', 'Astro', 'PHP', 'Git / GitHub', 'Strapi'],
+  },
+  {
+    key: '3d',
+    name: '3D & Motion',
+    tags: ['Blender', 'Maya', 'After Effects', 'Motion Design', 'Substance Painter', 'Basics of Zbrush'],
+  },
+  {
+    key: 'ai',
+    name: 'AI & Workflow',
+    tags: ['AI-assisted Design', 'Prompt Engineering', 'AI Workflow Automation'],
+  },
+];
+
+const bioText = [
+  "I'm a Digital Designer from Poland, currently studying at Howest | Devine in Kortrijk, Belgium. My work is driven by visual storytelling, combining colour, form, motion, and the space where art meets technology.",
+  "Before joining Devine, I graduated from a technical printing and design school in Poland and later completed my first year of Game Graphic Production at Howest DAE. Today, I'm focused on web design and development — a natural fit for both my creative and technical interests.",
+  "I'm curious by nature and enjoy experimenting across different tools, mediums, and ideas. Rather than limiting myself to one discipline, I like exploring a bit of everything and letting those influences come together in my work.",
+];
+
+const profileMeta = [
+  { key: 'user', val: 'Agata Tomaszewska' },
+  { key: 'role', val: 'Digital Designer' },
+  { key: 'origin', val: 'Poland' },
+  { key: 'study', val: 'Howest DEVINE · Kortrijk, Belgium' },
+  { key: 'freelance', val: 'active since 2019' },
+];
+
+const interests = ['Bouldering', 'Traveling', 'Snowboarding', 'Games', 'Music', 'Movies'];
+
+const experience = [
+  {
+    date: '2019 — Present',
+    title: 'Freelance Designer',
+    desc: 'Selected client and academic projects. Created print and digital materials including flyers, posters, business cards, CVs, infographics, and social media assets.',
+  },
+  {
+    date: '2022 — Present',
+    title: 'Bartender / Waitress (Part-time)',
+    desc: 'Worked alongside full-time studies, managing customer service, multitasking in a fast-paced environment, and staying organized under pressure.',
+  },
+];
+
+const education = [
+  {
+    date: '2023 — Present',
+    title: 'Howest University of Applied Sciences — DEVINE',
+    desc: 'Kortrijk, Belgium — B.A. Digital Design and Development',
+  },
+  {
+    date: '2022 — 2023',
+    title: 'Howest University of Applied Sciences — DAE',
+    desc: 'Kortrijk, Belgium — Coursework in Game Graphic Production',
+  },
+  {
+    date: '2017 — 2022',
+    title: 'Technical School No. 15',
+    desc: 'Wrocław, Poland — Technician Diploma in Graphic Design & Digital Printing',
+  },
+];
+
+const tabs = [
+  { id: 'bio', label: 'bio', title: 'about.txt' },
+  { id: 'skills', label: 'skills', title: 'skills.txt' },
+  { id: 'experience', label: 'experience', title: 'experience.txt' },
+  { id: 'education', label: 'education', title: 'education.txt' },
+];
+---
+
+<div class="about-section section hidden-section" id="about-section">
+  <h2 class="about-heading">
+    <span class="about-heading-accent">&gt;</span> about
+    <span class="about-heading-count">profile.txt</span>
+  </h2>
+
+  <div class="terminal-window" id="about-window">
     <div class="terminal-titlebar">
       <span class="terminal-dots">
         <span class="dot close"></span>
         <span class="dot minimize"></span>
         <span class="dot maximize"></span>
       </span>
-      <span class="terminal-title">about.txt — nano</span>
+      <span class="terminal-title" id="about-window-title">about — about.txt</span>
     </div>
-    <div class="terminal-body">
-      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat about.txt</span>
-<span class="terminal-output">
-  A multidisciplinary digital designer working at the intersection of
-  visual identity, editorial design, web experiences, and creative
-  technology. I explore how form and function can coexist in
-  minimal, intentional design systems.
 
-  My practice spans brand identity, interactive installations,
-  typographic systems, and web development — always with a focus
-  on clarity, concept, and craft.
-</span></pre>
+    <div class="terminal-body about-body">
+      <div class="about-tabs" id="about-tabs" role="tablist" aria-label="About sections">
+        {tabs.map((tab, index) => (
+          <button
+            type="button"
+            class={index === 0 ? 'about-tab active' : 'about-tab'}
+            id={`about-tab-${tab.id}`}
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`about-panel-${tab.id}`}
+            data-panel={tab.id}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div id="about-panel-bio" class="about-panel" role="tabpanel" aria-labelledby="about-tab-bio" data-title="about.txt">
+        <p class="bio-prompt">
+          <span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat about.txt</span>
+        </p>
+
+        <div class="profile-meta" role="list">
+          {profileMeta.map(meta => (
+            <div class="profile-row" role="listitem">
+              <span class="meta-key">{meta.key}</span>
+              <span class="meta-sep">:</span>
+              <span class="meta-val">{meta.val}</span>
+            </div>
+          ))}
+        </div>
+
+        <div class="bio-grid">
+          <figure class="bio-photo-figure">
+            <img src={photoUrl} alt="Portrait of Agata Tomaszewska" class="bio-photo" loading="lazy" />
+            <figcaption class="bio-photo-caption">agata@portfolio:~$</figcaption>
+          </figure>
+
+          <div class="bio-text">
+            <h3 class="about-subheading">$ whoami</h3>
+            {bioText.map(text => (
+              <p class="bio-paragraph">{text}</p>
+            ))}
+          </div>
+        </div>
+
+        <h3 class="about-subheading">$ interests</h3>
+        <ul class="interest-list">
+          {interests.map(interest => (
+            <li class="interest-pill">{interest}</li>
+          ))}
+        </ul>
+
+        <h3 class="about-subheading">$ connect</h3>
+        <div class="about-socials">
+          {resolvedSocials.map(s => (
+            <a
+              href={s.url}
+              class="about-social"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span class="about-social-icon" aria-hidden="true" set:html={s.icon} />
+              <span class="about-social-label">{s.label}</span>
+              <span class="about-social-sep">:</span>
+              <span class="about-social-value">{s.display}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div id="about-panel-skills" class="about-panel" role="tabpanel" aria-labelledby="about-tab-skills" data-title="skills.txt" hidden>
+        <h3 class="about-subheading">$ skills</h3>
+        <div class="about-skills">
+          {skillCategories.map(cat => (
+            <div class="about-skill-card">
+              <div class="skill-header">
+                <span class="skill-icon" aria-hidden="true" set:html={getSkillIcon(cat.key)} />
+                <h4 class="skill-name">{cat.name}</h4>
+              </div>
+              <ul class="skill-list">
+                {cat.tags.map(tag => (
+                  <li class="skill-item">{tag}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div id="about-panel-experience" class="about-panel" role="tabpanel" aria-labelledby="about-tab-experience" data-title="experience.txt" hidden>
+        <h3 class="about-subheading">$ experience</h3>
+        <div class="about-timeline">
+          {experience.map(entry => (
+            <div class="timeline-entry">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-date">{entry.date}</div>
+                <div class="timeline-title">{entry.title}</div>
+                <p class="timeline-desc">{entry.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div id="about-panel-education" class="about-panel" role="tabpanel" aria-labelledby="about-tab-education" data-title="education.txt" hidden>
+        <h3 class="about-subheading">$ education</h3>
+        <div class="about-timeline">
+          {education.map(entry => (
+            <div class="timeline-entry">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-date">{entry.date}</div>
+                <div class="timeline-title">{entry.title}</div>
+                <p class="timeline-desc">{entry.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
   import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(ScrollTrigger);
+  const section = document.getElementById('about-section');
+  const windowEl = document.getElementById('about-window');
+  const windowTitle = document.getElementById('about-window-title');
+  const tabList = document.getElementById('about-tabs');
+  const tabs = [...tabList.querySelectorAll('.about-tab')];
+  const panels = tabs.map(tab => document.getElementById(`about-panel-${tab.dataset.panel}`));
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function animateAbout() {
-    const el = document.getElementById('about-section');
-    if (!el || prefersReduced) return;
-    gsap.from(el, {
+  function activateTab(tab) {
+    const id = tab.dataset.panel;
+    let activePanel = null;
+
+    tabs.forEach(t => {
+      const isActive = t === tab;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', String(isActive));
+    });
+
+    panels.forEach((panel, index) => {
+      const isActive = tabs[index] === tab;
+      panel.hidden = !isActive;
+      if (isActive) activePanel = panel;
+    });
+
+    windowTitle.textContent = `about — ${tab.dataset.panel}`;
+
+    if (activePanel && !prefersReduced) {
+      gsap.fromTo(
+        activePanel,
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+      );
+    }
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => activateTab(tab));
+  });
+
+  tabList.addEventListener('keydown', (e) => {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+    e.preventDefault();
+
+    const index = tabs.indexOf(document.activeElement);
+    let next = index;
+
+    if (e.key === 'ArrowRight') next = (index + 1) % tabs.length;
+    else if (e.key === 'ArrowLeft') next = (index - 1 + tabs.length) % tabs.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = tabs.length - 1;
+
+    activateTab(tabs[next]);
+    tabs[next].focus();
+  });
+
+  let hasAnimated = false;
+
+  function animateReveal() {
+    if (hasAnimated) return;
+    hasAnimated = true;
+    if (prefersReduced) return;
+
+    gsap.from(windowEl, {
       opacity: 0,
-      y: 40,
-      duration: 0.8,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: el,
-        start: 'top 85%',
-      },
+      y: 24,
+      scale: 0.98,
+      duration: 0.45,
+      ease: 'power2.out',
+    });
+    gsap.from(tabList, {
+      opacity: 0,
+      duration: 0.3,
+      delay: 0.1,
+      ease: 'power2.out',
     });
   }
 
-  document.addEventListener('boot-complete', () => {
-    setTimeout(animateAbout, 200);
+  const observer = new MutationObserver(() => {
+    if (!section.classList.contains('hidden-section')) {
+      observer.disconnect();
+      animateReveal();
+    }
   });
+  observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+
+  if (!section.classList.contains('hidden-section')) {
+    observer.disconnect();
+    animateReveal();
+  }
 </script>
 
 <style>
   .about-section {
     padding-top: 40px;
-    padding-bottom: 40px;
+    padding-bottom: 80px;
   }
 
-  .terminal-output {
+  .about-heading {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0 0 24px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .about-heading-accent {
+    color: var(--accent-green);
+  }
+
+  .about-heading-count {
+    font-size: var(--fs-2xs);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  #about-window {
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 12px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  /* ---- tabs ---- */
+
+  .about-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .about-tab {
+    flex-shrink: 0;
+    padding: 5px 14px;
+    height: 30px;
+    font-size: var(--fs-xs);
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.2s, color 0.2s;
+  }
+
+  .about-tab:hover,
+  .about-tab:focus-visible {
+    background: var(--bg-tertiary);
+    border-color: var(--accent-green);
+    color: var(--text-primary);
+    outline: none;
+  }
+
+  .about-tab.active {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+    box-shadow: 0 0 8px var(--accent-green-glow);
+  }
+
+  /* ---- shared panel ---- */
+
+  .about-panel {
+    min-height: 220px;
+  }
+
+  .about-subheading {
+    display: inline-block;
+    margin: 24px 0 12px;
+    font-size: var(--fs-sm);
+    font-weight: 400;
+    color: var(--accent-green);
+    letter-spacing: 0.02em;
+  }
+
+  .about-panel > .about-subheading:first-child {
+    margin-top: 0;
+  }
+
+  /* ---- bio ---- */
+
+  .bio-prompt {
+    margin: 0 0 18px;
+    font-size: var(--fs-sm);
+  }
+
+  .profile-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 22px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-purple);
+    background: var(--bg-secondary);
+  }
+
+  .profile-row {
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+  }
+
+  .meta-key {
+    color: var(--accent-green);
+    min-width: 84px;
+    display: inline-block;
+  }
+
+  .meta-sep {
+    color: var(--text-dim);
+    margin-right: 8px;
+  }
+
+  .meta-val {
+    color: var(--text-primary);
+  }
+
+  .bio-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 8px;
+  }
+
+  .bio-photo-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bio-photo {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    filter: grayscale(35%) contrast(1.05);
+    transition: filter 0.4s, box-shadow 0.4s, border-color 0.4s;
+  }
+
+  .bio-photo-figure:hover .bio-photo {
+    filter: grayscale(0%) contrast(1);
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 18px var(--accent-purple-glow);
+  }
+
+  .bio-photo-caption {
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+  }
+
+  .bio-text .bio-paragraph {
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0 0 10px;
+  }
+
+  .interest-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .interest-pill {
+    padding: 3px 10px;
+    font-size: var(--fs-2xs);
+    color: var(--accent-purple);
+    border: 1px solid var(--accent-purple-dim);
+    background: rgba(179, 0, 255, 0.06);
+    letter-spacing: 0.03em;
+  }
+
+  .about-socials {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .about-social {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.6;
+    width: fit-content;
+    text-decoration: none;
+  }
+
+  .about-social-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--accent-purple);
+    line-height: 0;
+  }
+
+  .about-social-icon svg {
     display: block;
-    padding-top: 8px;
+  }
+
+  .about-social-label {
+    color: var(--accent-green);
+    font-size: var(--fs-xs);
+    min-width: 72px;
+  }
+
+  .about-social-sep {
+    color: var(--text-dim);
+  }
+
+  .about-social-value {
+    color: var(--text-secondary);
+    font-size: var(--fs-xs);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+
+  .about-social:hover .about-social-value {
+    color: var(--accent-green);
+  }
+
+  /* ---- skills ---- */
+
+  .about-skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+  }
+
+  .about-skill-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-green);
+    background: var(--bg-secondary);
+  }
+
+  .skill-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .skill-icon {
+    display: inline-flex;
+    align-items: center;
+    color: var(--accent-green);
+    line-height: 0;
+  }
+
+  .skill-icon svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+  }
+
+  .skill-name {
+    color: var(--accent-purple);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0;
+    padding: 0;
+    padding-left: 18px;
+    list-style: none;
+  }
+
+  .skill-item {
+    position: relative;
+    color: var(--text-secondary);
+    font-size: var(--fs-2xs);
+    line-height: 1.5;
+  }
+
+  .skill-item::before {
+    content: '>';
+    position: absolute;
+    left: -14px;
+    color: var(--accent-green);
+    font-size: var(--fs-2xs);
+  }
+
+  /* ---- timelines ---- */
+
+  .about-timeline {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-entry {
+    display: flex;
+    gap: 12px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+
+  .timeline-entry:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 14px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-dot {
+    width: 11px;
+    height: 11px;
+    min-width: 11px;
+    border-radius: 50%;
+    background: var(--accent-purple);
+    border: 1px solid var(--accent-purple-dim);
+    margin-top: 3px;
+  }
+
+  .timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .timeline-date {
+    color: var(--text-dim);
+    font-size: var(--fs-2xs);
+  }
+
+  .timeline-title {
+    color: var(--text-primary);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+  }
+
+  .timeline-desc {
+    color: var(--text-secondary);
+    font-size: var(--fs-2xs);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .about-section {
+      padding-top: 24px;
+      padding-bottom: 48px;
+    }
+
+    .bio-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .bio-photo-figure {
+      align-items: flex-start;
+    }
+
+    .bio-photo {
+      max-width: 180px;
+    }
+
+    .about-tab {
+      padding: 4px 12px;
+      height: 28px;
+    }
+
+    .about-skill-card {
+      padding: 10px 12px;
+    }
   }
 </style>

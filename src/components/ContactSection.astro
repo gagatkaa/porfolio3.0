@@ -1,0 +1,93 @@
+---
+import { socialLinks, getSocialIcon } from '../data/social';
+const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const contactEntries = [
+  { label: 'email', url: 'mailto:atomaszewska361@gmail.com', display: 'atomaszewska361@gmail.com', isExternal: false },
+  ...socialLinks.map(s => ({
+    label: s.label,
+    url: s.label === 'cv' ? cvUrl : s.url,
+    display: s.display,
+    isExternal: true,
+  })),
+];
+---
+
+<div class="contact-section section hidden-section" id="contact-section">
+  <div class="terminal-window">
+    <div class="terminal-titlebar">
+      <span class="terminal-dots">
+        <span class="dot close"></span>
+        <span class="dot minimize"></span>
+        <span class="dot maximize"></span>
+      </span>
+      <span class="terminal-title">contact — mail</span>
+    </div>
+    <div class="terminal-body">
+      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">cat contact.txt</span>
+<span class="terminal-output">
+  {
+    contactEntries.map(entry => (
+      <span class="contact-row">
+        <span class="contact-icon" aria-hidden="true" set:html={getSocialIcon(entry.label === 'email' ? 'mail' : entry.label)} />
+        <span class="contact-label">{entry.label}</span>
+        <span class="contact-sep">:</span>
+        <a href={entry.url} class="contact-value" {...(entry.isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{entry.display}</a>
+      </span>
+    ))
+  }
+</span></pre>
+    </div>
+  </div>
+</div>
+
+<style>
+  .contact-section {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  .terminal-output {
+    display: block;
+    padding-top: 8px;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .contact-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 6px;
+    color: var(--accent-purple);
+    line-height: 0;
+  }
+
+  .contact-icon svg {
+    display: block;
+  }
+
+  .contact-label {
+    width: 72px;
+    color: var(--accent-green);
+    font-size: var(--fs-sm);
+  }
+
+  .contact-sep {
+    color: var(--text-dim);
+    margin-right: 8px;
+  }
+
+  .contact-value {
+    color: var(--accent-purple);
+    font-size: var(--fs-sm);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .contact-value:hover {
+    color: var(--accent-green);
+  }
+</style>

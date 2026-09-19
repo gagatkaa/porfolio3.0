@@ -1,7 +1,21 @@
+---
+interface Props {
+  count?: number;
+}
+const { count = 0 } = Astro.props;
+---
+
 <div class="window-overlay" id="project-window-overlay" tabindex="-1" aria-hidden="true">
   <div class="project-window" id="project-window" role="dialog" aria-modal="true" aria-label="Project details">
     <div class="window-titlebar" id="window-drag-handle">
       <span class="window-title" id="window-title">Project</span>
+      {count > 1 && (
+        <span class="window-nav">
+          <button class="window-nav-btn" id="window-prev-btn" aria-label="Previous project" tabindex="0">&lsaquo;</button>
+          <span class="window-counter" id="window-counter"></span>
+          <button class="window-nav-btn" id="window-next-btn" aria-label="Next project" tabindex="0">&rsaquo;</button>
+        </span>
+      )}
       <button class="window-close" id="window-close-btn" aria-label="Close project window">&times;</button>
     </div>
     <div class="window-body" id="window-body"></div>
@@ -56,8 +70,52 @@
 
   .window-title {
     color: var(--text-primary);
-    font-size: 0.8rem;
+    font-size: var(--fs-sm);
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .window-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .window-nav-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    border: 1px solid var(--border);
+    background: var(--bg-surface);
+    border-radius: 0;
+    transition: background 0.15s, color 0.15s;
+    line-height: 1;
+    cursor: pointer;
+    font-family: var(--font-mono);
+  }
+
+  .window-nav-btn:hover,
+  .window-nav-btn:focus-visible {
+    color: var(--accent-green);
+    border-color: var(--accent-green);
+    outline: none;
+  }
+
+  .window-counter {
+    color: var(--text-dim);
+    font-size: var(--fs-xs);
+    min-width: 34px;
+    text-align: center;
+    user-select: none;
   }
 
   .window-close {
@@ -85,7 +143,7 @@
     padding: 20px;
     overflow-y: auto;
     color: var(--text-primary);
-    font-size: 0.875rem;
+    font-size: var(--fs-base);
     line-height: 1.7;
   }
 
@@ -100,7 +158,7 @@
 
   .window-body .field-label {
     color: var(--accent-green);
-    font-size: 0.75rem;
+    font-size: var(--fs-xs);
     display: block;
     margin-bottom: 2px;
   }
@@ -114,22 +172,6 @@
     padding-top: 16px;
     border-top: 1px solid var(--border);
     color: var(--text-secondary);
-  }
-
-  .window-body .ext-link {
-    display: inline-block;
-    margin-top: 16px;
-    color: var(--accent-purple);
-    text-decoration: underline;
-  }
-
-  .tool-tag {
-    display: inline-block;
-    padding: 2px 8px;
-    margin: 2px 4px 2px 0;
-    border: 1px solid var(--border);
-    font-size: 0.7rem;
-    color: var(--accent-purple);
   }
 
   @media (max-width: 640px) {
@@ -152,8 +194,12 @@
 
     .window-body {
       padding: 16px;
-      font-size: 0.8rem;
       padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+    }
+
+    .window-nav-btn {
+      width: 28px;
+      height: 28px;
     }
   }
 </style>

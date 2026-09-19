@@ -1,54 +1,99 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
+import ExtrasGallery from './ExtrasGallery.astro';
 
 const projects = await getCollection('projects');
+const designMotion = projects.filter(p => p.data.category === 'design-motion');
+const devWeb = projects.filter(p => p.data.category === 'dev-web');
+const ordered = [...devWeb, ...designMotion];
 
-const projectsData = projects.map(p => ({
-  slug: p.id.replace(/\.(md|mdx)$/, ''),
-  title: p.data.title,
-  shortDescription: p.data.shortDescription,
-  role: p.data.role,
-  year: p.data.year,
-  tools: p.data.tools,
-  externalLink: p.data.externalLink,
-}));
+const rendered = [];
+for (let i = 0; i < ordered.length; i++) {
+  const p = ordered[i];
+  rendered.push({
+    slug: p.id.replace(/\.(md|mdx)$/, ''),
+    title: p.data.title,
+    shortDescription: p.data.shortDescription,
+    role: p.data.role,
+    year: p.data.year,
+    tools: p.data.tools,
+    coverImage: p.data.coverImage,
+    externalLink: p.data.externalLink,
+  });
+}
+
+const projectsData = rendered;
+const categories = [
+  { key: 'dev-web', label: 'dev / web', items: devWeb },
+  { key: 'design-motion', label: 'design & motion', items: designMotion },
+];
 ---
 
-<section class="projects-section section" id="projects-section">
-  <div class="terminal-window projects-terminal">
-    <div class="terminal-titlebar">
-      <span class="terminal-dots">
-        <span class="dot close"></span>
-        <span class="dot minimize"></span>
-        <span class="dot maximize"></span>
-      </span>
-      <span class="terminal-title">projects — bash</span>
-    </div>
-    <div class="terminal-body">
-      <pre><span class="terminal-prompt">user@portfolio:~$</span> <span class="terminal-command">ls -la projects/</span>
-<span class="terminal-output">total {projects.length}
-{projects.map((p, i) => `${String(i + 1).padStart(3)}  drwxr-xr-x  2 user  staff  1024  draft  ${p.data.title.toLowerCase().replace(/\s+/g, '-')}`).join('\n')}</span></pre>
-    </div>
-  </div>
+<section class="projects-section section hidden-section" id="projects-section">
+  <h2 class="section-heading">
+    <span class="heading-accent">&gt;</span> projects
+    <span class="heading-count">{projectsData.length} files</span>
+  </h2>
 
-  <div class="projects-grid">
-    {projects.map((project, index) => (
-      <ProjectCard title={project.data.title} index={index} />
-    ))}
-  </div>
+  {categories.map(cat => {
+    const startIndex = ordered.indexOf(cat.items[0]);
+    return (
+      <div class="projects-category" data-category={cat.key}>
+        <h3 class="category-heading">
+          <span class="heading-accent">&gt;</span> {cat.label}
+          <span class="heading-count">{cat.items.length} files</span>
+        </h3>
+        <div class="projects-grid">
+          {cat.items.map((project, i) => (
+            <ProjectCard
+              title={project.data.title}
+              shortDescription={project.data.shortDescription}
+              tools={project.data.tools}
+              coverImage={project.data.coverImage}
+              index={startIndex + i}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  })}
+
+  <ExtrasGallery />
 </section>
 
-<ProjectWindow />
+<ProjectWindow count={projectsData.length} />
+
+{
+  rendered.map((p, index) => (
+    <template id={`project-template-${index}`}>
+      <div class="case-study">
+        {p.coverImage && (
+          <div class="case-cover">
+            <Image src={p.coverImage} alt="" loading="lazy" />
+          </div>
+        )}
+        <div class="case-meta">
+          <div class="meta-row"><span class="field-label">role</span> <span class="field-value">{p.role}</span></div>
+          <div class="meta-row"><span class="field-label">year</span> <span class="field-value">{p.year}</span></div>
+          <div class="meta-row meta-tools"><span class="field-label">tools</span> <span class="field-value">{p.tools.join(', ')}</span></div>
+        </div>
+        {p.externalLink && (
+          <a href={p.externalLink} target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>
+        )}
+        <p class="case-teaser">{p.shortDescription}</p>
+        <a class="case-cta" href={`/projects/${p.slug}`}>view full case study &rarr;</a>
+      </div>
+    </template>
+  ))
+}
 
 <script define:vars={{ pd: projectsData }}>window.__pd = pd;</script>
 
 <script>
   import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-  gsap.registerPlugin(ScrollTrigger);
 
   const projectsData = window.__pd;
 
@@ -58,44 +103,111 @@ const projectsData = projects.map(p => ({
   const bodyEl = document.getElementById('window-body');
   const closeBtn = document.getElementById('window-close-btn');
   const dragHandle = document.getElementById('window-drag-handle');
-  const cards = document.querySelectorAll('.project-card');
+  const prevBtn = document.getElementById('window-prev-btn');
+  const nextBtn = document.getElementById('window-next-btn');
+  const counterEl = document.getElementById('window-counter');
+  const section = document.getElementById('projects-section');
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let isOpen = false;
   let isDragging = false;
   let dragStartX, dragStartY, winStartX, winStartY;
+  let hasAnimated = false;
+  let currentIndex = 0;
 
-  cards.forEach((card) => {
-    card.addEventListener('click', () => {
-      const index = parseInt(card.dataset.projectIndex);
-      openProject(index);
-    });
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        const index = parseInt(card.dataset.projectIndex);
-        openProject(index);
+  /* ---- stagger on reveal ---- */
+  if (section && !prefersReduced) {
+    const showCards = () => {
+      const cards = section.querySelectorAll('.project-card');
+      cards.forEach(c => {
+        c.style.opacity = '';
+        c.style.transform = '';
+      });
+    };
+    const observer = new MutationObserver(() => {
+      if (!section.classList.contains('hidden-section') && !hasAnimated) {
+        hasAnimated = true;
+        observer.disconnect();
+        // If the section is still hidden (display:none) at reveal time,
+        // skip the animation entirely so cards are never left invisible.
+        if (section.offsetParent === null) {
+          showCards();
+          return;
+        }
+        const cards = section.querySelectorAll('.project-card');
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 40, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.55,
+            stagger: { each: 0.12, from: 'start' },
+            ease: 'power3.out',
+            onComplete: showCards,
+            onInterrupt: showCards,
+          }
+        );
+        // Safety net: never leave cards stuck invisible.
+        window.setTimeout(showCards, 3000);
       }
     });
-  });
+    observer.observe(section, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  /* ---- card click ---- */
+  const allCards = () => document.querySelectorAll('.project-card');
+  function bindCards() {
+    allCards().forEach((card) => {
+      card.addEventListener('click', () => {
+        const index = parseInt(card.dataset.projectIndex);
+        openProject(index);
+      });
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const index = parseInt(card.dataset.projectIndex);
+          openProject(index);
+        }
+      });
+    });
+  }
+  bindCards();
 
   function openProject(index) {
     const p = projectsData[index];
     if (!p) return;
 
+    const card = allCards()[index];
+
+    if (!prefersReduced && card) {
+      gsap.to(card, {
+        scale: 0.95,
+        opacity: 0.6,
+        duration: 0.15,
+        ease: 'power2.in',
+        onComplete: () => {
+          gsap.set(card, { clearProps: 'all' });
+          showWindow(index);
+        },
+      });
+    } else {
+      showWindow(index);
+    }
+  }
+
+  function showWindow(index) {
+    currentIndex = index;
+    const p = projectsData[index];
+    if (!p) return;
+
     titleEl.textContent = p.title;
 
-    bodyEl.innerHTML = `
-      <div class="field"><span class="field-label">role</span><span class="field-value">${escHtml(p.role)}</span></div>
-      <div class="field"><span class="field-label">year</span><span class="field-value">${p.year}</span></div>
-      <div class="field"><span class="field-label">tools</span><span class="field-value">${p.tools.map(t => `<span class="tool-tag">${escHtml(t)}</span>`).join('')}</span></div>
-      ${p.shortDescription ? `<div class="description">${escHtml(p.shortDescription)}</div>` : ''}
-      ${p.externalLink ? `<a href="${escHtml(p.externalLink)}" target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>` : ''}
-      <div class="field" style="margin-top:16px">
-        <a href="/projects/${escHtml(p.slug)}" class="ext-link">[ view full case study → ]</a>
-      </div>
-    `;
+    const tpl = document.getElementById('project-template-' + index);
+    bodyEl.innerHTML = tpl ? tpl.innerHTML : '';
+    if (counterEl) counterEl.textContent = `${index + 1} / ${projectsData.length}`;
 
     overlay.classList.add('visible');
 
@@ -111,6 +223,29 @@ const projectsData = projects.map(p => ({
     document.addEventListener('keydown', handleKeydown);
     overlay.focus();
     document.body.style.overflow = 'hidden';
+  }
+
+  function navigate(offset) {
+    if (!isOpen) return;
+    const next = (currentIndex + offset + projectsData.length) % projectsData.length;
+    if (!prefersReduced) {
+      gsap.to(windowEl, {
+        x: -offset * 24,
+        opacity: 0,
+        duration: 0.18,
+        ease: 'power2.in',
+        onComplete: () => {
+          windowEl.style.transform = '';
+          showWindow(next);
+          gsap.fromTo(windowEl,
+            { x: offset * 24, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.22, ease: 'power2.out' }
+          );
+        },
+      });
+    } else {
+      showWindow(next);
+    }
   }
 
   function closeProject() {
@@ -143,6 +278,16 @@ const projectsData = projects.map(p => ({
       closeProject();
       return;
     }
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      navigate(-1);
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      navigate(1);
+      return;
+    }
     if (e.key === 'Tab') {
       const focusable = overlay.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -161,6 +306,8 @@ const projectsData = projects.map(p => ({
   }
 
   closeBtn.addEventListener('click', closeProject);
+  if (prevBtn) prevBtn.addEventListener('click', () => navigate(-1));
+  if (nextBtn) nextBtn.addEventListener('click', () => navigate(1));
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) closeProject();
   });
@@ -169,12 +316,6 @@ const projectsData = projects.map(p => ({
     windowEl.style.left = '';
     windowEl.style.top = '';
     windowEl.style.transform = '';
-  }
-
-  function escHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   dragHandle.addEventListener('mousedown', (e) => {
@@ -225,26 +366,6 @@ const projectsData = projects.map(p => ({
   document.addEventListener('touchend', () => {
     isDragging = false;
   }, { passive: true });
-
-  const cardsContainer = document.querySelector('.projects-grid');
-
-  function initGsapAnimations() {
-    if (!prefersReduced) {
-      gsap.from(cardsContainer?.children || [], {
-        opacity: 0,
-        y: 30,
-        stagger: 0.12,
-        duration: 0.6,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '#projects-section',
-          start: 'top 80%',
-        },
-      });
-    }
-  }
-
-  document.addEventListener('boot-complete', initGsapAnimations, { once: true });
 </script>
 
 <style>
@@ -253,27 +374,153 @@ const projectsData = projects.map(p => ({
     padding-bottom: 80px;
   }
 
-  .projects-terminal {
-    margin-bottom: 32px;
+  .section-heading {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0 0 24px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .heading-accent {
+    color: var(--accent-green);
+  }
+
+  .heading-count {
+    font-size: var(--fs-2xs);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .projects-category {
+    margin-bottom: 40px;
+  }
+
+  .projects-category:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .category-heading {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
 
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 8px;
-    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .projects-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 769px) and (max-width: 1024px) {
     .projects-grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* ---- project window (modal content injected from the templates above) ---- */
+  .case-study {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .case-cover {
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    margin: -20px -20px 0;
+  }
+
+  .case-cover img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(40%) contrast(1.1);
+  }
+
+  .case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .meta-row {
+    font-size: var(--fs-xs);
+  }
+
+  .meta-row .field-label {
+    color: var(--accent-green);
+    margin-right: 6px;
+  }
+
+  .meta-tools {
+    width: 100%;
+  }
+
+  .case-teaser {
+    margin: 0;
+    padding: 12px 14px;
+    font-size: var(--fs-sm);
+    line-height: 1.7;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent-green);
+    background: var(--bg-tertiary);
+  }
+
+  .ext-link {
+    display: inline-block;
+    margin-top: 16px;
+    color: var(--accent-purple);
+    text-decoration: underline;
+  }
+
+  .case-cta {
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 4px;
+    padding: 8px 14px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.05em;
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .case-cta:hover,
+  .case-cta:focus-visible {
+    background: var(--accent-green);
+    color: var(--bg-primary);
+    outline: none;
+  }
+
+  @media (max-width: 640px) {
+    .case-cover {
+      margin: -16px -16px 0;
     }
   }
 </style>

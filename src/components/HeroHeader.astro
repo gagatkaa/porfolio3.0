@@ -1,0 +1,273 @@
+<section class="hero-header" id="hero-header">
+  <div class="hero-header-content">
+    <h1 class="hero-name" id="hero-name-display">
+      <span class="name-line name-line-1" data-text="AGATA">AGATA</span>
+      <span class="name-line name-line-2" data-text="TOMASZEWSKA">TOMASZEWSKA</span>
+    </h1>
+    <div class="hero-title-line" id="hero-title-line">
+      <span class="title-bracket">[</span>
+      <span class="title-text" id="title-text"></span>
+      <span class="title-bracket">]</span>
+    </div>
+    <p class="hero-hint" id="hero-hint">
+      <span class="hint-comment"># explore the portfolio —</span>
+      <span class="hint-desktop">use the terminal or press the icons to open sections</span>
+      <span class="hint-mobile">press the icons on the bottom to start exploring</span>
+    </p>
+    <button class="open-terminal-btn" id="open-terminal-btn" aria-label="Open terminal">
+      <span class="btn-arrow">&gt;</span>
+      <span class="btn-text">open terminal</span>
+      <span class="btn-cursor">_</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+
+  const nameDisplay = document.getElementById('hero-name-display');
+  const titleLine = document.getElementById('hero-title-line');
+  const terminalBtn = document.getElementById('open-terminal-btn');
+  const hint = document.getElementById('hero-hint');
+
+  function typeSubtitle(el, text, speed) {
+    let i = 0;
+    el.textContent = '';
+    const cursor = document.createElement('span');
+    cursor.className = 'typing-cursor';
+    cursor.textContent = '▊';
+    el.parentNode.insertBefore(cursor, el.nextSibling);
+    function tick() {
+      if (i < text.length) {
+        el.textContent += text[i];
+        i++;
+        setTimeout(tick, speed);
+      } else {
+        cursor.style.animation = 'none';
+        cursor.style.opacity = '0';
+      }
+    }
+    setTimeout(tick, speed);
+  }
+
+  function animateHeader() {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const titleText = document.getElementById('title-text');
+
+    if (prefersReduced) {
+      titleText.textContent = 'Digital Designer';
+      return;
+    }
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    tl.fromTo(nameDisplay, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8 })
+      .fromTo('.name-line-1', { x: -30 }, { x: 0, duration: 0.5 }, '-=0.4')
+      .fromTo('.name-line-2', { x: 30 }, { x: 0, duration: 0.5 }, '-=0.3')
+      .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
+      .call(() => { typeSubtitle(titleText, 'Digital Designer', 55); }, [], '>')
+      .fromTo(hint, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }, '-=0.1')
+      .fromTo(terminalBtn, { opacity: 0, y: 16, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power3.out' }, '-=0.1');
+  }
+
+  terminalBtn.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('open-terminal'));
+    const terminal = document.getElementById('hero-section');
+    if (terminal) {
+      terminal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  document.addEventListener('boot-complete', animateHeader, { once: true });
+</script>
+
+<style>
+  .hero-header {
+    position: relative;
+    min-height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+
+  .hero-header-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px;
+  }
+
+  .hero-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 20px;
+    opacity: 0;
+  }
+
+  .name-line {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 10vw, 6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    position: relative;
+  }
+
+  .hero-title-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    margin-bottom: 28px;
+  }
+
+  .title-bracket {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--accent-purple);
+    font-weight: 300;
+  }
+
+  .title-text {
+    font-size: clamp(0.85rem, 2.5vw, 1.2rem);
+    color: var(--accent-green);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .hero-hint {
+    margin: 24px 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.03em;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    opacity: 0;
+  }
+
+  .hint-comment {
+    color: var(--accent-green);
+  }
+
+  .hint-start {
+    color: var(--accent-purple);
+  }
+
+  .hint-mobile {
+    display: none;
+  }
+
+  @media (max-width: 1099px) {
+    .hint-desktop {
+      display: none;
+    }
+
+    .hint-mobile {
+      display: inline;
+    }
+  }
+
+  .open-terminal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    cursor: pointer;
+    opacity: 0;
+    transition: border-color 0.25s, color 0.25s, box-shadow 0.25s;
+    outline: none;
+  }
+
+  .open-terminal-btn:hover,
+  .open-terminal-btn:focus-visible {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+    box-shadow: 0 0 16px rgba(0, 255, 100, 0.08);
+  }
+
+  .btn-arrow {
+    color: var(--accent-green);
+    transition: transform 0.25s;
+  }
+
+  .open-terminal-btn:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  .btn-cursor {
+    color: var(--accent-green);
+    animation: blink-cursor 1s step-end infinite;
+  }
+
+  .typing-cursor {
+    color: var(--accent-green);
+    animation: blink-cursor 1s step-end infinite;
+    margin-left: 2px;
+  }
+
+  @keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-cursor {
+      animation: none;
+      opacity: 1;
+    }
+
+    .hero-hint {
+      opacity: 1;
+    }
+
+    .typing-cursor {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
+  @keyframes glitch-scan {
+    0%, 90%, 100% { transform: translate(0); opacity: 0.08; }
+    92% { transform: translate(-2px, 1px); opacity: 0.4; }
+    94% { transform: translate(2px, -1px); opacity: 0.15; }
+    96% { transform: translate(-1px, 2px); opacity: 0.3; }
+    98% { transform: translate(1px, -2px); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .name-line::before,
+    .name-line::after {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
+  @media (max-width: 1099px) {
+    .open-terminal-btn {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-header {
+      min-height: auto;
+    }
+
+    .hero-header-content {
+      padding: 24px 16px;
+    }
+  }
+</style>

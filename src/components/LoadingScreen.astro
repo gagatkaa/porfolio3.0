@@ -38,7 +38,7 @@
       el.textContent += text[i];
       i++;
       if (i >= text.length) clearInterval(interval);
-    }, 20);
+    }, 6);
   }
 
   if (prefersReduced) {
@@ -47,8 +47,8 @@
     });
     progressFill.style.width = '100%';
     setTimeout(() => {
-      gsap.to(screen, { opacity: 0, duration: 0.3, onComplete: () => { screen.style.display = 'none'; } });
-    }, 500);
+      gsap.to(screen, { opacity: 0, duration: 0.25, onComplete: () => { screen.style.display = 'none'; } });
+    }, 120);
   } else {
     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
 
@@ -58,17 +58,17 @@
         typeText(lineEls[i], text);
       }, [], '>')
       .to(lineEls[i], { opacity: 1, duration: 0.01 }, '>')
-      .to({}, { duration: 0.4 });
+      .to({}, { duration: 0.1 });
     });
 
     tl.to(progressFill, {
       width: '100%',
-      duration: 0.8,
+      duration: 0.45,
       ease: 'power1.inOut',
     })
     .to(screen, {
       opacity: 0,
-      duration: 0.5,
+      duration: 0.35,
       onComplete: () => {
         screen.style.display = 'none';
         document.dispatchEvent(new CustomEvent('boot-complete'));
@@ -104,7 +104,7 @@
 
   .loading-line {
     color: var(--accent-green);
-    font-size: 0.875rem;
+    font-size: var(--fs-sm);
     opacity: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -126,11 +126,5 @@
     width: 0%;
     height: 100%;
     background: var(--accent-green);
-  }
-
-  @media (max-width: 640px) {
-    .loading-line {
-      font-size: 0.75rem;
-    }
   }
 </style>
