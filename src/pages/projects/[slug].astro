@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -35,10 +36,10 @@ const { Content } = await render(project);
         </span>
         <span class="terminal-title">{project.data.title} — details</span>
       </div>
-      <div class="terminal-body">
+      <div class="terminal-body detail-body">
         {project.data.coverImage && (
           <div class="detail-cover">
-            <img src={project.data.coverImage} alt="" />
+            <Image src={project.data.coverImage} alt="" />
           </div>
         )}
         <div class="detail-meta">
@@ -76,9 +77,14 @@ const { Content } = await render(project);
     color: var(--accent-green);
   }
 
+  .detail-body {
+    padding: 28px;
+  }
+
   .detail-cover {
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
+    margin: -28px -28px 28px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border);
   }
 
   .detail-cover img {
@@ -91,19 +97,19 @@ const { Content } = await render(project);
   .detail-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px 20px;
+    margin-bottom: 16px;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
   }
 
   .meta-row {
-    font-size: var(--fs-sm);
+    font-size: var(--fs-xs);
   }
 
-  .field-label {
+  .meta-row .field-label {
     color: var(--accent-green);
-    display: inline;
+    margin-right: 6px;
   }
 
   .field-value {
@@ -112,45 +118,95 @@ const { Content } = await render(project);
 
   .ext-link {
     display: inline-block;
-    margin-bottom: 20px;
+    margin: 8px 0 28px;
+    color: var(--accent-purple);
+    text-decoration: underline;
+    text-underline-offset: 3px;
     font-size: var(--fs-sm);
   }
 
   .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2.25rem, 6vw, 4.5rem);
     font-size: var(--fs-base);
-    line-height: 1.7;
+    line-height: 1.8;
+  }
+
+  .detail-content > :first-child {
+    margin-top: 0;
+  }
+
+  .case-section {
+    padding-top: 28px;
+    border-top: 1px dashed var(--border);
+  }
+
+  .case-section:first-child {
+    padding-top: 0;
+    border-top: none;
   }
 
   .detail-content h2 {
-    color: var(--accent-purple);
+    color: var(--text-primary);
     font-size: var(--fs-md);
-    font-weight: 500;
-    margin: 28px 0 12px;
-    text-transform: uppercase;
+    font-weight: 600;
     letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0 0 14px;
+  }
+
+  .detail-content h2::before {
+    content: '## ';
+    color: var(--accent-green);
+    font-weight: 500;
   }
 
   .detail-content h3 {
     color: var(--accent-green);
     font-size: var(--fs-sm);
     font-weight: 500;
-    margin: 24px 0 10px;
+    margin: 28px 0 10px;
+    padding-left: 14px;
+    border-left: 3px solid var(--accent-green-dim);
+  }
+
+  .detail-content h3::before {
+    content: '### ';
+    color: var(--accent-green-dim);
   }
 
   .detail-content p {
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     color: var(--text-secondary);
   }
 
   .detail-content ul,
   .detail-content ol {
-    padding-left: 20px;
-    margin-bottom: 12px;
+    margin: 0 0 18px;
+    padding-left: 24px;
     color: var(--text-secondary);
   }
 
+  .detail-content ul {
+    list-style: none;
+  }
+
   .detail-content li {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    position: relative;
+    padding-left: 4px;
+  }
+
+  .detail-content ul li::before {
+    content: '›';
+    position: absolute;
+    left: -18px;
+    color: var(--accent-purple);
+  }
+
+  .detail-content li > p {
+    margin-bottom: 6px;
   }
 
   .detail-content strong {
@@ -161,12 +217,34 @@ const { Content } = await render(project);
   .detail-content a {
     color: var(--accent-purple);
     text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   .detail-content code {
     background: var(--bg-tertiary);
-    padding: 1px 4px;
-    font-size: 0.8em;
+    border: 1px solid var(--border);
+    padding: 2px 5px;
+    font-size: 0.85em;
     color: var(--accent-green);
+  }
+
+  .detail-content img {
+    width: 100%;
+    height: auto;
+    margin: clamp(1.75rem, 4vw, 3.5rem) 0 28px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    filter: grayscale(40%) contrast(1.1);
+  }
+
+  @media (max-width: 640px) {
+    .detail-body {
+      padding: 14px;
+    }
+
+    .detail-cover {
+      margin: -14px -14px 22px;
+    }
   }
 </style>

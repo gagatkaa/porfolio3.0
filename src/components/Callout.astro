@@ -1,0 +1,112 @@
+---
+interface Props {
+  type?: 'key' | 'note';
+  title?: string;
+}
+const { type = 'key', title } = Astro.props;
+const label = title || (type === 'note' ? 'note' : 'key fact');
+const isNote = type === 'note';
+---
+
+<aside class={isNote ? 'callout is-note' : 'callout is-key'}>
+  <div class="callout-bar">
+    <span class="callout-marker">&gt;</span>
+    <span class="callout-title">{label}</span>
+  </div>
+  <div class="callout-body">
+    <slot />
+  </div>
+</aside>
+
+<style is:global>
+  .callout {
+    position: relative;
+    margin: 28px 0;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-light);
+  }
+
+  .callout::before,
+  .callout::after {
+    content: '';
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    pointer-events: none;
+  }
+
+  .callout.is-key::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid var(--accent-green);
+    border-left: 2px solid var(--accent-green);
+  }
+
+  .callout.is-key::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid var(--accent-green);
+    border-right: 2px solid var(--accent-green);
+  }
+
+  .callout.is-note::before {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid var(--accent-purple);
+    border-left: 2px solid var(--accent-purple);
+  }
+
+  .callout.is-note::after {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid var(--accent-purple);
+    border-right: 2px solid var(--accent-purple);
+  }
+
+  .callout-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-2xs);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    user-select: none;
+  }
+
+  .callout-marker {
+    color: var(--accent-green);
+    font-weight: 700;
+  }
+
+  .is-note .callout-marker {
+    color: var(--accent-purple);
+  }
+
+  .callout-title {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .callout-body {
+    padding: 12px 14px;
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+    color: var(--text-secondary);
+  }
+
+  .callout-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  .callout-body p {
+    margin-bottom: 0;
+  }
+
+  .callout-body strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+</style>

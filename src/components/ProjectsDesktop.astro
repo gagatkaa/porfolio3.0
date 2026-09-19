@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
 import ExtrasGallery from './ExtrasGallery.astro';
@@ -71,7 +72,7 @@ const categories = [
       <div class="case-study">
         {p.coverImage && (
           <div class="case-cover">
-            <img src={p.coverImage} alt="" loading="lazy" />
+            <Image src={p.coverImage} alt="" loading="lazy" />
           </div>
         )}
         <div class="case-meta">
