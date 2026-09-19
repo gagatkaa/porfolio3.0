@@ -21,6 +21,11 @@ type Props = {
 
 const { project } = Astro.props as Props;
 const { Content } = await render(project);
+const projectVideos = import.meta.glob('../../assets/projects/**/*.mp4', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>;
+const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo] : undefined;
 ---
 
 <BaseLayout title={`${project.data.title} · Agata Tomaszewska`}>
@@ -37,10 +42,16 @@ const { Content } = await render(project);
         <span class="terminal-title">{project.data.title} — details</span>
       </div>
       <div class="terminal-body detail-body">
-        {project.data.coverImage && (
-          <div class="detail-cover">
-            <Image src={project.data.coverImage} alt="" />
+        {project.data.heroVideo && heroVideo ? (
+          <div class="detail-cover detail-cover-video">
+            <video src={heroVideo} autoplay muted loop playsinline preload="metadata" />
           </div>
+        ) : (
+          project.data.coverImage && (
+            <div class="detail-cover">
+              <Image src={project.data.coverImage} alt="" />
+            </div>
+          )
         )}
         <div class="detail-meta">
           <div class="meta-row"><span class="field-label">role</span> <span class="field-value">{project.data.role}</span></div>
@@ -87,7 +98,8 @@ const { Content } = await render(project);
     border-bottom: 1px solid var(--border);
   }
 
-  .detail-cover img {
+  .detail-cover img,
+  .detail-cover video {
     width: 100%;
     height: auto;
     display: block;

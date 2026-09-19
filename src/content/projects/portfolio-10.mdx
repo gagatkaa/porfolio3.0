@@ -1,51 +1,90 @@
 ---
 title: 'Portfolio 1.0'
-category: 'dev-web'            # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'Web Designer & Developer'   # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+
+category: 'dev-web'
+
+shortDescription: 'My first personal portfolio, built with Astro to bring my development, creative work and experiments into one place.'
+
+role: 'Designer & Developer'
+
+year: 2025
+
 tools:
-  - 'Astro'                    # # your actual tools
-  - 'HTML / CSS / JS'
-  - 'Figma'
-# Cover / gallery: drop files into src/assets/projects/portfolio-10/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/portfolio-10/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/portfolio-10/mockup-01.jpg'
-# externalLink: 'https://...'
+  - 'Astro'
+  - 'JavaScript'
+  - 'HTML'
+  - 'CSS'
+  - 'GitHub Pages'
+
+coverImage: '../../assets/projects/portfolio-10/portfolio1.0-mockup01.png'
+
+heroVideo: '../../assets/projects/portfolio-10/portfolio-1.0-movie.mp4'
+
+galleryImages:
+  - '../../assets/projects/portfolio-10/portfolio1.0-mockup01.png'
+  - '../../assets/projects/portfolio-10/portfolio1.0-mockup02.png'
+
+externalLink: 'https://gagatkaa.github.io/my-portfolio/'
 ---
 
+import { Image } from 'astro:assets';
+import Callout from '../../components/Callout.astro';
+import mockup01 from '../../assets/projects/portfolio-10/portfolio1.0-mockup01.png';
+import mockup02 from '../../assets/projects/portfolio-10/portfolio1.0-mockup02.png';
 
 <div class="case-section">
 
 ## Overview
 
-[First person, 2-4 sentences: this site, and the goal of pairing a portfolio with an interactive experiment.]
+**Portfolio 1.0** was my first attempt at creating a personal space for my development, design and creative work.
+
+I built it with **Astro**, focusing on a simple structure that lets the work take priority while still showing some personality through interaction, typography and motion.
+
+The site became a place where I could collect projects that normally sit across very different areas — from web development and creative coding to 3D and visual experiments.
+
+<Callout type="key" title="key fact">
+  My first complete online creative identity — a home for projects scattered across **web development, creative coding, 3D and visual experiments**.
+</Callout>
+
+<Image src={mockup01} alt="Portfolio 1.0 homepage" />
 
 </div>
 
 <div class="case-section">
 
-## Approach
+## Designing around the work
 
-[The desktop-metaphor direction — terminal, taskbar, windows — and how you kept it readable rather than gimmicky.]
+The homepage is built around a **Selected Work** section, using interactive project cards that reveal more information before leading into the full case study.
 
-</div>
+I wanted browsing the portfolio to feel a little more playful than scrolling through a static list, while still keeping every project easy to reach and understand.
 
-<div class="case-section">
+Each project then gets its own page where I could document the idea, development process, final outcome and what I learned from building it.
 
-## Product choices
-
-[The stack and structure: Astro, content collections as data, retro desktop aesthetic with restraint. Explain the thinking behind each choice.]
+<Image src={mockup02} alt="Portfolio project page" />
 
 </div>
 
 <div class="case-section">
 
-## Challenges
+## More than a project gallery
 
-[Optional: a problem you hit while building it and how you solved it.]
+I also added a personal **Journal** for shorter posts about topics I was exploring, including color, motion, 3D and composition.
+
+This gave the site a second purpose: not only showing finished work, but also documenting the things I was learning along the way.
+
+Separate RSS feeds for projects and journal posts were included so the site's content could also be followed outside the portfolio itself.
+
+</div>
+
+<div class="case-section">
+
+## Building with Astro
+
+I chose **Astro** as the foundation for the site and used it to structure the portfolio around reusable pages and content.
+
+The project helped me move beyond building individual experiments and think about how multiple projects, articles and shared UI components fit together inside one website.
+
+It was also my first experience building and maintaining a portfolio as a product of its own rather than treating it simply as a collection of links.
 
 </div>
 
@@ -53,9 +92,14 @@ tools:
 
 ## Outcome
 
-[What it became and what you'd change in the next version.]
+Portfolio 1.0 became the first complete version of my online creative identity.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+More importantly, building it showed me what I wanted to improve in the next version — stronger storytelling, better project presentation and a clearer connection between my technical and creative work.
+
+It became the foundation for the portfolio I continued developing afterwards.
+
+<Callout type="note" title="takeaway">
+  The foundation for everything since — the first version is what convinced me the portfolio itself could be a product worth iterating on.
+</Callout>
 
 </div>
