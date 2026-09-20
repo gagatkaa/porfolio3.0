@@ -1,51 +1,60 @@
 ---
-title: 'Soundwaveclock'
-category: 'dev-web'            # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'Creative Technologist'  # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+title: 'SoundWaveClock.exe'
+
+category: 'dev-web'
+
+shortDescription: 'An experimental clock that turns time into an interactive visual system shaped through wave-like controls.'
+
+role: 'Designer & Developer'
+
+year: 2026 # FILL IN: correct year
+
 tools:
-  - 'JavaScript'               # # your actual tools
-  - 'Web Audio API'
-  - 'Canvas'
-# Cover / gallery: drop files into src/assets/projects/soundwaveclock/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/soundwaveclock/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/soundwaveclock/mockup-01.jpg'
-# externalLink: 'https://...'
+  - 'JavaScript'
+  - 'HTML'
+  - 'CSS'
+  # FILL IN: add the visual library if one was used
+
+coverImage: '../../assets/projects/soundwaveclock/soundwaveclock.png'
+
+externalLink: 'https://atomaszewska.be/soundwaveclock/index.html'
 ---
 
+import Callout from '../../components/Callout.astro';
 
 <div class="case-section">
 
 ## Overview
 
-[First person, 2-4 sentences: the concept — time read through sound and generative motion rather than digits.]
+**SoundWaveClock.exe** is a small creative-coding experiment that explores what happens when a familiar object — a digital clock — becomes something more fluid and interactive.
+
+Instead of treating time as static numbers, the project combines the clock with adjustable visual parameters, allowing its appearance and movement to be manipulated in real time.
+
+<Callout type="key" title="key fact">
+  A clock you can play with — time becomes an **interactive visual system** instead of static numbers.
+</Callout>
 
 </div>
 
 <div class="case-section">
 
-## Approach
+## Shaping time
 
-[How time maps to audio and visuals, and the abstract, felt direction you took with the composition.]
+The interface exposes a small set of controls for **amplitude, period and weight**, alongside direct control over the displayed time.
 
-</div>
+Changing those values transforms the behaviour of the visual system, turning the clock into something that can be played with rather than simply read.
 
-<div class="case-section">
-
-## Technical & interaction
-
-[The build: Web Audio synthesis, canvas rendering, how each time unit drives a layer — and what it feels like to watch and listen to it tick.]
+A play control adds another layer of movement, making the piece feel closer to an instrument or visual experiment than a conventional clock.
 
 </div>
 
 <div class="case-section">
 
-## Challenges
+## Interaction
 
-[Optional: keeping the piece calm and legible while staying abstract.]
+I intentionally kept the interface minimal.
+
+Rather than explaining every parameter, the project encourages experimentation: move a value, observe how the system reacts, and gradually understand the relationship between the controls and the resulting form.
 
 </div>
 
@@ -53,9 +62,8 @@ tools:
 
 ## Outcome
 
-[What it does now, what you learned, what's next.]
+SoundWaveClock.exe was an experiment in combining **time, motion and user-controlled parameters** inside a simple web interface.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+It helped me explore how even a very familiar piece of information can become expressive when its visual rules are exposed to the user.
 
 </div>
