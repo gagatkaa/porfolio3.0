@@ -1,8 +1,13 @@
 <footer class="taskbar" id="taskbar">
   <div class="taskbar-left">
-    <button class="start-btn" id="start-btn" aria-label="Start menu">
-      <span class="start-icon">▲</span>
-      <span class="start-label">Start</span>
+    <button class="boot-btn" id="boot-btn" aria-label="Back to boot screen">
+      <span class="boot-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+          <line x1="12" y1="2" x2="12" y2="12" />
+        </svg>
+      </span>
+      <span class="boot-label">boot</span>
     </button>
     <div class="taskbar-tabs" id="taskbar-tabs"></div>
   </div>
@@ -14,20 +19,9 @@
   </div>
 </footer>
 
-<nav class="start-menu" id="start-menu" aria-label="Start menu">
-  <div class="start-menu-header">◆ Portfolio</div>
-  <button class="start-item" data-section="hero-section">Terminal</button>
-  <button class="start-item" data-section="about-section">About</button>
-  <button class="start-item" data-section="projects-section">Projects</button>
-  <button class="start-item" data-section="contact-section">Contact</button>
-  <div class="start-menu-footer">Agata Tomaszewska · Digital Designer</div>
-</nav>
-
 <script>
-  const startBtn = document.getElementById('start-btn');
-  const startMenu = document.getElementById('start-menu');
+  const bootBtn = document.getElementById('boot-btn');
   const clockEl = document.getElementById('clock');
-  const startItems = startMenu.querySelectorAll('[data-section]');
   const themeToggle = document.getElementById('theme-toggle');
   const themeIcon = document.getElementById('theme-icon');
   const tabsContainer = document.getElementById('taskbar-tabs');
@@ -123,15 +117,6 @@
   updateClock();
   setInterval(updateClock, 10000);
 
-  function toggleStart(e) {
-    e.stopPropagation();
-    startMenu.classList.toggle('visible');
-  }
-
-  function closeStart() {
-    startMenu.classList.remove('visible');
-  }
-
   function setTheme(mode) {
     if (mode === 'light') {
       document.documentElement.classList.add('light-mode');
@@ -153,29 +138,17 @@
     setTheme(isLight ? 'dark' : 'light');
   });
 
-  startBtn.addEventListener('click', toggleStart);
-
-  document.addEventListener('click', (e) => {
-    if (!startMenu.contains(e.target) && e.target !== startBtn) {
-      closeStart();
-    }
-  });
-
-  startItems.forEach((item) => {
-    item.addEventListener('click', () => {
-      closeStart();
-      const sectionId = item.dataset.section;
-      const revealFn = window.revealSection;
-      if (revealFn) {
-        revealFn(sectionId);
-      } else {
-        const el = document.getElementById(sectionId);
-        if (el) {
-          el.classList.remove('hidden-section');
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+  bootBtn.addEventListener('click', () => {
+    const revealFn = window.revealSection;
+    if (revealFn) {
+      revealFn('hero-section');
+    } else {
+      const hero = document.getElementById('hero-section');
+      if (hero) {
+        hero.style.display = 'block';
+        hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    });
+    }
   });
 </script>
 
@@ -274,7 +247,7 @@
     background: #ff5f56;
   }
 
-  .start-btn {
+  .boot-btn {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -289,15 +262,21 @@
     transition: background 0.1s, border-color 0.2s;
   }
 
-  .start-btn:hover,
-  .start-btn:focus-visible {
+  .boot-btn:hover,
+  .boot-btn:focus-visible {
     background: var(--bg-tertiary);
     border-color: var(--accent-green);
     box-shadow: 0 0 8px rgba(0, 255, 65, 0.1);
   }
 
-  .start-icon {
-    font-size: 0.75rem;
+  .boot-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .boot-icon svg {
+    display: block;
   }
 
   .theme-toggle {
@@ -333,58 +312,6 @@
     font-family: var(--font-mono);
   }
 
-  .start-menu {
-    position: fixed;
-    bottom: 48px;
-    left: 6px;
-    z-index: 8001;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    min-width: 200px;
-    display: none;
-    flex-direction: column;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  .start-menu.visible {
-    display: flex;
-  }
-
-  .start-menu-header {
-    padding: 12px 16px 8px;
-    font-size: var(--fs-sm);
-    color: var(--accent-purple);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .start-item {
-    padding: 10px 16px;
-    font-size: var(--fs-sm);
-    font-family: var(--font-mono);
-    color: var(--text-primary);
-    text-decoration: none;
-    background: transparent;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    transition: background 0.1s;
-  }
-
-  .start-item:hover,
-  .start-item:focus-visible {
-    background: var(--bg-surface);
-    color: var(--accent-green);
-  }
-
-  .start-menu-footer {
-    padding: 8px 16px 10px;
-    font-size: var(--fs-2xs);
-    color: var(--text-dim);
-    border-top: 1px solid var(--border);
-    margin-top: 4px;
-  }
-
   @media (max-width: 640px) {
     .taskbar {
       height: 38px;
@@ -392,7 +319,7 @@
       padding-bottom: env(safe-area-inset-bottom, 0);
     }
 
-    .start-btn {
+    .boot-btn {
       font-size: 0.78rem;
       padding: 3px 10px;
       height: 28px;
@@ -422,21 +349,10 @@
       font-size: 0.72rem;
       max-width: 120px;
     }
-
-    .start-menu {
-      min-width: 170px;
-      bottom: 42px;
-    }
-
-    .start-item {
-      padding: 8px 14px;
-      font-size: 0.76rem;
-    }
   }
 
   @media (max-width: 1099px) {
-    .taskbar,
-    .start-menu {
+    .taskbar {
       display: none;
     }
   }
