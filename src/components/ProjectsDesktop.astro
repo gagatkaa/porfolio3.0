@@ -136,6 +136,7 @@ const categories = [
           return;
         }
         const cards = section.querySelectorAll('.project-card');
+        if (!cards.length) return;
         gsap.fromTo(
           cards,
           { opacity: 0, y: 40, scale: 0.96 },

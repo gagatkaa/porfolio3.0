@@ -296,19 +296,23 @@ const tabs = [
     hasAnimated = true;
     if (prefersReduced) return;
 
-    gsap.from(windowEl, {
-      opacity: 0,
-      y: 24,
-      scale: 0.98,
-      duration: 0.45,
-      ease: 'power2.out',
-    });
-    gsap.from(tabList, {
-      opacity: 0,
-      duration: 0.3,
-      delay: 0.1,
-      ease: 'power2.out',
-    });
+    if (windowEl) {
+      gsap.from(windowEl, {
+        opacity: 0,
+        y: 24,
+        scale: 0.98,
+        duration: 0.45,
+        ease: 'power2.out',
+      });
+    }
+    if (tabList) {
+      gsap.from(tabList, {
+        opacity: 0,
+        duration: 0.3,
+        delay: 0.1,
+        ease: 'power2.out',
+      });
+    }
   }
 
   const observer = new MutationObserver(() => {
