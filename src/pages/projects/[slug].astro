@@ -21,6 +21,7 @@ type Props = {
 
 const { project } = Astro.props as Props;
 const { Content } = await render(project);
+const detailHero = project.data.detailHero ?? project.data.coverImage;
 const projectVideos = import.meta.glob('../../assets/projects/**/*.mp4', {
   eager: true,
   import: 'default',
@@ -47,9 +48,9 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
             <video src={heroVideo} autoplay muted loop playsinline preload="metadata" />
           </div>
         ) : (
-          project.data.coverImage && (
+          detailHero && (
             <div class="detail-cover">
-              <Image src={project.data.coverImage} alt="" />
+              <Image src={detailHero} alt="" />
             </div>
           )
         )}
