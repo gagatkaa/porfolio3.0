@@ -1,51 +1,120 @@
 ---
-title: 'Workshopbooking'
-category: 'design-motion'      # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'UX / UI Designer'       # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+title: 'Code Runners'
+
+category: 'design-motion'
+
+shortDescription: 'An interactive workshop booking experience combining coding culture, freerunning and an urban collage-inspired visual identity.'
+
+role: 'UI/UX Designer'
+
+year: 2024
+
 tools:
-  - 'Figma'                    # # your actual tools
-  - 'Wireframing & Prototyping'
-  - 'Usability Testing'
-# Cover / gallery: drop files into src/assets/projects/workshopbooking/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/workshopbooking/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/workshopbooking/mockup-01.jpg'
-# externalLink: 'https://...'
+  - 'Figma'
+
+coverImage: '../../assets/projects/workshopbooking/workshopbooking-hero.jpg'
+
+galleryImages:
+  - '../../assets/projects/workshopbooking/workshopbooking-styleboard-closeup-1.png'
+  - '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-2.png'
+  - '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-3.png'
+  - '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-4.png'
 ---
 
+import { Image } from 'astro:assets';
+import hero from '../../assets/projects/workshopbooking/workshopbooking-hero.jpg';
+import styleboard from '../../assets/projects/workshopbooking/workshopbooking-styleboard-closeup-1.png';
+import wireframes2 from '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-2.png';
+import wireframes3 from '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-3.png';
+import wireframes4 from '../../assets/projects/workshopbooking/workshopbooking-wireframes-closeup-4.png';
 
 <div class="case-section">
 
 ## Overview
 
-[First person, 2-4 sentences: the platform concept, its audience, and the priority — a low-friction booking experience.]
+**Code Runners** is a workshop-booking experience created around an unusual combination: **programming and freerunning**.
+
+The workshop invites programmers and gamers to step away from their screens and take on a physical urban challenge, combining movement with small problem-solving and coding-inspired tasks.
+
+The goal was not simply to design a booking form, but to make the **booking process feel like the beginning of the experience itself**.
+
+<Image src={hero} alt="Code Runners booking experience" />
 
 </div>
 
 <div class="case-section">
 
-## Approach
+## The concept
 
-[Information architecture first: mapping every page around the user's next decision, and testing wireframes before any visual layer.]
+The original workshop brief focused on freerunning, adrenaline and exploring the city of Kortrijk.
+
+I reinterpreted it for a tech-oriented audience through the idea of **Code Runners** — participants moving through the city while combining physical challenges with the mindset of problem solving.
+
+The booking flow adapts the workshop to the user by collecting information such as:
+
+- number of participants
+- preferred date and duration
+- fitness and experience level
+- occasion
+- food and drink extras
+- personal information
+
+Each decision becomes part of one continuous interactive journey rather than a conventional checkout form.
 
 </div>
 
 <div class="case-section">
 
-## Features & flow
+## Finding the visual direction
 
-[The reservation flow and key screens: what removes friction, and what the journey looks like end to end.]
+The concept went through several visual directions before reaching the final result.
+
+My early exploration was heavily influenced by gaming and *Mirror's Edge*. After feedback, I moved away from that direction and began exploring **Bauhaus graphics, urban architecture and editorial collage**.
+
+<Image src={styleboard} alt="Code Runners styleboard" />
+
+The final system combines black-and-white archival imagery with orange accents, geometric lines and monospace typography inspired by programming interfaces.
+
+This gave the project a visual language that connects **technology, architecture and movement** without relying too heavily on gaming references.
 
 </div>
 
 <div class="case-section">
 
-## Challenges
+## Booking as interaction
 
-[Optional: a usability finding and how you iterated on it.]
+A key part of the brief was continuous feedback during the booking process.
+
+I introduced a vertical progress indicator that moves with the user through each stage, making it clear where they are and how much of the experience remains.
+
+<Image src={wireframes2} alt="Code Runners booking flow" />
+
+Inputs are integrated directly into the visual composition — from participant selection and skill levels to occasions and extras — so the interface feels less like filling in a form and more like configuring your own workshop.
+
+<Image src={wireframes3} alt="Code Runners booking configuration" />
+
+Pricing and selections remain visible throughout the flow, keeping the experience playful without sacrificing clarity.
+
+</div>
+
+<div class="case-section">
+
+## Visual system
+
+The interface uses a deliberately limited palette of **orange, black, white and grey**, allowing photography and typography to carry most of the personality.
+
+I combined:
+
+- architectural photography
+- archival computer imagery
+- collage
+- geometric line work
+- programming-inspired typography
+- minimal UI controls
+
+<Image src={wireframes4} alt="Code Runners UI detail" />
+
+Reducing the amount of color compared with my earlier concepts helped the final design feel more focused while keeping its urban energy.
 
 </div>
 
@@ -53,9 +122,10 @@ tools:
 
 ## Outcome
 
-[The scope you delivered and the takeaway.]
+Code Runners turned a functional booking task into an extension of the workshop itself.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+The project taught me how much **concept, visual identity and interaction design need to support the same experience** — and how simplifying an early idea can often make the final direction much stronger.
+
+Instead of designing a form around the workshop, I designed the booking journey to already make the user feel like they were entering the world of **Code Runners**.
 
 </div>

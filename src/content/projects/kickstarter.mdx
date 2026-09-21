@@ -1,51 +1,95 @@
 ---
-title: 'Kickstarter'
-category: 'design-motion'      # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'Brand Designer'         # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+title: 'AlphalyteBlend'
+
+category: 'design-motion'
+
+shortDescription: 'A redesigned Kickstarter campaign animation for a compact portable blender, focused on clearer storytelling, stronger pacing and a more engaging visual identity.'
+
+role: 'Motion Designer'
+
+year: 2025
+
 tools:
-  - 'Figma'                    # # your actual tools
-  - 'Illustrator'
   - 'After Effects'
-# Cover / gallery: drop files into src/assets/projects/kickstarter/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/kickstarter/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/kickstarter/mockup-01.jpg'
+  - 'Photoshop'
+  - 'Illustrator'
+
+
+
+coverImage: '../../assets/projects/kickstarter/alpalyteblend.png'
+
+galleryImages:
+  - '../../assets/projects/kickstarter/alpalyteblend-closeup1.png'
+  - '../../assets/projects/kickstarter/alpalyteblend-closeup2.png'
+  - '../../assets/projects/kickstarter/alpalyteblend-closeup3.png'
+  - '../../assets/projects/kickstarter/alpalyteblend-closeup4.png'
+
 # externalLink: 'https://...'
 ---
 
+import { Image } from 'astro:assets';
+import mainProduct from '../../assets/projects/kickstarter/alpalyteblend.png';
+import closeup1 from '../../assets/projects/kickstarter/alpalyteblend-closeup1.png';
+import closeup2 from '../../assets/projects/kickstarter/alpalyteblend-closeup2.png';
+import closeup3 from '../../assets/projects/kickstarter/alpalyteblend-closeup3.png';
 
 <div class="case-section">
 
 ## Overview
 
-[First person, 2-4 sentences: the product the campaign was for, who it targeted, and what your design had to achieve in a crowdfunding sprint.]
+**AlphalyteBlend** was a motion-design project focused on improving an existing Kickstarter campaign for a lightweight, collapsible portable blender.
+
+The original campaign struggled to communicate the product clearly and lacked the energy expected from a short promotional video.
+
+My goal was to rebuild the presentation around a stronger visual system, clearer messaging and more dynamic motion.
+
+<Image src={mainProduct} alt="AlphalyteBlend campaign animation" />
 
 </div>
 
 <div class="case-section">
 
-## Approach
+## The challenge
 
-[How you planned the pitch — the narrative, the identity decisions, and the asset list the campaign needed.]
+The product had several clear selling points:
+
+- collapsible and lightweight
+- portable
+- powerful enough for smoothies and ice
+- USB-C rechargeable
+- reusable and easy to carry
+
+The challenge was turning those features into a short video that could be understood almost immediately.
+
+Rather than explaining everything in detail, I focused on **one message per scene** and created a faster, more structured rhythm for the campaign.
 
 </div>
 
 <div class="case-section">
 
-## Campaign & deliverables
+## Visual direction
 
-[The actual deliverables: hero moments, benefit communication, tier/update/social assets — what you made and how it kept the story consistent.]
+I developed a bright and playful visual language inspired by **fruit, geometric forms and bold color blocking**.
+
+The styleboard helped define the palette, shapes and overall energy before moving into animation.
+
+<Image src={closeup1} alt="AlphalyteBlend visual direction" />
+
+The strong colors and simple compositions were chosen to make the product feel lightweight, fresh and energetic while keeping the blender as the main focus.
 
 </div>
 
 <div class="case-section">
 
-## Challenges
+## Story and motion
 
-[Optional: the tricky constraint (short attention spans, asset volume, tone) and how you handled it.]
+Before animating, I rewrote the campaign into a short sequence built around the product's key benefits.
+
+The animation moves from introducing the blender to showing its portability, power, charging and everyday use, finishing with a direct Kickstarter call to action.
+
+<Image src={closeup2} alt="AlphalyteBlend script" />
+
+I used **After Effects** to create the motion, combining product movement, typography and graphic transitions to keep the pacing fast and visually consistent.
 
 </div>
 
@@ -53,9 +97,10 @@ tools:
 
 ## Outcome
 
-[What was delivered, any results you know of, and the takeaway on designing for conversion.]
+The final animation turns a weak product pitch into a more focused and energetic Kickstarter presentation.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+<Image src={closeup3} alt="AlphalyteBlend final result" />
+
+For me, the project was an exercise in using **motion design as communication** — deciding what information matters, how quickly it should appear and how visual rhythm can make a product easier to understand.
 
 </div>

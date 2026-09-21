@@ -3,17 +3,17 @@ export type ExtraType = '3d' | 'drawing';
 export interface ExtraItem {
   title: string;
   type: ExtraType;
-  image?: string;
+  link?: string;
   note?: string;
 }
 
 export const extras: ExtraItem[] = [
-  { title: 'car', type: '3d', note: 'Modelling & render study' },
-  { title: 'bow', type: '3d', note: 'Modelling & render study' },
-  { title: 'plane', type: '3d', note: 'Modelling & render study' },
-  { title: 'cannon', type: 'drawing', note: 'Sketch study' },
-  { title: 'tower', type: 'drawing', note: 'Sketch study' },
-  { title: 'cave', type: 'drawing', note: 'Sketch study' },
+  { title: 'vintagecar', type: '3d', link: 'https://www.artstation.com/artwork/obZraW', note: 'Modelling & render study' },
+  { title: 'stylizedbow', type: '3d', link: 'https://www.artstation.com/artwork/blB8og', note: 'Modelling & render study' },
+  { title: 'stylizedplane', type: '3d', link: 'https://www.artstation.com/artwork/1xxzro', note: 'Modelling & render study' },
+  { title: 'colorstudy', type: 'drawing', link: 'https://www.artstation.com/artwork/EvvkVq', note: 'Sketch study' },
+  { title: 'compositionstudy', type: 'drawing', link: 'https://www.artstation.com/artwork/39v3lg', note: 'Sketch study' },
+  { title: 'cavecomposition', type: 'drawing', link: 'https://www.artstation.com/artwork/XgDrqY', note: 'Sketch study' },
 ];
 
 export const extraGroups: { type: ExtraType; label: string }[] = [

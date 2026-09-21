@@ -12,9 +12,11 @@ const projects = defineCollection({
       year: z.number(),
       tools: z.array(z.string()),
       coverImage: image().optional(),
+      detailHero: image().optional(),
       heroVideo: z.string().optional(),
       galleryImages: z.array(image()).optional(),
       externalLink: z.string().url().optional(),
+      externalLinkMobile: z.string().url().optional(),
     }),
 });
 
