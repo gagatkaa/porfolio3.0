@@ -139,15 +139,17 @@
   });
 
   bootBtn.addEventListener('click', () => {
+    const hero = document.getElementById('hero-section');
+    if (!hero) {
+      window.location.href = '/';
+      return;
+    }
     const revealFn = window.revealSection;
     if (revealFn) {
       revealFn('hero-section');
     } else {
-      const hero = document.getElementById('hero-section');
-      if (hero) {
-        hero.style.display = 'block';
-        hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      hero.style.display = 'block';
+      hero.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
 </script>

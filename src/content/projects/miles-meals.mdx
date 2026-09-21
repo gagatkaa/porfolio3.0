@@ -1,27 +1,102 @@
 ---
 title: 'Miles & Meals'
-category: 'design-motion'      # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'Brand Designer'         # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+
+category: 'design-motion'
+
+shortDescription: 'A food-box app and brand concept that turns cooking into a journey through local street food, cities and stories.'
+
+role: 'Brand & UI/UX Designer'
+
+year: 2026
+
 tools:
-  - 'Figma'                    # # your actual tools
+  - 'Figma'
   - 'Illustrator'
-  - 'After Effects'
-# Cover / gallery: drop files into src/assets/projects/miles-meals/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/miles-meals/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/miles-meals/mockup-01.jpg'
-# externalLink: 'https://...'
+
+coverImage: '../../assets/projects/miles-meals/Mockup-portfolio.png'
+
+galleryImages:
+  - '../../assets/projects/miles-meals/Brandboard.png'
+  - '../../assets/projects/miles-meals/Styleboard.png'
+
+externalLink: 'https://www.figma.com/proto/hqFAwYftHCaMwDBilpSeEe/Miles---Meals?node-id=59417-14770&page-id=59417%3A14764&starting-point-node-id=59417%3A14770&show-proto-sidebar=1&t=1ZDHl0SVTHH4ZKZu-1'
 ---
 
+import { Image } from 'astro:assets';
+import BrandboardReveal from '../../components/BrandboardReveal.astro';
+import mockupPortfolio from '../../assets/projects/miles-meals/Mockup-portfolio.png';
+import brandboard from '../../assets/projects/miles-meals/Brandboard.png';
+import styleboard from '../../assets/projects/miles-meals/Styleboard.png';
 
 <div class="case-section">
 
 ## Overview
 
-[First person, 2-4 sentences: the brand idea — travel × food — and the feeling you wanted the identity to land.]
+**Miles & Meals** is a food-box concept built around the idea of experiencing a city through its food.
+
+Instead of positioning the service as another meal kit, I designed it as a **travel-driven food experience**: each box represents a destination and brings local street-food recipes, ingredients and stories into the user's kitchen.
+
+The app connects the full experience — from receiving and managing food boxes to cooking recipes and discovering the cities they come from.
+
+<Image src={mockupPortfolio} alt="Miles & Meals app mockup" />
+
+</div>
+
+<div class="case-section">
+
+## The concept
+
+The core idea was:
+
+**Street food. Local stories. At home.**
+
+Each delivery contains recipes and pre-portioned ingredients inspired by a specific place, with different box types built around local food culture:
+
+- **Local Legend** — iconic dishes people grow up with
+- **Street Made** — bold, fast and flavour-heavy street food
+- **Neighbourhood Bakes** — local snacks, pastries and baked treats
+
+The goal was to make discovering new cuisines feel accessible while keeping the sense of place and story behind the food.
+
+</div>
+
+<div class="case-section">
+
+## App experience
+
+The app was designed around the complete customer journey.
+
+Users can manage upcoming food-box deliveries, browse the recipes included in each box, follow cooking instructions and explore the destinations behind the dishes.
+
+A recipe page combines practical cooking information — preparation time, servings, ingredients and instructions — with the story and location behind the dish.
+
+The **Explore** section expands the experience beyond the food box itself, allowing users to discover cities, local dishes and new destinations.
+
+</div>
+
+<div class="case-section">
+
+## Brand identity
+
+The visual identity is based on the idea of **travel translated into a collectible system**.
+
+Rather than relying on literal travel imagery, I used elements inspired by:
+
+- tickets
+- luggage labels
+- destination stickers
+- navigation symbols
+- travel stamps
+
+These are combined with warmer, more expressive food-inspired colors and shapes.
+
+The result balances two sides of the brand:
+
+**structured travel systems + expressive food culture**
+
+This helped create an identity that feels playful and adventurous without becoming visually chaotic.
+
+<BrandboardReveal src={brandboard} alt="Miles & Meals brandboard" />
 
 </div>
 
@@ -29,23 +104,13 @@ tools:
 
 ## Visual system
 
-[The core identity: type, colour, layouts — what carries the warm, editorial tone and why you chose it.]
+The interface uses bold colors, rounded shapes and modular cards to create a friendly and accessible experience.
 
-</div>
+Travel-inspired labels and icons help communicate movement and destination, while food photography and warmer tones keep the focus on flavour and discovery.
 
-<div class="case-section">
+<Image src={styleboard} alt="Miles & Meals styleboard" />
 
-## Touchpoints & motion
-
-[How the system flexes: printed maps, social storytelling — and where motion sits in it, kept sparing.]
-
-</div>
-
-<div class="case-section">
-
-## Challenges
-
-[Optional: how you kept the identity flexible without it drifting off-brand.]
+The same system was designed to extend beyond the app into packaging and physical food boxes, making each delivery feel like an object that has arrived from somewhere rather than a generic meal kit.
 
 </div>
 
@@ -53,9 +118,10 @@ tools:
 
 ## Outcome
 
-[What you produced, what it demonstrated, what you'd refine.]
+Miles & Meals became a complete brand and digital product concept connecting **food, travel and discovery**.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+The project allowed me to work across brand identity, UX structure and interface design while keeping one central idea consistent across the entire experience:
+
+**every box is a small journey to another city.**
 
 </div>

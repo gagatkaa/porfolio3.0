@@ -1,0 +1,125 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  label?: string;
+}
+
+const { src, alt, label = 'unveil the brandboard' } = Astro.props;
+---
+
+<div class="brandboard-reveal" data-reveal>
+  <div class="brandboard-reveal__stage" data-reveal-stage>
+    <Image src={src} alt={alt} class="brandboard-reveal__img" />
+    <span class="brandboard-reveal__fade" aria-hidden="true"></span>
+  </div>
+  <button type="button" class="brandboard-reveal__toggle" data-reveal-toggle aria-expanded="false">
+    <span class="brandboard-reveal__label" data-reveal-label>{label}</span>
+  </button>
+</div>
+
+<script>
+  const blocks = document.querySelectorAll('[data-reveal]');
+  blocks.forEach((block) => {
+    const stage = block.querySelector('[data-reveal-stage]');
+    const toggle = block.querySelector('[data-reveal-toggle]');
+    const label = block.querySelector('[data-reveal-label]');
+    if (!stage || !toggle) return;
+
+    const expandText = toggle.getAttribute('aria-expanded') === 'true' ? 'collapse' : (label?.textContent ?? 'unveil');
+
+    toggle.addEventListener('click', () => {
+      const open = block.classList.toggle('is-open');
+      toggle.setAttribute('aria-expanded', String(open));
+      if (label && open) {
+        label.textContent = 'collapse the board';
+      } else if (label) {
+        label.textContent = expandText;
+      }
+      block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+</script>
+
+<style>
+  .brandboard-reveal {
+    margin: clamp(1.75rem, 4vw, 3.5rem) 0 28px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+  }
+
+  .brandboard-reveal__stage {
+    position: relative;
+    max-height: clamp(180px, 38vh, 320px);
+    overflow: hidden;
+    transition: max-height 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .brandboard-reveal.is-open .brandboard-reveal__stage {
+    max-height: 20000px;
+  }
+
+  .brandboard-reveal__img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: grayscale(40%) contrast(1.1);
+    margin: 0 !important;
+  }
+
+  .brandboard-reveal__fade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 40%;
+    background: linear-gradient(to top, var(--bg-tertiary), transparent);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .brandboard-reveal.is-open .brandboard-reveal__fade {
+    opacity: 0;
+  }
+
+  .brandboard-reveal__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border: 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--accent-green);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .brandboard-reveal__toggle::before {
+    content: '⌄';
+    font-size: 1.1em;
+    line-height: 1;
+    transition: transform 0.3s;
+  }
+
+  .brandboard-reveal.is-open .brandboard-reveal__toggle::before {
+    transform: rotate(180deg);
+  }
+
+  .brandboard-reveal__toggle:hover,
+  .brandboard-reveal__toggle:focus-visible {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    outline: none;
+  }
+</style>
