@@ -21,6 +21,18 @@ type Props = {
 
 const { project } = Astro.props as Props;
 const { Content } = await render(project);
+
+const allProjects = await getCollection('projects');
+const ordered = [
+  ...allProjects.filter(p => p.data.category === 'dev-web'),
+  ...allProjects.filter(p => p.data.category === 'design-motion'),
+];
+const currentIndex = ordered.findIndex(p => p.id === project.id);
+const slugOf = (entry: CollectionEntry<'projects'>) => entry.id.replace(/\.(md|mdx)$/, '');
+const hasSiblings = ordered.length > 1;
+const prevProject = hasSiblings ? ordered[(currentIndex - 1 + ordered.length) % ordered.length] : undefined;
+const nextProject = hasSiblings ? ordered[(currentIndex + 1) % ordered.length] : undefined;
+
 const detailHero = project.data.detailHero ?? project.data.coverImage;
 const projectVideos = import.meta.glob('../../assets/projects/**/*.mp4', {
   eager: true,
@@ -73,6 +85,23 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
         </div>
       </div>
     </div>
+
+    {hasSiblings && (
+      <nav class="project-nav" aria-label="Project navigation">
+        {prevProject && (
+          <a class="project-nav-link" href={`/projects/${slugOf(prevProject)}/`} rel="prev">
+            <span class="project-nav-dir">← prev</span>
+            <span class="project-nav-title">{prevProject.data.title}</span>
+          </a>
+        )}
+        {nextProject && (
+          <a class="project-nav-link project-nav-next" href={`/projects/${slugOf(nextProject)}/`} rel="next">
+            <span class="project-nav-dir">next →</span>
+            <span class="project-nav-title">{nextProject.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )}
   </div>
 </BaseLayout>
 
@@ -80,6 +109,60 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
   .detail-page {
     padding-top: 40px;
     padding-bottom: 80px;
+  }
+
+  .project-nav {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .project-nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 14px;
+    min-width: 0;
+    font-family: var(--font-mono);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+
+  .project-nav-link:hover,
+  .project-nav-link:focus-visible {
+    border-color: var(--accent-green);
+    background: var(--bg-tertiary);
+    box-shadow: 0 0 12px var(--accent-green-glow);
+    outline: none;
+  }
+
+  .project-nav-next {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .project-nav-dir {
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+  }
+
+  .project-nav-title {
+    max-width: 100%;
+    font-size: var(--fs-xs);
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-nav-link:hover .project-nav-title,
+  .project-nav-link:focus-visible .project-nav-title {
+    color: var(--text-primary);
   }
 
   .back-link {
@@ -253,6 +336,39 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
     border: 1px solid var(--border);
     background: var(--bg-tertiary);
     filter: grayscale(40%) contrast(1.1);
+  }
+
+  @media (max-width: 1099px) {
+    .project-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 8200;
+      gap: 0;
+      margin: 0;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      border-top: 1px solid var(--border);
+      background: var(--bg-tertiary);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .project-nav-link {
+      padding: 10px 14px;
+      gap: 2px;
+      border: none;
+      background: transparent;
+    }
+
+    .project-nav-link + .project-nav-link {
+      border-left: 1px solid var(--border);
+    }
+
+    .project-nav-link:hover,
+    .project-nav-link:focus-visible {
+      background: var(--bg-surface);
+      box-shadow: none;
+    }
   }
 
   @media (max-width: 640px) {

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import MouseReveal from '../components/MouseReveal.astro';
 import TaskBar from '../components/TaskBar.astro';
+import ScrollTopButton from '../components/ScrollTopButton.astro';
 
 export interface Props {
   title?: string;
@@ -37,5 +38,6 @@ const { title, description } = Astro.props;
       <slot />
     </main>
     <TaskBar />
+    <ScrollTopButton />
   </body>
 </html>
