@@ -16,6 +16,7 @@ const projects = defineCollection({
       heroVideo: z.string().optional(),
       galleryImages: z.array(image()).optional(),
       externalLink: z.string().url().optional(),
+      externalLinkMobile: z.string().url().optional(),
     }),
 });
 

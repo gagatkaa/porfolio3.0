@@ -1,51 +1,99 @@
 ---
-title: 'Type01'
-category: 'design-motion'      # # design-motion | dev-web
-shortDescription: ''           # # FILL IN: one-line card hook, 1-2 sentences
-role: 'Type / Graphic Designer'   # # FILL IN if your role differs
-year: 0                        # # FILL IN: real year
+title: 'TYPE01 Conference'
+
+category: 'design-motion'
+
+shortDescription: 'A bold responsive website concept for a typography conference, designed across desktop and mobile.'
+
+role: 'UI/UX Designer'
+
+year: 2025
+
 tools:
-  - 'Adobe Fonts'              # # your actual tools
+  - 'Figma'
   - 'Illustrator'
-  - 'InDesign'
-# Cover / gallery: drop files into src/assets/projects/type01/, then set the
-# paths below (relative to this file). Body images are imported at the top of the body.
-# coverImage: '../../assets/projects/type01/cover.jpg'
-# galleryImages:
-#   - '../../assets/projects/type01/mockup-01.jpg'
-# externalLink: 'https://...'
+
+coverImage: '../../assets/projects/type01/Mockup-portfolio-type01.png'
+
+galleryImages:
+  - '../../assets/projects/type01/01_home_desktop-type01.jpg'
+  - '../../assets/projects/type01/01_tickets-type01.png'
+  - '../../assets/projects/type01/type01-mockup-laptop.png'
+
+externalLink: 'https://www.figma.com/proto/rEULk4Xfaa7tIvM5qZlgff/VD3-Conference?node-id=328-760&p=f&viewport=-6752%2C-1162%2C0.2&t=iz0myLU4od70QRiB-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=328%3A760&page-id=1%3A2'
+
+externalLinkMobile: 'https://www.figma.com/proto/rEULk4Xfaa7tIvM5qZlgff/VD3-Conference?node-id=328-607&p=f&viewport=402%2C376%2C0.06&t=Xwp0rm7XY0RQEnWF-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=328%3A607&page-id=1%3A3'
 ---
 
+import { Image } from 'astro:assets';
+import ImageUnveil from '../../components/ImageUnveil.astro';
+import homeDesktop from '../../assets/projects/type01/01_home_desktop-type01.jpg';
+import tickets from '../../assets/projects/type01/01_tickets-type01.png';
+import laptop from '../../assets/projects/type01/type01-mockup-laptop.png';
 
 <div class="case-section">
 
 ## Overview
 
-[First person: the experiment of a single type family carrying an entire visual identity — and the question it set out to answer.]
+**TYPE01 Conference** is a responsive website concept for a typography-focused design event in London.
+
+The goal was to create a digital experience that felt as expressive as the conference itself while still making practical information — speakers, schedule, tickets and event details — easy to find.
+
+The design was created for both **desktop and mobile**, with the same visual identity adapted across different screen sizes.
+
+<ImageUnveil src={homeDesktop} alt="TYPE01 Conference homepage" label="unveil the homepage" />
 
 </div>
 
 <div class="case-section">
 
-## Approach
+## Visual direction
 
-[Specimen work → layout exercises: how you moved from studying the letterforms to building the system.]
+Because the event is centred around typography, I wanted type to become the main visual element rather than simply supporting the layout.
+
+The interface combines:
+
+- oversized typography
+- outlined and layered letterforms
+- bright accent colors
+- sticker-like labels
+- strong contrast against a dark background
+
+The result is intentionally energetic and slightly chaotic, while still using a clear underlying grid to keep the content readable.
 
 </div>
 
 <div class="case-section">
 
-## Type system
+## Event experience
 
-[The toolkit you ended with: rules, grids, treatments, and the range of outputs it can shape.]
+The website brings the main parts of the conference into one system:
+
+- event introduction
+- countdown
+- schedule
+- speakers
+- partners
+- ticket purchasing
+- event information
+
+Large typographic sections create visual moments between more functional content, helping the page feel like part of the event identity rather than a generic conference website.
+
+<Image src={tickets} alt="TYPE01 Conference ticket purchasing" />
 
 </div>
 
 <div class="case-section">
 
-## Challenges
+## Responsive design
 
-[Optional: making one voice enough — forcing restraint rather than reaching for more type.]
+A major part of the project was translating the desktop design into a mobile experience.
+
+Rather than simply shrinking the original layouts, I adjusted hierarchy, navigation and composition to work with the narrower format while preserving the oversized typography and bold visual language.
+
+<Image src={laptop} alt="TYPE01 Conference laptop mockup" />
+
+The mobile version keeps the same personality while making important actions such as **Tickets**, **Speakers** and the event schedule easy to access.
 
 </div>
 
@@ -53,9 +101,8 @@ tools:
 
 ## Outcome
 
-[What it proved and what it could inform next.]
+TYPE01 became an exercise in balancing **expressive typography with functional interface design**.
 
-{/* Replace every [prompt] with your own copy in first person, then delete the prompts and this comment. */}
-{/* Highlight the most important points with <Callout type="key" title="key fact">…</Callout> (or type="note"). Import it like the other assets: import Callout from '../../components/Callout.astro'; */}
+The project helped me explore how a strong visual identity can remain consistent across desktop and mobile without sacrificing usability or hierarchy.
 
 </div>

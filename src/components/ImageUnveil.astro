@@ -8,34 +8,34 @@ interface Props {
   label?: string;
 }
 
-const { src, alt, label = 'unveil the brandboard' } = Astro.props;
+const { src, alt, label = 'unveil image' } = Astro.props;
 ---
 
-<div class="brandboard-reveal" data-reveal>
-  <div class="brandboard-reveal__stage" data-reveal-stage>
-    <Image src={src} alt={alt} class="brandboard-reveal__img" />
-    <span class="brandboard-reveal__fade" aria-hidden="true"></span>
+<div class="image-unveil" data-unveil>
+  <div class="image-unveil__stage" data-unveil-stage>
+    <Image src={src} alt={alt} class="image-unveil__img" />
+    <span class="image-unveil__fade" aria-hidden="true"></span>
   </div>
-  <button type="button" class="brandboard-reveal__toggle" data-reveal-toggle aria-expanded="false">
-    <span class="brandboard-reveal__label" data-reveal-label>{label}</span>
+  <button type="button" class="image-unveil__toggle" data-unveil-toggle aria-expanded="false">
+    <span class="image-unveil__label" data-unveil-label>{label}</span>
   </button>
 </div>
 
 <script>
-  const blocks = document.querySelectorAll('[data-reveal]');
+  const blocks = document.querySelectorAll('[data-unveil]');
   blocks.forEach((block) => {
-    const stage = block.querySelector('[data-reveal-stage]');
-    const toggle = block.querySelector('[data-reveal-toggle]');
-    const label = block.querySelector('[data-reveal-label]');
+    const stage = block.querySelector('[data-unveil-stage]');
+    const toggle = block.querySelector('[data-unveil-toggle]');
+    const label = block.querySelector('[data-unveil-label]');
     if (!stage || !toggle) return;
 
-    const expandText = toggle.getAttribute('aria-expanded') === 'true' ? 'collapse' : (label?.textContent ?? 'unveil');
+    const expandText = label?.textContent ?? 'unveil';
 
     toggle.addEventListener('click', () => {
       const open = block.classList.toggle('is-open');
       toggle.setAttribute('aria-expanded', String(open));
       if (label && open) {
-        label.textContent = 'collapse the board';
+        label.textContent = 'collapse the image';
       } else if (label) {
         label.textContent = expandText;
       }
@@ -45,24 +45,24 @@ const { src, alt, label = 'unveil the brandboard' } = Astro.props;
 </script>
 
 <style>
-  .brandboard-reveal {
+  .image-unveil {
     margin: clamp(1.75rem, 4vw, 3.5rem) 0 28px;
     border: 1px solid var(--border);
     background: var(--bg-tertiary);
   }
 
-  .brandboard-reveal__stage {
+  .image-unveil__stage {
     position: relative;
     max-height: clamp(180px, 38vh, 320px);
     overflow: hidden;
     transition: max-height 1.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .brandboard-reveal.is-open .brandboard-reveal__stage {
+  .image-unveil.is-open .image-unveil__stage {
     max-height: 20000px;
   }
 
-  .brandboard-reveal__img {
+  .image-unveil__img {
     width: 100%;
     height: auto;
     display: block;
@@ -70,7 +70,7 @@ const { src, alt, label = 'unveil the brandboard' } = Astro.props;
     margin: 0 !important;
   }
 
-  .brandboard-reveal__fade {
+  .image-unveil__fade {
     position: absolute;
     left: 0;
     right: 0;
@@ -82,11 +82,11 @@ const { src, alt, label = 'unveil the brandboard' } = Astro.props;
     transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .brandboard-reveal.is-open .brandboard-reveal__fade {
+  .image-unveil.is-open .image-unveil__fade {
     opacity: 0;
   }
 
-  .brandboard-reveal__toggle {
+  .image-unveil__toggle {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -105,19 +105,19 @@ const { src, alt, label = 'unveil the brandboard' } = Astro.props;
     transition: background 0.15s, color 0.15s;
   }
 
-  .brandboard-reveal__toggle::before {
+  .image-unveil__toggle::before {
     content: '⌄';
     font-size: 1.1em;
     line-height: 1;
     transition: transform 0.3s;
   }
 
-  .brandboard-reveal.is-open .brandboard-reveal__toggle::before {
+  .image-unveil.is-open .image-unveil__toggle::before {
     transform: rotate(180deg);
   }
 
-  .brandboard-reveal__toggle:hover,
-  .brandboard-reveal__toggle:focus-visible {
+  .image-unveil__toggle:hover,
+  .image-unveil__toggle:focus-visible {
     background: var(--bg-tertiary);
     color: var(--text-primary);
     outline: none;

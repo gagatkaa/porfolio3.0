@@ -64,6 +64,10 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
           <a href={project.data.externalLink} target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>
         )}
 
+        {project.data.externalLinkMobile && (
+          <a href={project.data.externalLinkMobile} target="_blank" rel="noopener noreferrer" class="ext-link ext-link-mobile">[ view mobile ]</a>
+        )}
+
         <div class="detail-content">
           <Content />
         </div>
