@@ -1,6 +1,7 @@
 name: Deploy to GitHub Pages
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 
-on:
+"on":
   # Deploy whenever the production branch is updated.
   push:
     branches: [master]
