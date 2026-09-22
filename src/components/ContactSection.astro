@@ -1,6 +1,7 @@
 ---
 import { socialLinks, getSocialIcon } from '../data/social';
-const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+import { withBase } from '../utils/url';
+const cvUrl = withBase('documents/Tomaszewska_Agata_CV.pdf');
 const contactEntries = [
   { label: 'email', url: 'mailto:atomaszewska361@gmail.com', display: 'atomaszewska361@gmail.com', isExternal: false },
   ...socialLinks.map(s => ({

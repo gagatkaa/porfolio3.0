@@ -2,9 +2,10 @@
 import mePhoto from '../assets/me.png';
 import { socialLinks, getSocialIcon } from '../data/social';
 import { getSkillIcon } from '../data/skills';
+import { withBase } from '../utils/url';
 
 const photoUrl = mePhoto.src;
-const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const cvUrl = withBase('documents/Tomaszewska_Agata_CV.pdf');
 const resolvedSocials = socialLinks.map(s => ({
   ...s,
   url: s.label === 'cv' ? cvUrl : s.url,

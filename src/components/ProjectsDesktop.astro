@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
 import ExtrasGallery from './ExtrasGallery.astro';
+import { withBase } from '../utils/url';
 
 const projects = await getCollection('projects');
 const designMotion = projects.filter(p => p.data.category === 'design-motion');
@@ -84,7 +85,7 @@ const categories = [
           <a href={p.externalLink} target="_blank" rel="noopener noreferrer" class="ext-link">[ view live ]</a>
         )}
         <p class="case-teaser">{p.shortDescription}</p>
-        <a class="case-cta" href={`/projects/${p.slug}`}>view full case study &rarr;</a>
+        <a class="case-cta" href={withBase(`projects/${p.slug}/`)}>view full case study &rarr;</a>
       </div>
     </template>
   ))
