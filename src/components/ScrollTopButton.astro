@@ -1,0 +1,114 @@
+<button class="scroll-top" id="scroll-top" type="button" aria-label="Back to top" title="Back to top">
+  <span class="scroll-top-icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5" />
+      <polyline points="5 12 12 5 19 12" />
+    </svg>
+  </span>
+  <span class="scroll-top-label">top</span>
+</button>
+
+<script>
+  const btn = document.getElementById('scroll-top');
+
+  if (btn) {
+    const onScroll = () => {
+      btn.classList.toggle('visible', window.scrollY > 320);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    btn.addEventListener('click', () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+
+    const overlay = document.getElementById('project-window-overlay');
+    if (overlay) {
+      const syncOverlay = () => {
+        btn.classList.toggle('overlay-open', overlay.classList.contains('visible'));
+      };
+      new MutationObserver(syncOverlay).observe(overlay, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+      syncOverlay();
+    }
+  }
+</script>
+
+<style>
+  .scroll-top {
+    position: fixed;
+    right: 12px;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px) + 24px);
+    z-index: 8200;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent-green);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: opacity 0.25s, transform 0.25s, visibility 0.25s, border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .scroll-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .scroll-top:hover,
+  .scroll-top:focus-visible {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 12px var(--accent-green-glow), 0 4px 16px rgba(0, 0, 0, 0.35);
+    outline: none;
+  }
+
+  .scroll-top-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scroll-top-icon svg {
+    display: block;
+  }
+
+  .scroll-top:hover .scroll-top-icon svg,
+  .scroll-top:focus-visible .scroll-top-icon svg {
+    animation: scroll-top-bounce 0.6s ease;
+  }
+
+  @keyframes scroll-top-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .scroll-top.overlay-open {
+    display: none;
+  }
+
+  @media (max-width: 1099px) {
+    .scroll-top {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .scroll-top {
+      bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 24px);
+      padding: 11px 16px;
+    }
+  }
+</style>

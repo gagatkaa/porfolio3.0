@@ -2,9 +2,10 @@
 import mePhoto from '../assets/me.png';
 import { socialLinks, getSocialIcon } from '../data/social';
 import { getSkillIcon } from '../data/skills';
+import { withBase } from '../utils/url';
 
 const photoUrl = mePhoto.src;
-const cvUrl = '/documents/Tomaszewska_Agata_CV.pdf';
+const cvUrl = withBase('documents/Tomaszewska_Agata_CV.pdf');
 const resolvedSocials = socialLinks.map(s => ({
   ...s,
   url: s.label === 'cv' ? cvUrl : s.url,
@@ -296,19 +297,23 @@ const tabs = [
     hasAnimated = true;
     if (prefersReduced) return;
 
-    gsap.from(windowEl, {
-      opacity: 0,
-      y: 24,
-      scale: 0.98,
-      duration: 0.45,
-      ease: 'power2.out',
-    });
-    gsap.from(tabList, {
-      opacity: 0,
-      duration: 0.3,
-      delay: 0.1,
-      ease: 'power2.out',
-    });
+    if (windowEl) {
+      gsap.from(windowEl, {
+        opacity: 0,
+        y: 24,
+        scale: 0.98,
+        duration: 0.45,
+        ease: 'power2.out',
+      });
+    }
+    if (tabList) {
+      gsap.from(tabList, {
+        opacity: 0,
+        duration: 0.3,
+        delay: 0.1,
+        ease: 'power2.out',
+      });
+    }
   }
 
   const observer = new MutationObserver(() => {
