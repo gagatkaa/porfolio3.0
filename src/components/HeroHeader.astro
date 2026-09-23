@@ -338,6 +338,10 @@ const resolvedSocials = socialLinks.map(s => ({
       text-align: center;
     }
 
+    .hero-title-line {
+      justify-content: center;
+    }
+
     .hero-intro-text {
       margin-left: auto;
       margin-right: auto;
@@ -345,6 +349,18 @@ const resolvedSocials = socialLinks.map(s => ({
 
     .hero-socials {
       justify-content: center;
+      gap: 8px;
+    }
+
+    .hero-social {
+      border-color: var(--border-color);
+      background: var(--bg-surface);
+      padding: 7px 12px;
+    }
+
+    .hero-social:hover,
+    .hero-social:focus-visible {
+      border-color: var(--accent-purple);
     }
 
     .hero-photo-figure {
