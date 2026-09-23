@@ -28,26 +28,37 @@ for (let i = 0; i < ordered.length; i++) {
 }
 
 const projectsData = rendered;
+const projectCount = projectsData.length;
 const categories = [
-  { key: 'dev-web', label: 'dev / web', items: devWeb },
-  { key: 'design-motion', label: 'design & motion', items: designMotion },
+  { key: 'dev-web', label: 'Dev / Web', path: '~/work/dev', sub: 'builds · tools · interactive', items: devWeb },
+  { key: 'design-motion', label: 'Design & Motion', path: '~/work/design', sub: 'brand · visual · motion', items: designMotion },
 ];
+const accentFor = { 'dev-web': 'green', 'design-motion': 'purple' };
+const pad = n => String(n).padStart(2, '0');
 ---
 
 <section class="projects-section section hidden-section" id="projects-section">
-  <h2 class="section-heading">
-    <span class="heading-accent">&gt;</span> projects
-    <span class="heading-count">{projectsData.length} files</span>
-  </h2>
+  <header class="projects-head">
+    <h2 class="section-heading">
+      <span class="heading-accent">&gt;</span> projects
+      <span class="heading-count">{projectCount} files</span>
+    </h2>
+    <p class="section-note">client work &amp; personal experiments &mdash; grouped by discipline</p>
+  </header>
 
-  {categories.map(cat => {
+  {categories.map((cat, ci) => {
     const startIndex = ordered.indexOf(cat.items[0]);
     return (
-      <div class="projects-category" data-category={cat.key}>
-        <h3 class="category-heading">
-          <span class="heading-accent">&gt;</span> {cat.label}
-          <span class="heading-count">{cat.items.length} files</span>
-        </h3>
+      <div class="projects-group" data-accent={accentFor[cat.key]}>
+        <header class="group-header">
+          <span class="group-index">{pad(ci + 1)}</span>
+          <div class="group-id">
+            <h3 class="group-title">{cat.label}</h3>
+            <span class="group-path">{cat.path}</span>
+          </div>
+          <span class="group-sub">{cat.sub}</span>
+          <span class="group-count">{cat.items.length} files</span>
+        </header>
         <div class="projects-grid">
           {cat.items.map((project, i) => (
             <ProjectCard
@@ -406,25 +417,94 @@ const categories = [
     text-transform: uppercase;
   }
 
-  .projects-category {
-    margin-bottom: 40px;
+  .projects-head {
+    margin-bottom: 30px;
   }
 
-  .projects-category:last-of-type {
+  .projects-head .section-note {
+    margin: 4px 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .projects-group {
+    margin-bottom: 44px;
+  }
+
+  .projects-group:last-of-type {
     margin-bottom: 0;
   }
 
-  .category-heading {
-    font-family: var(--font-mono);
-    font-size: var(--fs-md);
-    font-weight: 400;
-    color: var(--text-primary);
-    margin: 0 0 16px;
-    letter-spacing: 0.05em;
-    display: flex;
+  .group-header {
+    display: grid;
+    grid-template-columns: auto auto 1fr auto;
     align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 16px;
+    padding: 14px 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--accent-green);
+    background: var(--bg-surface);
+  }
+
+  .projects-group[data-accent='purple'] .group-header {
+    border-left-color: var(--accent-purple);
+  }
+
+  .group-index {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    line-height: 1;
+    color: var(--accent-green);
+  }
+
+  .projects-group[data-accent='purple'] .group-index {
+    color: var(--accent-purple);
+  }
+
+  .group-id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .group-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .group-path {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .group-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    justify-self: start;
+    opacity: 0.85;
+  }
+
+  .group-count {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
 
   .projects-grid {
@@ -443,6 +523,18 @@ const categories = [
   @media (min-width: 769px) and (max-width: 1024px) {
     .projects-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 620px) {
+    .group-header {
+      grid-template-columns: auto 1fr auto;
+      padding: 12px 14px;
+      gap: 10px;
+    }
+
+    .group-sub {
+      display: none;
     }
   }
 
