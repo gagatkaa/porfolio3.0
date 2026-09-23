@@ -1,0 +1,317 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { orderProjects } from '../utils/projects';
+
+const baseProjects = await getCollection('projects');
+const ordered = orderProjects(baseProjects);
+
+const featured = ordered.filter(p => p.data.featured);
+const deselected = ordered.filter(p => !p.data.featured);
+const shown = (featured.length >= 3 ? featured : [...featured, ...deselected]).slice(0, 4);
+
+const tiles = shown.map(p => ({
+  index: ordered.indexOf(p),
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  year: p.data.year,
+  coverImage: p.data.coverImage,
+}));
+---
+
+<section class="hero-projects" id="hero-projects" aria-label="Featured projects">
+  <div class="hero-projects-head">
+    <span class="hp-accent">&gt;</span>
+    <span class="hp-label">featured work</span>
+    <span class="hp-hint">click to open</span>
+  </div>
+  <div class="hero-projects-row" id="hero-projects-row">
+    {tiles.map(t => (
+      <button class="hero-project-tile" data-index={t.index} aria-label={`Open project: ${t.title}`}>
+        <div class="hpt-titlebar">
+          <span class="hpt-dots">
+            <span class="dot close"></span>
+            <span class="dot minimize"></span>
+            <span class="dot maximize"></span>
+          </span>
+          <span class="hpt-filename">{t.slug}.md</span>
+        </div>
+        <div class="hpt-body">
+          {t.coverImage ? (
+            <Image class="hpt-cover" src={t.coverImage} alt="" loading="lazy" />
+          ) : (
+            <span class="hpt-placeholder">
+              <svg viewBox="0 0 48 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="2" y="2" width="44" height="52" rx="2" stroke="currentColor" stroke-width="1.5" fill="none" />
+                <path d="M32 2v12h12" stroke="currentColor" stroke-width="1.5" fill="none" />
+                <line x1="14" y1="24" x2="34" y2="24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                <line x1="14" y1="32" x2="34" y2="32" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                <line x1="14" y1="40" x2="28" y2="40" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </span>
+          )}
+          <div class="hpt-meta">
+            <span class="hpt-title">{t.title}</span>
+            <span class="hpt-year">{t.year}</span>
+          </div>
+        </div>
+        <div class="hpt-status">
+          <span class="hpt-indicator"></span>
+          <span class="hpt-status-text">open</span>
+        </div>
+      </button>
+    ))}
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+
+  const row = document.getElementById('hero-projects-row');
+
+  if (row) {
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const animate = () => {
+      const tiles = row.querySelectorAll('.hero-project-tile');
+      if (!tiles.length || prefersReduced) return;
+      gsap.fromTo(
+        tiles,
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.5, stagger: { each: 0.09 }, ease: 'power3.out' }
+      );
+    };
+
+    document.addEventListener('boot-complete', animate, { once: true });
+
+    row.addEventListener('click', (e) => {
+      const tile = e.target.closest('.hero-project-tile');
+      if (!tile) return;
+      const index = parseInt(tile.dataset.index, 10);
+      if (!Number.isNaN(index)) {
+        document.dispatchEvent(new CustomEvent('open-project-window', { detail: { index } }));
+      }
+    });
+  }
+</script>
+
+<style>
+  .hero-projects {
+    max-width: 1040px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 24px clamp(48px, 7vw, 80px);
+  }
+
+  .hero-projects-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    font-family: var(--font-mono);
+  }
+
+  .hp-accent {
+    color: var(--accent-green);
+    font-size: var(--fs-md);
+  }
+
+  .hp-label {
+    color: var(--text-primary);
+    font-size: var(--fs-md);
+    letter-spacing: 0.05em;
+  }
+
+  .hp-hint {
+    color: var(--text-dim);
+    font-size: var(--fs-3xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-projects-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .hero-project-tile {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: 1px solid var(--border-color);
+    background: var(--bg-surface);
+    text-align: left;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .hero-project-tile:hover,
+  .hero-project-tile:focus-visible {
+    border-color: var(--accent-purple);
+    box-shadow:
+      0 0 20px rgba(179, 0, 255, 0.12),
+      0 4px 12px rgba(0, 0, 0, 0.3);
+    outline: none;
+    z-index: 1;
+  }
+
+  .hpt-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .hpt-dots {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .hpt-filename {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.03em;
+  }
+
+  .hpt-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .hpt-cover {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    filter: grayscale(50%) contrast(1.1);
+    transition: filter 0.4s, transform 0.4s;
+  }
+
+  .hero-project-tile:hover .hpt-cover,
+  .hero-project-tile:focus-visible .hpt-cover {
+    filter: grayscale(0%) contrast(1);
+    transform: scale(1.03);
+  }
+
+  .hpt-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    color: var(--text-dim);
+  }
+
+  .hpt-placeholder svg {
+    width: 28px;
+    height: 33px;
+    opacity: 0.5;
+  }
+
+  .hpt-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 10px 10px 12px;
+    flex: 1;
+  }
+
+  .hpt-title {
+    font-size: var(--fs-2xs);
+    font-weight: 600;
+    color: var(--accent-green);
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .hpt-year {
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+  }
+
+  .hpt-status {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
+    flex-shrink: 0;
+  }
+
+  .hpt-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .hero-project-tile:hover .hpt-indicator,
+  .hero-project-tile:focus-visible .hpt-indicator {
+    background: var(--accent-green);
+    box-shadow: 0 0 6px var(--accent-green);
+  }
+
+  .hpt-status-text {
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .hero-project-tile:hover .hpt-status-text,
+  .hero-project-tile:focus-visible .hpt-status-text {
+    color: var(--accent-green);
+  }
+
+  @media (min-width: 641px) and (max-width: 960px) {
+    .hero-projects-row {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero-projects {
+      padding: 0 16px 48px;
+    }
+
+    .hero-projects-row {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      padding-bottom: 8px;
+    }
+
+    .hero-project-tile {
+      flex: 0 0 230px;
+      scroll-snap-align: start;
+    }
+  }
+</style>

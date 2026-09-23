@@ -5,11 +5,12 @@ import ProjectCard from './ProjectCard.astro';
 import ProjectWindow from './ProjectWindow.astro';
 import ExtrasGallery from './ExtrasGallery.astro';
 import { withBase } from '../utils/url';
+import { orderProjects } from '../utils/projects';
 
 const projects = await getCollection('projects');
 const designMotion = projects.filter(p => p.data.category === 'design-motion');
 const devWeb = projects.filter(p => p.data.category === 'dev-web');
-const ordered = [...devWeb, ...designMotion];
+const ordered = orderProjects(projects);
 
 const rendered = [];
 for (let i = 0; i < ordered.length; i++) {
@@ -177,6 +178,11 @@ const categories = [
     });
   }
   bindCards();
+
+  document.addEventListener('open-project-window', (e) => {
+    const index = e.detail?.index;
+    if (typeof index === 'number') openProject(index);
+  });
 
   function openProject(index) {
     const p = projectsData[index];
