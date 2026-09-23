@@ -11,6 +11,7 @@ const projects = defineCollection({
       role: z.string(),
       year: z.number(),
       tools: z.array(z.string()),
+      featured: z.boolean().optional(),
       coverImage: image().optional(),
       detailHero: image().optional(),
       heroVideo: z.string().optional(),

@@ -18,6 +18,14 @@ const imageByTitle = Object.fromEntries(
 ---
 
 <section class="extras-block">
+  <header class="extras-master">
+    <span class="extras-index">*</span>
+    <div class="extras-master-id">
+      <h3 class="extras-master-title">Extras / Misc</h3>
+      <span class="extras-master-path">~/work/extras</span>
+    </div>
+    <span class="extras-master-sub">sketches · experiments · side pieces</span>
+  </header>
   {extraGroups.map(group => {
     const items = extras.filter(e => e.type === group.type);
     return (
@@ -78,10 +86,61 @@ const imageByTitle = Object.fromEntries(
 
 <style>
   .extras-block {
-    margin-top: 40px;
+    margin-top: 44px;
+    padding-top: 44px;
+    border-top: 1px dashed var(--border-color);
     display: flex;
     flex-direction: column;
     gap: 32px;
+  }
+
+  .extras-master {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 4px;
+  }
+
+  .extras-index {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    line-height: 1;
+    color: var(--text-secondary);
+  }
+
+  .extras-master-id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .extras-master-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .extras-master-path {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+  }
+
+  .extras-master-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: var(--text-secondary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    justify-self: start;
+    opacity: 0.85;
   }
 
   .extras-heading {
@@ -95,6 +154,8 @@ const imageByTitle = Object.fromEntries(
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
   }
 
   .heading-accent {
@@ -194,6 +255,10 @@ const imageByTitle = Object.fromEntries(
     .extras-grid {
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
       gap: 12px;
+    }
+
+    .extras-master-sub {
+      display: none;
     }
   }
 </style>

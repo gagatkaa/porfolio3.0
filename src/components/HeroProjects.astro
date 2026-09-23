@@ -1,0 +1,648 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import { orderProjects } from '../utils/projects';
+
+const baseProjects = await getCollection('projects');
+const ordered = orderProjects(baseProjects);
+
+const featured = ordered.filter(p => p.data.featured);
+const deselected = ordered.filter(p => !p.data.featured);
+const shown = (featured.length >= 3 ? featured : [...featured, ...deselected]).slice(0, 4);
+
+const catLabel = {
+  'dev-web': 'dev / web',
+  'design-motion': 'design & motion',
+};
+
+const tiles = shown.map((p, i) => ({
+  index: ordered.indexOf(p),
+  slug: p.id.replace(/\.(md|mdx)$/, ''),
+  title: p.data.title,
+  year: p.data.year,
+  category: catLabel[p.data.category] ?? p.data.category,
+  coverImage: p.data.coverImage,
+  num: String(i + 1).padStart(2, '0'),
+}));
+---
+
+<section class="hero-projects" id="hero-projects" aria-label="Featured work">
+  <div class="hero-projects-inner">
+    <header class="hero-projects-head">
+      <span class="hp-code">
+        <span class="hp-accent">&gt;</span> featured work
+      </span>
+      <span class="hp-hint">hover to preview &middot; click to open</span>
+    </header>
+
+    <div class="showcase" id="showcase">
+      <div class="showcase-list" role="list" aria-label="Featured projects">
+        {tiles.map((t, i) => (
+          <button
+            class={i === 0 ? 'showcase-item active' : 'showcase-item'}
+            data-index={t.index}
+            data-slug={t.slug}
+            role="listitem"
+            aria-label={`Preview ${t.title}`}
+          >
+            <span class="si-num">{t.num}</span>
+            <span class="si-name">{t.title}</span>
+            <span class="si-year">{t.year}</span>
+            <span class="si-arrow" aria-hidden="true">&rarr;</span>
+          </button>
+        ))}
+      </div>
+
+      <div class="showcase-stage" id="showcase-stage">
+        <header class="stage-frame-head">
+          <span class="stage-tag">preview / 16:10</span>
+          <span class="stage-kicker" id="stage-kicker">featured &mdash; 01 / 04</span>
+        </header>
+
+        <div class="pane" id="pane">
+          {tiles.map((t, i) => (
+            <div
+              class="pane-slide"
+              data-slug={t.slug}
+              data-category={t.category}
+              aria-hidden={i !== 0 ? 'true' : 'false'}
+              style={i !== 0 ? 'opacity:0; visibility:hidden;' : ''}
+            >
+              {t.coverImage ? (
+                <Image class="pane-img" src={t.coverImage} alt="" loading={i === 0 ? 'eager' : 'lazy'} />
+              ) : null}
+            </div>
+          ))}
+          <div class="pane-shade" aria-hidden="true"></div>
+          <div class="pane-meta">
+            <span class="pane-title" id="pane-title"></span>
+            <span class="pane-sub" id="pane-sub"></span>
+          </div>
+        </div>
+
+        <footer class="stage-frame-foot">
+          <span class="stage-tag">~/work &middot; featured</span>
+          <div class="pane-pager" id="pane-pager" role="tablist" aria-label="Featured slides">
+            {tiles.map((t, i) => (
+              <button class={i === 0 ? 'pager-dot active' : 'pager-dot'} data-idx={i} aria-label={`Go to ${t.title}`}>
+                <span class="pager-fill"></span>
+              </button>
+            ))}
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <footer class="hp-more">
+      <button type="button" class="hp-more-btn" id="hp-more-btn" aria-label="See more projects">
+        <span class="more-label">See more projects</span>
+        <span class="more-arrow" aria-hidden="true">&rarr;</span>
+      </button>
+    </footer>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+
+  const showcase = document.getElementById('showcase');
+  const listButtons = [];
+  const slides = [];
+  const pagerDots = [];
+  const paneTitle = document.getElementById('pane-title');
+  const paneSub = document.getElementById('pane-sub');
+  const kicker = document.getElementById('stage-kicker');
+  const stage = document.getElementById('showcase-stage');
+  const pane = document.getElementById('pane');
+  const pager = document.getElementById('pane-pager');
+  const moreBtn = document.getElementById('hp-more-btn');
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const TIMER = 4200;
+  let data = [];
+
+  if (showcase && stage && pane && paneTitle && paneSub && kicker && pager) {
+    listButtons.push(...showcase.querySelectorAll('.showcase-item'));
+    slides.push(...showcase.querySelectorAll('.pane-slide'));
+    pagerDots.push(...pager.querySelectorAll('.pager-dot'));
+    data = listButtons.map(b => ({
+      index: parseInt(b.dataset.index, 10),
+      slug: b.dataset.slug,
+      title: b.querySelector('.si-name').textContent,
+      year: b.querySelector('.si-year').textContent,
+      category: '',
+    }));
+    data.forEach((d, i) => {
+      d.category = slides[i]?.dataset.category ?? '';
+    });
+
+    let active = 0;
+    let timer = null;
+
+    function openActive(index) {
+      const item = data.find(d => d.index === index);
+      if (!item) return;
+      document.dispatchEvent(new CustomEvent('open-project-window', { detail: { index } }));
+    }
+
+    function startProgress() {
+      pagerDots.forEach((d, i) => {
+        const fill = d.querySelector('.pager-fill');
+        d.classList.toggle('active', i === active);
+        if (prefersReduced) {
+          fill.style.transition = 'none';
+          fill.style.width = i === active ? '100%' : '0';
+          return;
+        }
+        fill.style.transition = 'none';
+        fill.style.width = '0';
+        if (i === active) {
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            fill.style.transition = `width ${TIMER}ms linear`;
+            fill.style.width = '100%';
+          }));
+        }
+      });
+    }
+
+    function renderState() {
+      listButtons.forEach((b, i) => {
+        const isActive = i === active;
+        b.classList.toggle('active', isActive);
+        b.setAttribute('aria-pressed', String(isActive));
+      });
+      kicker.textContent = `featured — ${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      paneTitle.textContent = data[active].title;
+      paneSub.textContent = `${data[active].category || ''} · ${data[active].year}`;
+      startProgress();
+    }
+
+    function setActive(i) {
+      if (i === active || i < 0 || i >= slides.length) return;
+      const prev = slides[active];
+      const next = slides[i];
+      active = i;
+      renderState();
+
+      prev.setAttribute('aria-hidden', 'true');
+      next.setAttribute('aria-hidden', 'false');
+
+      if (prefersReduced) {
+        slides.forEach((s, idx) => {
+          const show = idx === active;
+          s.style.opacity = show ? '1' : '0';
+          s.style.visibility = show ? 'visible' : 'hidden';
+        });
+        return;
+      }
+
+      // Clear any in-flight preview tweens and snap to a deterministic state so
+      // fast hovering can never leave a stale image visible.
+      slides.forEach(s => gsap.killTweensOf(s));
+      slides.forEach((s, idx) => {
+        if (idx === active) return;
+        gsap.set(s, { autoAlpha: 0 });
+      });
+      gsap.set(next, { autoAlpha: 0, scale: 1.02 });
+      gsap.to(next, {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 0.4,
+        ease: 'power2.out',
+        clearProps: 'transform',
+      });
+    }
+
+    function advance() {
+      setActive((active + 1) % slides.length);
+    }
+
+    function startTimer() {
+      if (prefersReduced || timer) return;
+      timer = window.setInterval(advance, TIMER);
+    }
+
+    function stopTimer() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    listButtons.forEach((b, i) => {
+      b.addEventListener('pointerenter', () => setActive(i));
+      b.addEventListener('focus', () => setActive(i));
+      b.addEventListener('click', () => openActive(parseInt(b.dataset.index, 10)));
+    });
+
+    pagerDots.forEach((d, i) => {
+      d.addEventListener('click', () => setActive(i));
+      d.addEventListener('pointerenter', () => setActive(i));
+    });
+
+    showcase.addEventListener('mouseenter', stopTimer);
+    showcase.addEventListener('mouseleave', startTimer);
+
+    if (!prefersReduced) {
+      stage.addEventListener('mousemove', (e) => {
+        const rect = stage.getBoundingClientRect();
+        const nx = (e.clientX - rect.left) / rect.width - 0.5;
+        const ny = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(pane, {
+          rotationY: nx * 5,
+          rotationX: -ny * 5,
+          duration: 0.5,
+          ease: 'power2.out',
+        });
+      });
+      stage.addEventListener('mouseleave', () => {
+        gsap.to(pane, { rotationY: 0, rotationX: 0, duration: 0.7, ease: 'power3.out' });
+      });
+    }
+
+    pane.addEventListener('click', () => openActive(data[active].index));
+
+    if (moreBtn) {
+      moreBtn.addEventListener('click', () => {
+        const revealFn = window.revealSection;
+        if (typeof revealFn === 'function') {
+          revealFn('projects-section');
+        } else {
+          const el = document.getElementById('projects-section');
+          if (el) {
+            el.classList.remove('hidden-section');
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    }
+
+    const animateIn = () => {
+      if (prefersReduced) return;
+      gsap.fromTo(
+        listButtons,
+        { opacity: 0, x: -18 },
+        { opacity: 1, x: 0, duration: 0.5, stagger: { each: 0.08 }, ease: 'power3.out' }
+      );
+      gsap.from(pane, { opacity: 0, y: 22, duration: 0.6, delay: 0.2, ease: 'power3.out' });
+      if (moreBtn) {
+        gsap.from(moreBtn, { opacity: 0, y: 12, duration: 0.5, delay: 0.35, ease: 'power3.out' });
+      }
+    };
+    document.addEventListener('boot-complete', animateIn, { once: true });
+
+    renderState();
+    startTimer();
+  }
+</script>
+
+<style>
+  .hero-projects {
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-projects-inner {
+    max-width: 1040px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px 24px clamp(48px, 7vw, 80px);
+  }
+
+  .hero-projects-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+    font-family: var(--font-mono);
+  }
+
+  .hp-code {
+    color: var(--text-primary);
+    font-size: var(--fs-md);
+    letter-spacing: 0.05em;
+  }
+
+  .hp-accent {
+    color: var(--accent-green);
+  }
+
+  .hp-hint {
+    color: var(--text-dim);
+    font-size: var(--fs-3xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---- showcase grid ---- */
+  .showcase {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) 1.35fr;
+    gap: clamp(28px, 5vw, 64px);
+    align-items: center;
+  }
+
+  /* ---- list ---- */
+  .showcase-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .showcase-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: baseline;
+    gap: 14px;
+    width: 100%;
+    padding: 16px 4px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    text-align: left;
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+    position: relative;
+    transition: background 0.2s;
+  }
+
+  .showcase-item:last-child {
+    border-bottom: none;
+  }
+
+  .showcase-item:hover,
+  .showcase-item:focus-visible {
+    background: rgba(179, 0, 255, 0.05);
+    outline: none;
+  }
+
+  .si-num {
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.06em;
+    transition: color 0.25s;
+  }
+
+  .showcase-item:hover .si-num {
+    color: var(--accent-purple);
+  }
+
+  .si-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.05rem, 2vw, 1.4rem);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    line-height: 1.2;
+    transition: color 0.25s, text-shadow 0.25s;
+  }
+
+  .si-year {
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+  }
+
+  .si-arrow {
+    color: transparent;
+    transition: color 0.25s, transform 0.25s;
+    font-size: var(--fs-sm);
+  }
+
+  .showcase-item:hover .si-arrow {
+    color: var(--accent-green);
+    transform: translateX(3px);
+  }
+
+  .showcase-item.active {
+    border-left: 2px solid var(--accent-green);
+    padding-left: 10px;
+  }
+
+  .showcase-item.active .si-num {
+    color: var(--accent-green);
+  }
+
+  .showcase-item.active .si-name {
+    color: var(--text-primary);
+    text-shadow: 0 0 18px var(--accent-purple-glow);
+  }
+
+  .showcase-item.active .si-arrow {
+    color: var(--accent-green);
+  }
+
+  /* ---- stage ---- */
+  .showcase-stage {
+    position: relative;
+    perspective: 1200px;
+  }
+
+  .stage-frame-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .stage-frame-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .stage-tag {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stage-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--fs-3xs);
+    color: var(--accent-green);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ---- pane ---- */
+  .pane {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+    background: var(--bg-primary);
+    cursor: pointer;
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 24px 60px rgba(0, 0, 0, 0.42);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .light-mode .pane {
+    box-shadow:
+      0 0 0 1px var(--border-light),
+      0 24px 60px rgba(0, 0, 0, 0.12);
+  }
+
+  .pane-slide {
+    position: absolute;
+    inset: 0;
+  }
+
+  .pane-slide[aria-hidden="true"] {
+    pointer-events: none;
+  }
+
+  .pane-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(18%) contrast(1.06);
+  }
+
+  .pane-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.28) 38%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .pane-meta {
+    position: absolute;
+    left: 18px;
+    bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    pointer-events: none;
+  }
+
+  .pane-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.4vw, 1.8rem);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.1;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.5);
+  }
+
+  .pane-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ---- pager ---- */
+  .pane-pager {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pager-dot {
+    width: 30px;
+    height: 4px;
+    padding: 0;
+    background: var(--border-light);
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  .pager-dot:hover,
+  .pager-dot:focus-visible {
+    background: var(--text-dim);
+    outline: none;
+  }
+
+  .pager-fill {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: var(--accent-green);
+  }
+
+  /* ---- see-more button ---- */
+  .hp-more {
+    display: flex;
+    justify-content: center;
+    margin-top: 42px;
+  }
+
+  .hp-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 26px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.25s, border-color 0.25s, background 0.25s, box-shadow 0.25s;
+  }
+
+  .hp-more-btn:hover,
+  .hp-more-btn:focus-visible {
+    color: var(--accent-purple);
+    border-color: var(--accent-purple);
+    background: rgba(179, 0, 255, 0.04);
+    box-shadow: 0 0 24px var(--accent-purple-glow);
+    outline: none;
+  }
+
+  .more-arrow {
+    color: var(--accent-green);
+    transition: transform 0.25s, color 0.25s;
+  }
+
+  .hp-more-btn:hover .more-arrow {
+    color: var(--accent-purple);
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 860px) {
+    .showcase {
+      grid-template-columns: 1fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .showcase-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .showcase-item {
+      padding: 12px 4px;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .showcase-list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
