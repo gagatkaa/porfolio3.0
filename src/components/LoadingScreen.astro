@@ -41,13 +41,25 @@
     }, 6);
   }
 
+  function finishBoot() {
+    document.documentElement.classList.add('booted');
+    document.dispatchEvent(new CustomEvent('boot-complete'));
+  }
+
   if (prefersReduced) {
     LINES.forEach((text, i) => {
       lineEls[i].textContent = PREFIX + i + '] ' + text;
     });
     progressFill.style.width = '100%';
     setTimeout(() => {
-      gsap.to(screen, { opacity: 0, duration: 0.25, onComplete: () => { screen.style.display = 'none'; } });
+      gsap.to(screen, {
+        opacity: 0,
+        duration: 0.25,
+        onComplete: () => {
+          screen.style.display = 'none';
+          finishBoot();
+        },
+      });
     }, 120);
   } else {
     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
@@ -71,7 +83,7 @@
       duration: 0.35,
       onComplete: () => {
         screen.style.display = 'none';
-        document.dispatchEvent(new CustomEvent('boot-complete'));
+        finishBoot();
       },
     });
   }

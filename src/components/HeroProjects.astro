@@ -277,19 +277,53 @@ const tiles = shown.map((p, i) => ({
       });
     }
 
+    const revealInstantly = () => {
+      [...listButtons, pane, moreBtn].forEach(el => {
+        if (el) el.style.opacity = '1';
+      });
+    };
+
+    let projectsAnimated = false;
+
     const animateIn = () => {
-      if (prefersReduced) return;
+      if (projectsAnimated) return;
+      projectsAnimated = true;
+
+      if (prefersReduced) {
+        revealInstantly();
+        return;
+      }
+
       gsap.fromTo(
         listButtons,
         { opacity: 0, x: -18 },
         { opacity: 1, x: 0, duration: 0.5, stagger: { each: 0.08 }, ease: 'power3.out' }
       );
-      gsap.from(pane, { opacity: 0, y: 22, duration: 0.6, delay: 0.2, ease: 'power3.out' });
+      gsap.fromTo(
+        pane,
+        { opacity: 0, y: 22 },
+        { opacity: 1, y: 0, duration: 0.6, delay: 0.2, ease: 'power3.out' }
+      );
       if (moreBtn) {
-        gsap.from(moreBtn, { opacity: 0, y: 12, duration: 0.5, delay: 0.35, ease: 'power3.out' });
+        gsap.fromTo(
+          moreBtn,
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.5, delay: 0.35, ease: 'power3.out' }
+        );
       }
     };
-    document.addEventListener('boot-complete', animateIn, { once: true });
+
+    if (document.documentElement.classList.contains('booted')) {
+      animateIn();
+    } else {
+      document.addEventListener('boot-complete', animateIn, { once: true });
+    }
+
+    setTimeout(() => {
+      if (projectsAnimated) return;
+      projectsAnimated = true;
+      revealInstantly();
+    }, 4000);
 
     renderState();
     startTimer();
@@ -301,6 +335,12 @@ const tiles = shown.map((p, i) => ({
     background: var(--bg-tertiary);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+  }
+
+  .showcase-item,
+  #pane,
+  #hp-more-btn {
+    opacity: 0;
   }
 
   .hero-projects-inner {
