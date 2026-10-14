@@ -85,7 +85,7 @@ const pad = n => String(n).padStart(2, '0');
       <div class="case-study">
         {p.coverImage && (
           <div class="case-cover">
-            <Image src={p.coverImage} alt="" loading="lazy" />
+            <Image src={p.coverImage} alt={`${p.title} cover`} loading="lazy" />
           </div>
         )}
         <div class="case-meta">

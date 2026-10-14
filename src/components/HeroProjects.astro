@@ -69,7 +69,7 @@ const tiles = shown.map((p, i) => ({
               style={i !== 0 ? 'opacity:0; visibility:hidden;' : ''}
             >
               {t.coverImage ? (
-                <Image class="pane-img" src={t.coverImage} alt="" loading={i === 0 ? 'eager' : 'lazy'} />
+                <Image class="pane-img" src={t.coverImage} alt={`${t.title} cover`} loading={i === 0 ? 'eager' : 'lazy'} />
               ) : null}
             </div>
           ))}

@@ -165,7 +165,7 @@
         return 'Agata Tomaszewska';
       case 'echo': {
         const arg = parts.slice(1).join(' ');
-        if (arg === '$ROLE' || arg === 'ROLE') return 'Digital Designer';
+        if (arg === '$ROLE' || arg === 'ROLE') return 'UI/UX Designer & Developer';
         return arg;
       }
       case 'date': {
@@ -189,7 +189,7 @@
           return { output: [
             '',
             '  Agata Tomaszewska',
-            '  Digital Designer',
+            '  UI/UX Designer & Developer',
             '  ─────────────────────────────────',
             '  Multidisciplinary designer working at the',
             '  intersection of visual identity, editorial',
@@ -323,7 +323,7 @@
 
     typeText(nameEl, 'Agata Tomaszewska', () => {
       setTimeout(() => {
-        typeText(roleEl, 'Digital Designer', () => {
+        typeText(roleEl, 'UI/UX Designer & Developer', () => {
           setTimeout(() => {
             typeText(heroPrompt, '→ Type \'help\' to explore', () => {
               setTimeout(() => {

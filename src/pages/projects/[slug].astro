@@ -63,7 +63,7 @@ const heroVideo = project.data.heroVideo ? projectVideos[project.data.heroVideo]
         ) : (
           detailHero && (
             <div class="detail-cover">
-              <Image src={detailHero} alt="" />
+              <Image src={detailHero} alt={`${project.data.title} cover`} />
             </div>
           )
         )}

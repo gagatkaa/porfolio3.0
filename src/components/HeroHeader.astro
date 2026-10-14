@@ -25,7 +25,7 @@ const resolvedSocials = socialLinks.map(s => ({
         <span class="title-bracket">]</span>
       </div>
       <p class="hero-intro-text" id="hero-intro-text">
-        Digital Designer from Poland, combining colour, motion and creative tech &mdash; currently at Howest DEVINE.
+        UI/UX designer and frontend developer from Poland &mdash; I design digital products in Figma and build them in code, with a love for motion and creative tech. Currently at Howest DEVINE.
       </p>
       <nav class="hero-socials" id="hero-socials" aria-label="Find me on">
         {resolvedSocials.map(s => (
@@ -104,7 +104,7 @@ const resolvedSocials = socialLinks.map(s => ({
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReduced) {
-      titleText.textContent = 'Digital Designer';
+      titleText.textContent = 'UI/UX Designer & Developer';
       revealInstantly();
       return;
     }
@@ -115,7 +115,7 @@ const resolvedSocials = socialLinks.map(s => ({
       .fromTo('.name-line-1', { x: -30 }, { x: 0, duration: 0.5 }, '-=0.4')
       .fromTo('.name-line-2', { x: 30 }, { x: 0, duration: 0.5 }, '-=0.3')
       .fromTo(titleLine, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4 }, '-=0.2')
-      .call(() => { typeSubtitle(titleText, 'Digital Designer', 55); }, [], '>')
+      .call(() => { typeSubtitle(titleText, 'UI/UX Designer & Developer', 55); }, [], '>')
       .fromTo(introText, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.2')
       .fromTo(socials, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.3')
       .fromTo(photo, { opacity: 0, x: 24, scale: 0.96 }, { opacity: 1, x: 0, scale: 1, duration: 0.6, ease: 'power3.out' }, '-=0.5');
@@ -130,7 +130,7 @@ const resolvedSocials = socialLinks.map(s => ({
   setTimeout(() => {
     if (headerAnimated) return;
     headerAnimated = true;
-    titleText.textContent = 'Digital Designer';
+    titleText.textContent = 'UI/UX Designer & Developer';
     revealInstantly();
   }, 4000);
 </script>
