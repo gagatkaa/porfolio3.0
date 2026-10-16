@@ -1,107 +1,53 @@
-# Agata Tomaszewska — Portfolio
+# Agata Tomaszewska — Portfolio 3.0
 
-A desktop-inspired portfolio built with Astro. Case studies live in a content
-collection, the homepage is a faux terminal desktop, and the site is deployed as
-a static build to GitHub Pages.
+**UI/UX designer & frontend developer.** I design digital products in Figma and build them in code, with a love for motion and creative tech.
 
-**Live:** https://gagatkaa.github.io/porfolio3.0/
+🔗 **Live portfolio:** [gagatkaa.github.io/porfolio3.0](https://gagatkaa.github.io/porfolio3.0/)
+📄 **CV:** available on the site (open CV)
 
-## Stack
+I'm a third-year **Digital Design & Development** student at **Howest DEVINE** in Kortrijk, Belgium, and I'm looking for an **internship from 15 February to 21 May 2027** in UI/UX, digital product design and frontend development. I'm open to relocating.
 
-- [Astro](https://docs.astro.build) (static output)
-- [@astrojs/mdx](https://docs.astro.build/en/guides/integrations-guide/mdx/) for case studies
-- [GSAP](https://gsap.com) for animations
-- Vanilla JS in `.astro` scripts (no UI framework)
-
-## Commands
-
-All commands are run from the project root:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts the dev server at `localhost:4321`        |
-| `npm run build`           | Builds the production site to `./dist/`          |
-| `npm run preview`         | Previews the build locally before deploying      |
-| `npm run astro ...`       | Runs CLI commands like `astro check`             |
-
-Background dev server workflow:
-
-```sh
-astro dev --background
-astro dev status
-astro dev logs
-astro dev stop
-```
-
-## Project structure
-
-```text
-/
-├── .github/workflows/deploy.yml   # GitHub Pages deployment
-├── public/                        # static assets served as-is
-├── src/
-│   ├── assets/projects/           # project images (optimized at build)
-│   ├── components/                # UI components
-│   ├── content/projects/          # case studies (.mdx)
-│   ├── content.config.ts          # content collection schema
-│   ├── data/                      # social links, extras, icons
-│   ├── layouts/BaseLayout.astro
-│   ├── pages/
-│   │   ├── index.astro            # homepage
-│   │   └── projects/[slug].astro  # case-study detail pages
-│   └── utils/url.ts               # base-aware link helper
-└── astro.config.mjs               # site + base config
-```
-
-## Adding a project
-
-Create `src/content/projects/<slug>.mdx`. Frontmatter fields are validated in
-`src/content.config.ts`:
-
-```yaml
 ---
-title: Project name
-category: design-motion        # 'design-motion' | 'dev-web'
-shortDescription: One-line summary
-role: Your role
-year: 2025
-tools: [Figma, Blender]
-coverImage: '../../assets/projects/<slug>/cover.png'
-detailHero: '../../assets/projects/<slug>/hero.png'   # optional
-galleryImages:                                        # optional
-  - '../../assets/projects/<slug>/one.png'
-externalLink: https://example.com                     # optional
-externalLinkMobile: https://example.com/mobile        # optional
+
+## About this repo
+
+This is the source code of my personal portfolio: the third version, where I bring my design, development, motion and 3D work together in one place. It is published with GitHub Pages.
+
+## Featured projects
+
+### Development / Web
+| Project | What it is | Built with |
+| --- | --- | --- |
+| **Sounds Like Antwerp** | Interactive platform that turns Antwerp city data into generative music and visuals | Astro, React, JavaScript, Node.js |
+| **Craft in Motion** | Interactive motion experience about the rhythm and hidden exhaustion of working behind a bar | JavaScript, ml5.js, PoseNet, FaceAPI |
+| **SoundWaveClock.exe** | Experimental clock that turns time into a visual system shaped by wave-like controls | JavaScript, HTML, CSS |
+| **Portfolio 1.0** | My first personal portfolio | Astro, JavaScript, HTML, CSS |
+
+### Design & Motion
+| Project | What it is | Tools |
+| --- | --- | --- |
+| **Miles & Meals** | Food-box app and brand concept that turns cooking into a journey through local street food | Figma, Illustrator |
+| **Code Runners** | Interactive workshop booking experience blending coding culture, freerunning and an urban collage identity | Figma, Photoshop, Illustrator |
+| **TYPE01 Conference** | Bold responsive website concept for a typography conference | Figma, Illustrator |
+| **Beer That Shouldn't Exist** | Campaign concept for Thrive that reframes alcohol-free beer | Figma, Illustrator, Photoshop |
+| **AlphalyteBlend** | Redesigned Kickstarter campaign animation for a portable blender | After Effects, Photoshop, Illustrator |
+
+Plus 3D modelling/render studies and drawing studies (see ArtStation via the site).
+
+## Skills & tools
+
+- **Design:** Figma, Adobe Creative Suite, UI/UX design, wireframing & prototyping, visual identity, editorial & layout design
+- **Development:** HTML, CSS, JavaScript, React, Astro, PHP, Strapi, Git/GitHub
+- **3D & Motion:** Blender, Maya, After Effects, Substance Painter, motion design, ZBrush (basics)
+- **AI & Workflow:** AI-assisted design, prompt engineering, AI workflow automation
+
+## Contact
+
+- ✉️ [atomaszewska361@gmail.com](mailto:atomaszewska361@gmail.com)
+- 💼 [LinkedIn](https://www.linkedin.com/in/agata-tomaszewska-136a66249)
+- 🌐 [Linktree](https://linktr.ee/atomaszewska)
+- 💻 [GitHub](https://github.com/gagatkaa)
+
 ---
-```
 
-Image paths are relative to the MDX file. In the body, import images and render
-them with Astro's `<Image />` component for optimization.
-
-## Deployment (GitHub Pages)
-
-Deployment is automated by `.github/workflows/deploy.yml` using the official
-[Astro GitHub Action](https://github.com/withastro/action).
-
-1. In the repository, go to **Settings → Pages** and set **Source** to
-   **GitHub Actions**.
-2. Push to the `master` branch (or run the workflow manually from the **Actions**
-   tab via `workflow_dispatch`).
-3. The workflow builds the site and publishes it to
-   `https://gagatkaa.github.io/porfolio3.0/`.
-
-The site is served from a repository subpath, so `astro.config.mjs` sets:
-
-```js
-site: 'https://gagatkaa.github.io',
-base: '/porfolio3.0',
-```
-
-All internal links are built with `withBase()` from `src/utils/url.ts` so they
-resolve correctly under the `/porfolio3.0/` prefix. If you switch to a custom
-domain, update `site` and remove `base`.
-
-## Want to learn more?
-
-Check the [Astro documentation](https://docs.astro.build).
+© Agata Tomaszewska. All designs, artwork and content in this repository are my own; please don't reuse them without permission.
